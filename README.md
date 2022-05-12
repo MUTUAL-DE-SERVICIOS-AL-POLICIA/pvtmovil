@@ -1,6 +1,6 @@
 # pvt_movil
 
-A new Flutter project.
+A new PVT project.
 
 ## Getting Started
 
