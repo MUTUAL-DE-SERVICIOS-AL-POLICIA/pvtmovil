@@ -320,9 +320,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
         dateCtrlText = DateFormat('dd-MM-yyyy').format(date);
         dateState = false;
       });
-      if (dniCtrl.text.trim() != '') {
-        initSession();
-      }
     });
   }
 
