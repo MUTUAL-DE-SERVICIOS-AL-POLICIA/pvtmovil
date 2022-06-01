@@ -1,6 +1,6 @@
 {
-    "name": "pvt_movil",
-    "short_name": "pvt_movil",
+    "name": "muserpol_pvt",
+    "short_name": "muserpol_pvt",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

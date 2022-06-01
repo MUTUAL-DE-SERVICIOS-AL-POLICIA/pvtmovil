@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "pvt_movil" "\0"
+            VALUE "FileDescription", "muserpol_pvt" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "pvt_movil" "\0"
+            VALUE "InternalName", "muserpol_pvt" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "pvt_movil.exe" "\0"
-            VALUE "ProductName", "pvt_movil" "\0"
+            VALUE "OriginalFilename", "muserpol_pvt.exe" "\0"
+            VALUE "ProductName", "muserpol_pvt" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
