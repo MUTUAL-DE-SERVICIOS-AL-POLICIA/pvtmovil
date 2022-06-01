@@ -32,30 +32,32 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive> {
   Widget build(BuildContext context) {
     final stateCam = BlocProvider.of<UserBloc>(context, listen: true).state;
     return stateCam.stateCam
-        ? Transform.scale(
-            scale: 1,
-            alignment: Alignment.topCenter,
-            child: CameraPreview(
-              widget.controllerCam,
-              child: stateCam.stateBtntoggleCameraLens
-                  ? Positioned(
-                      bottom: 20,
-                      right: 20,
-                      left: 20,
-                      child: Row(
-                        children: [
-                          Expanded(
-                              child: ButtonComponent(
-                                  text: 'CAPTURAR',
-                                  onPressed: () => takePhoto())),
-                          IconBtnComponent(
-                            icon: Icons.cameraswitch_outlined,
-                            onPressed: () => switchCam(),
-                          )
-                        ],
-                      ))
-                  : Container(),
-            ))
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CameraPreview(
+                widget.controllerCam,
+                child: stateCam.stateBtntoggleCameraLens
+                    ? Positioned(
+                        bottom: 20,
+                        right: 20,
+                        left: 20,
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: ButtonComponent(
+                                    text: 'CAPTURAR',
+                                    onPressed: () => takePhoto())),
+                            IconBtnComponent(
+                              icon: Icons.cameraswitch_outlined,
+                              onPressed: () => switchCam(),
+                            )
+                          ],
+                        ))
+                    : Container(),
+              ),
+            ],
+          )
         : Center(
             child: Image.asset(
             'assets/images/load.gif',

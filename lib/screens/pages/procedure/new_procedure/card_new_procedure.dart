@@ -173,7 +173,7 @@ class _CardNewProcedureState extends State<CardNewProcedure>
                 ),
                 if (procedureBloc.existInfoComplementInfo &&
                     appState.stateLoadingProcedure)
-                  ButtonWhiteComponent(
+                  ButtonComponent(
                       text: tabController!.index == tabController!.length - 1
                           ? 'Enviar'
                           : 'Continuar',

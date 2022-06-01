@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:muserpol_pvt/components/button.dart';
 
@@ -15,9 +16,17 @@ class TabInfo extends StatelessWidget {
       child: text != ''
           ? Center(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Flexible(child: Text(text, textAlign: TextAlign.justify)),
-                ButtonWhiteComponent(
-                  text: 'Iniciar',
+                Flexible(
+                    child: Text(
+                  text,
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(fontSize: 20.sp),
+                )),
+                SizedBox(
+                  height: 20,
+                ),
+                ButtonComponent(
+                  text: 'INICIAR',
                   onPressed: () => nextScreen(),
                 )
               ]),

@@ -4,10 +4,11 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/image_ctrl_live.dart';
-import 'package:muserpol_pvt/dialogs/dialog_back.dart';
+import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/model/liveness_data_model.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/tab_info.dart';
@@ -31,6 +32,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
   String message = '';
   LivenesData? infoLivenes;
   int step = 0;
+  String titleback = '';
 
   bool stateInfo = false;
 
@@ -54,6 +56,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
         infoLivenes = livenesDataFromJson(response.body);
         stateInfo = true;
         title = infoLivenes!.data!.dialog!.title!;
+        titleback = infoLivenes!.data!.dialog!.title!;
         textContent = infoLivenes!.data!.dialog!.content!;
         message = infoLivenes!.data!.action!.message!;
         tabController = TabController(
@@ -94,22 +97,28 @@ class _ModalInsideModalState extends State<ModalInsideModal>
         child: CupertinoPageScaffold(
           navigationBar: CupertinoNavigationBar(
               automaticallyImplyLeading: false,
-              middle: Column(
-                children: [
-                  Text(
-                    title,
-                  ),
-                  if (subTitle != '')
+              middle: Container(
+                height: 300,
+                child: Flexible(
+                    child: Column(
+                  children: [
                     Text(
-                      subTitle,
-                    )
-                ],
+                      title,
+                      style: TextStyle(fontSize: 19.sp),
+                    ),
+                    if (subTitle != '')
+                      Text(
+                        subTitle,
+                        style: TextStyle(fontSize: 16.sp),
+                      )
+                  ],
+                )),
               )),
           child: SizedBox(
             height: MediaQuery.of(context).size.height <
                     MediaQuery.of(context).size.width / 1.65
                 ? MediaQuery.of(context).size.height
-                : MediaQuery.of(context).size.height / 1.3,
+                : MediaQuery.of(context).size.height / 1,
             child: DefaultTabController(
                 length: stateInfo ? (1 + infoLivenes!.data!.totalActions!) : 1,
                 child: TabBarView(
@@ -139,7 +148,14 @@ class _ModalInsideModalState extends State<ModalInsideModal>
     return await showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (context) => const ComponentAnimate(child: DialogBack()));
+        builder: (context) => ComponentAnimate(
+            child: DialogTwoAction(
+                message: '¿DESEAS CANCELAR EL $titleback?',
+                actionCorrect: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                messageCorrect: 'Salir')));
   }
 
   sendImage(String image) async {
@@ -155,6 +171,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
           title = json.decode(response.body)['message'];
           subTitle = json.decode(response.body)['data']['action']['message'];
         });
+        callDialogAction(context, 'Oops. paso algo');
       } else {
         if (json.decode(response.body)['data']['completed']) {
           User user = userBloc.state.user!;
