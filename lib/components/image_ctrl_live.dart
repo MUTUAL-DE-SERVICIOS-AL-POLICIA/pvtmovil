@@ -1,25 +1,15 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class ImageCtrlLive extends StatefulWidget {
   final Function(String) sendImage;
-  // final CameraController controllerCam;
-  // final Function() toggleCameraLens;
-  const ImageCtrlLive({
-    Key? key,
-    required this.sendImage,
-    // required this.controllerCam,
-    // required this.toggleCameraLens
-  }) : super(key: key);
+  const ImageCtrlLive({Key? key, required this.sendImage}) : super(key: key);
 
   @override
   State<ImageCtrlLive> createState() => _ImageCtrlLiveState();
@@ -27,7 +17,6 @@ class ImageCtrlLive extends StatefulWidget {
 
 class _ImageCtrlLiveState extends State<ImageCtrlLive>
     with WidgetsBindingObserver {
-  bool stateCamera = false;
   late List<CameraDescription>? _availableCameras;
   CameraController? controllerCam;
   @override
@@ -77,7 +66,7 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
   @override
   Widget build(BuildContext context) {
     final stateCam = BlocProvider.of<UserBloc>(context, listen: true).state;
-    return controllerCam != null
+    return controllerCam != null && stateCam.stateCam
         ? CameraPreview(
             controllerCam!,
             child: stateCam.stateBtntoggleCameraLens
@@ -111,7 +100,6 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     if (userBloc.state.stateCam) {
       userBloc.add(UpdateStateBtntoggleCameraLens(false));
-      // widget.toggleCameraLens();
       _toggleCameraLens();
     }
   }
@@ -121,22 +109,28 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
     if (userBloc.state.stateBtntoggleCameraLens) {
       userBloc.add(UpdateStateCam(false));
       XFile picture = await controllerCam!.takePicture();
-      File picturer = await FlutterNativeImage.compressImage(picture.path,
-          quality: 100, targetWidth: 320, targetHeight: 240);
-      Uint8List imagebytes = await picturer.readAsBytes();
-      String base64 = base64Encode(imagebytes);
-      await Permission.storage.request();
-      await Permission.manageExternalStorage.request();
-      await Permission.accessMediaLocation.request();
-      Directory documentDirectory =
-          await Directory('/storage/emulated/0/Muserpol/pruebas')
-              .create(recursive: true);
-      String documentPath = documentDirectory.path;
-      var imagen = File(
-          '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.txt');
-      imagen.writeAsString('$base64');
+      var imagebytes = await FlutterImageCompress.compressWithFile(
+        picture.path,
+        minWidth: 240,
+        minHeight: 320,
+        quality: 100,
+      );
+      String base64 = base64Encode(imagebytes!);
+      // await Permission.storage.request();
+      // await Permission.manageExternalStorage.request();
+      // await Permission.accessMediaLocation.request();
+      // Directory documentDirectory =
+      //     await Directory('/storage/emulated/0/Muserpol/pruebas')
+      //         .create(recursive: true);
+      // String documentPath = documentDirectory.path;
+      // var imagen = File(
+      //     '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.txt');
+      // var imagen2 = File(
+      //     '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.jpg');
+      // imagen.writeAsString('$base64');
+      // final file = await picture.readAsBytes();
+      // imagen2.writeAsBytesSync(file);
       widget.sendImage(base64);
-      // controllerCam!.dispose();
     }
   }
 

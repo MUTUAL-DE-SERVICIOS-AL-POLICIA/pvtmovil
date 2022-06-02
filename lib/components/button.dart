@@ -147,6 +147,8 @@ class ButtonDate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
+        elevation: 0,
+        focusElevation: 0,
         autofocus: true,
         onPressed: onPressed,
         shape: RoundedRectangleBorder(

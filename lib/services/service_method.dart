@@ -52,7 +52,12 @@ Future<dynamic> serviceMethod(
                 return null;
             }
           }).catchError((err) {
-            callDialogAction(context, err);
+            if ('$err'.contains('html')) {
+              callDialogAction(context,
+                  'Tenemos un problema con nuestro servidor, intente luego');
+            } else {
+              callDialogAction(context, err);
+            }
             return null;
           });
         case 'post':
@@ -70,17 +75,24 @@ Future<dynamic> serviceMethod(
                 return null;
             }
           }).catchError((err) {
-            callDialogAction(context, err);
+            if ('$err'.contains('html')) {
+              callDialogAction(context,
+                  'Tenemos un problema con nuestro servidor, intente luego');
+            } else {
+              callDialogAction(context, err);
+            }
             return null;
           });
       }
     }
   } on TimeoutException catch (e) {
+    print('errB $e');
     callDialogAction(context, '${e.message} ');
     return;
   } on SocketException catch (_) {
     return callDialogAction(context, 'Verifique su conexión a Internet');
   } catch (e) {
+    print('errD $e');
     callDialogAction(context, '${e} ');
     return;
   }

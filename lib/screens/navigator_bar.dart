@@ -75,9 +75,9 @@ class _NavigatorBarState extends State<NavigatorBar> {
               .add(AddHistoryProcedures(procedureHistory!.data!.data!));
         }
         if (current) {
-          pageCurrent = procedureCurrent!.data!.lastPage!;
+          pageCurrent++;
         } else {
-          pageHistory = procedureHistory!.data!.lastPage!;
+          pageHistory++;
         }
       });
     }

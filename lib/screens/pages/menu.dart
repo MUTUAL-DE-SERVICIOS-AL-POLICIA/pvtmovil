@@ -6,6 +6,7 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/section_title.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
+import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
@@ -116,7 +117,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                   icon: Icons.info_outline,
                   onTap: () => closeSession(context)),
               Center(
-                child: Text('Versión 2.0.2 beta'),
+                child: Text('Versión 2.0.6 beta'),
               )
             ],
           ))),
@@ -164,8 +165,14 @@ class _MenuDrawerState extends State<MenuDrawer> {
     final procedureBloc =
         BlocProvider.of<ProcedureBloc>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     // var response = await serviceMethod( context, 'delete', null, serviceAuthSession(), true);
     // if ( response != null ) {
+    prefs!.getKeys();
+    for (String key in prefs!.getKeys()) {
+      prefs!.remove(key);
+    }
+    userBloc.add(UpdateCtrlLive(false));
     authService.logout();
     procedureBloc.add(ClearProcedures());
     Navigator.pushReplacementNamed(context, 'login');

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +13,7 @@ import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/tab_info.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class ModalInsideModal extends StatefulWidget {
   final Function(String) nextScreen;
@@ -31,19 +31,12 @@ class _ModalInsideModalState extends State<ModalInsideModal>
   String textContent = '';
   String message = '';
   LivenesData? infoLivenes;
-  // int step = 0;
   String titleback = '';
-
-  // bool stateInfo = false;
-
-  // late List<CameraDescription>? _availableCameras;
-  // CameraController? controllerCam;
 
   @override
   void initState() {
     super.initState();
     getMessage();
-    // _getAvailableCameras();
   }
 
   getMessage() async {
@@ -54,40 +47,14 @@ class _ModalInsideModalState extends State<ModalInsideModal>
       userBloc.add(UpdateStateCam(true));
       setState(() {
         infoLivenes = livenesDataFromJson(response.body);
-        // stateInfo = true;
         title = infoLivenes!.data!.dialog!.title!;
         titleback = infoLivenes!.data!.dialog!.title!;
         textContent = infoLivenes!.data!.dialog!.content!;
         message = infoLivenes!.data!.action!.message!;
         tabController = TabController(vsync: this, length: 2);
-        //step = tabController!.index;
       });
     }
   }
-
-  // @override
-  // void dispose() {
-  //   controllerCam!.dispose();
-  //   super.dispose();
-  // }
-
-  // Future<void> _getAvailableCameras() async {
-  //   _availableCameras = await availableCameras();
-  //   _initCamera(_availableCameras!.last);
-  // }
-
-  // Future<void> _initCamera(CameraDescription description) async {
-  //   final stateCam = BlocProvider.of<UserBloc>(context, listen: false);
-
-  //   controllerCam = CameraController(description, ResolutionPreset.medium,
-  //       enableAudio: false);
-  //   try {
-  //     await controllerCam!.initialize();
-  //     stateCam.add(UpdateStateBtntoggleCameraLens(true));
-  //     setState(() {});
-  //   } catch (_) {}
-  //   if (!mounted) return;
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -95,17 +62,27 @@ class _ModalInsideModalState extends State<ModalInsideModal>
         onWillPop: _onBackPressed,
         child: CupertinoPageScaffold(
           navigationBar: CupertinoNavigationBar(
+              backgroundColor:
+                  ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
               automaticallyImplyLeading: false,
               middle: Column(
                 children: [
                   Text(
                     title,
-                    style: TextStyle(fontSize: 17.sp),
+                    style: TextStyle(
+                        fontSize: 17.sp,
+                        color: ThemeProvider.themeOf(context)
+                            .data
+                            .primaryColorDark),
                   ),
                   if (subTitle != '')
                     Text(
                       subTitle,
-                      style: TextStyle(fontSize: 15.sp),
+                      style: TextStyle(
+                          fontSize: 17.sp,
+                          color: ThemeProvider.themeOf(context)
+                              .data
+                              .primaryColorDark),
                     )
                 ],
               )),
@@ -123,14 +100,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
                           setState(() => title = message);
                           tabController!.animateTo(tabController!.index + 1);
                         }),
-                    // if (stateInfo)
-                    // for (var i = 0; i < infoLivenes!.data!.totalActions!; i++)
-                    // if (controllerCam != null)
-                    ImageCtrlLive(
-                      sendImage: (image) => sendImage(image),
-                      // controllerCam: controllerCam!,
-                      // toggleCameraLens: () => _toggleCameraLens()
-                    )
+                    ImageCtrlLive(sendImage: (image) => sendImage(image))
                   ],
                 )),
           ),
@@ -157,7 +127,6 @@ class _ModalInsideModalState extends State<ModalInsideModal>
     var response = await serviceMethod(
         context, 'post', data, serviceProcessEnrolled(), true, true);
     userBloc.add(UpdateStateCam(true));
-
     if (response != null) {
       if (json.decode(response.body)['error']) {
         setState(() {
@@ -175,23 +144,9 @@ class _ModalInsideModalState extends State<ModalInsideModal>
           setState(() {
             title = json.decode(response.body)['data']['action']['message'];
             subTitle = '';
-            tabController!.animateTo(tabController!.index + 1);
           });
         }
       }
     }
   }
-
-  // void _toggleCameraLens() {
-  //   final lensDirection = controllerCam!.description.lensDirection;
-  //   CameraDescription newDescription;
-  //   if (lensDirection == CameraLensDirection.front) {
-  //     newDescription = _availableCameras!.firstWhere((description) =>
-  //         description.lensDirection == CameraLensDirection.back);
-  //   } else {
-  //     newDescription = _availableCameras!.firstWhere((description) =>
-  //         description.lensDirection == CameraLensDirection.front);
-  //   }
-  //   _initCamera(newDescription);
-  // }
 }
