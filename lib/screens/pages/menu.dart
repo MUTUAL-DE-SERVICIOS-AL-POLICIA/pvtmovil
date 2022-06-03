@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,11 +9,13 @@ import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/section_title.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/main.dart';
+import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
 
@@ -166,15 +170,22 @@ class _MenuDrawerState extends State<MenuDrawer> {
         BlocProvider.of<ProcedureBloc>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    final appState = Provider.of<AppState>(context, listen: false);
     // var response = await serviceMethod( context, 'delete', null, serviceAuthSession(), true);
     // if ( response != null ) {
     prefs!.getKeys();
     for (String key in prefs!.getKeys()) {
       prefs!.remove(key);
     }
+    for (var element in appState.files) {
+      appState.updateFile(element.id!, null);
+    }
     userBloc.add(UpdateCtrlLive(false));
+    var appDir = (await getTemporaryDirectory()).path;
+    new Directory(appDir).delete(recursive: true);
     authService.logout();
     procedureBloc.add(ClearProcedures());
+    appState.updateTabProcedure(0);
     Navigator.pushReplacementNamed(context, 'login');
     // }
   }

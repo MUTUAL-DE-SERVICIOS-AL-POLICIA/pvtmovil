@@ -37,6 +37,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
   void initState() {
     super.initState();
     getProcessingPermit();
+    getObservations();
     getEconomicComplement(true);
     getEconomicComplement(false);
     _scrollController.addListener(() {
@@ -83,6 +84,16 @@ class _NavigatorBarState extends State<NavigatorBar> {
     }
   }
 
+  getObservations() async {
+    final appState = Provider.of<AppState>(context, listen: false);
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    var response = await serviceMethod(context, 'get', null,
+        serviceGetObservation(userBloc.state.user!.id!), true, true);
+    if (response != null) {
+      appState.updateObservation(json.decode(response.body)['message']);
+    }
+  }
+
   getProcessingPermit() async {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
@@ -91,6 +102,23 @@ class _NavigatorBarState extends State<NavigatorBar> {
     if (response != null) {
       userBloc.add(UpdateCtrlLive(
           json.decode(response.body)['data']['liveness_success']));
+      if (json.decode(response.body)['data']['liveness_success']) {
+        print('HIZO SU CONTROL DE VIVIENCIA');
+        if (userBloc.state.user!.verified!) {
+          appState.updateTabProcedure(1 + appState.files.length);
+          appState.updateStateLoadingProcedure(
+              true); //MOSTRAMOS EL BTN DE CONTINUAR
+        } else {
+          appState.updateTabProcedure(1);
+
+          appState.updateStateLoadingProcedure(
+              false); //OCULTAMOS EL BTN DE CONTINUAR
+        }
+      } else {
+        appState.updateTabProcedure(0);
+        appState
+            .updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+      }
       userBloc.add(UpdateProcedureId(
           json.decode(response.body)['data']['procedure_id']));
       if (json.decode(response.body)['data']['cell_phone_number'].length > 0) {

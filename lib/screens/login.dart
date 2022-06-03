@@ -25,6 +25,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
+import 'package:new_version/new_version.dart';
 import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -55,6 +56,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   @override
   void initState() {
     super.initState();
+    // _checkVersion();
     initializeDateFormatting();
     initPlatformState();
 
@@ -86,6 +88,36 @@ class _ScreenLoginState extends State<ScreenLogin> {
       }
     });
   }
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   _checkVersion();
+  // }
+
+  // void _checkVersion() async {
+  //   final newVersion = NewVersion(
+  //     androidId: "com.snapchat.android",
+  //   );
+  //   final status = await newVersion.getVersionStatus();
+  //   newVersion.showUpdateDialog(
+  //     context: context,
+  //     versionStatus: status!,
+  //     dialogTitle: "UPDATE!!!",
+  //     dismissButtonText: "Skip",
+  //     dialogText: "Please update the app from " +
+  //         "${status.localVersion}" +
+  //         " to " +
+  //         "${status.storeVersion}",
+  //     dismissAction: () {
+  //       SystemNavigator.pop();
+  //     },
+  //     updateButtonText: "Lets update",
+  //   );
+
+  //   print("DEVICE : " + status.localVersion);
+  //   print("STORE : " + status.storeVersion);
+  // }
 
   Future<void> initPlatformState() async {
     Map<String, dynamic> deviceData = <String, dynamic>{};

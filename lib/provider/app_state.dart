@@ -4,6 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:muserpol_pvt/model/files_model.dart';
 
 class AppState with ChangeNotifier {
+  String? messageObservation = null;
+  updateObservation(String message) {
+    messageObservation = message;
+    notifyListeners();
+  }
+
   bool stateAuxToken = false;
   updateStateAuxToken(bool state) {
     stateAuxToken = state;
@@ -11,7 +17,8 @@ class AppState with ChangeNotifier {
   }
 
   int indexTabProcedure = 0;
-  updateTabProcedure(int index) {
+  updateTabProcedure(int index) async {
+    await Future.delayed(const Duration(milliseconds: 50), () {});
     indexTabProcedure = index;
     notifyListeners();
   }
@@ -78,8 +85,12 @@ class AppState with ChangeNotifier {
     notifyListeners();
   }
 
-  updateFile(String keyId, File file) {
-    files.firstWhere((e) => e.id == keyId).imageFile = file;
+  updateFile(String keyId, File? file) {
+    if (file == null) {
+      files.firstWhere((e) => e.id == keyId).imageFile = null;
+    } else {
+      files.firstWhere((e) => e.id == keyId).imageFile = file;
+    }
     notifyListeners();
   }
 

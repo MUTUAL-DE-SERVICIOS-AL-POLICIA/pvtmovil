@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
+import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
 import 'package:muserpol_pvt/screens/pages/procedure/card_economic_complement.dart';
 import 'package:muserpol_pvt/components/heders.dart';
@@ -31,7 +32,6 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
     final procedureBloc =
         BlocProvider.of<ProcedureBloc>(context, listen: true).state;
     final appState = Provider.of<AppState>(context, listen: true);
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: true).state;
     return Scaffold(
         drawer: MenuDrawer(),
         body: Builder(
@@ -42,9 +42,18 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                       title: 'Complemento Económico',
                       menu: true,
                       onPressMenu: () => Scaffold.of(context).openDrawer()),
-                  if (appState.stateProcessing &&
-                      widget.current &&
-                      userBloc.user!.verified != null)
+                  if (appState.messageObservation != null)
+                    ContainerComponent(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [Text(appState.messageObservation!)],
+                          ),
+                        ),
+                        color: const Color(0xffffdead)),
+                  if (appState.stateProcessing && widget.current)
                     const CardNewProcedure(),
                   if (widget.current)
                     Expanded(

@@ -19,6 +19,8 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
     with WidgetsBindingObserver {
   late List<CameraDescription>? _availableCameras;
   CameraController? controllerCam;
+  bool? isCameraReady;
+  Future<void>? _initializeControllerFuture;
   @override
   void initState() {
     super.initState();
@@ -38,7 +40,11 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       print('REGRESE');
-      _getAvailableCameras();
+      setState(() {
+        _initializeControllerFuture = null;
+        controllerCam != null;
+        _getAvailableCameras();
+      });
     }
   }
 
@@ -48,26 +54,47 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
   }
 
   Future<void> _initCamera(CameraDescription description) async {
-    print('INICIANDO CAMARA');
     final stateCam = BlocProvider.of<UserBloc>(context, listen: false);
-
+    print('INICIANDO CAMARA');
     controllerCam = CameraController(description, ResolutionPreset.high,
         enableAudio: false);
-    try {
-      await controllerCam!.initialize();
+    print('INICIANDO CAMARA2');
+    _initializeControllerFuture = controllerCam!.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+      controllerCam!.addListener(() {
+        if (mounted) setState(() {});
+        if (controllerCam!.value.hasError) {
+          print('Camera error ${controllerCam!.value.errorDescription}');
+        }
+      });
       stateCam.add(UpdateStateBtntoggleCameraLens(true));
       setState(() {});
-    } catch (_) {
-      print('paso paso algo');
-    }
-    if (!mounted) return;
+    }).catchError((Object e) {
+      if (e is CameraException) {
+        switch (e.code) {
+          case 'CameraAccessDenied':
+            print('User denied camera access.');
+            break;
+          default:
+            print('Handle other errors.');
+            break;
+        }
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final stateCam = BlocProvider.of<UserBloc>(context, listen: true).state;
-    return controllerCam != null && stateCam.stateCam
-        ? CameraPreview(
+    return FutureBuilder<void>(
+      future: _initializeControllerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            stateCam.stateCam) {
+          // If the Future is complete, display the preview.
+          return CameraPreview(
             controllerCam!,
             child: stateCam.stateBtntoggleCameraLens
                 ? Positioned(
@@ -87,13 +114,17 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
                       ],
                     ))
                 : Container(),
-          )
-        : Center(
-            child: Image.asset(
+          );
+        } else {
+          return Center(
+              child: Image.asset(
             'assets/images/load.gif',
             fit: BoxFit.cover,
             height: 20,
-          ));
+          )); // Otherwise, display a loading indicator.
+        }
+      },
+    );
   }
 
   switchCam() {
@@ -106,31 +137,35 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
 
   takePhoto() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    if (userBloc.state.stateBtntoggleCameraLens) {
-      userBloc.add(UpdateStateCam(false));
-      XFile picture = await controllerCam!.takePicture();
-      var imagebytes = await FlutterImageCompress.compressWithFile(
-        picture.path,
-        minWidth: 240,
-        minHeight: 320,
-        quality: 100,
-      );
-      String base64 = base64Encode(imagebytes!);
-      // await Permission.storage.request();
-      // await Permission.manageExternalStorage.request();
-      // await Permission.accessMediaLocation.request();
-      // Directory documentDirectory =
-      //     await Directory('/storage/emulated/0/Muserpol/pruebas')
-      //         .create(recursive: true);
-      // String documentPath = documentDirectory.path;
-      // var imagen = File(
-      //     '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.txt');
-      // var imagen2 = File(
-      //     '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.jpg');
-      // imagen.writeAsString('$base64');
-      // final file = await picture.readAsBytes();
-      // imagen2.writeAsBytesSync(file);
-      widget.sendImage(base64);
+    try {
+      if (userBloc.state.stateBtntoggleCameraLens) {
+        userBloc.add(UpdateStateCam(false));
+        XFile picture = await controllerCam!.takePicture();
+        var imagebytes = await FlutterImageCompress.compressWithFile(
+          picture.path,
+          minWidth: 240,
+          minHeight: 320,
+          quality: 100,
+        );
+        String base64 = base64Encode(imagebytes!);
+        // await Permission.storage.request();
+        // await Permission.manageExternalStorage.request();
+        // await Permission.accessMediaLocation.request();
+        // Directory documentDirectory =
+        //     await Directory('/storage/emulated/0/Muserpol/pruebas')
+        //         .create(recursive: true);
+        // String documentPath = documentDirectory.path;
+        // var imagen = File(
+        //     '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.txt');
+        // var imagen2 = File(
+        //     '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.jpg');
+        // imagen.writeAsString('$base64');
+        // final file = await picture.readAsBytes();
+        // imagen2.writeAsBytesSync(file);
+        widget.sendImage(base64);
+      }
+    } catch (_) {
+      print('paso paso algo');
     }
   }
 
@@ -144,6 +179,6 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
       newDescription = _availableCameras!.firstWhere((description) =>
           description.lensDirection == CameraLensDirection.front);
     }
-    _initCamera(newDescription);
+    // _initCamera(newDescription);
   }
 }

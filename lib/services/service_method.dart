@@ -52,12 +52,13 @@ Future<dynamic> serviceMethod(
                 return null;
             }
           }).catchError((err) {
-            if ('$err'.contains('html')) {
-              callDialogAction(context,
-                  'Tenemos un problema con nuestro servidor, intente luego');
-            } else {
-              callDialogAction(context, err);
-            }
+            callDialogAction(context, err);
+            // if ('$err'.contains('html')) {
+            //   callDialogAction(context,
+            //       'Tenemos un problema con nuestro servidor, intente luego');
+            // } else {
+            //   callDialogAction(context, err);
+            // }
             return null;
           });
         case 'post':
@@ -65,6 +66,8 @@ Future<dynamic> serviceMethod(
               .post(url, headers: headers, body: json.encode(body))
               .timeout(const Duration(seconds: 40))
               .then((value) {
+            print('statusCode ${value.statusCode}');
+            print('value ${value.body}');
             switch (value.statusCode) {
               case 200:
                 return value;
@@ -75,12 +78,8 @@ Future<dynamic> serviceMethod(
                 return null;
             }
           }).catchError((err) {
-            if ('$err'.contains('html')) {
-              callDialogAction(context,
-                  'Tenemos un problema con nuestro servidor, intente luego');
-            } else {
-              callDialogAction(context, err);
-            }
+            print('errA $err');
+            callDialogAction(context, '$err');
             return null;
           });
       }

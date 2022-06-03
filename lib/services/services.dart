@@ -12,6 +12,7 @@ serviceGetEconomicComplements(int page, bool current) =>
     '$url/economic_complement/?page=$page&current=$current';
 //GET MESSAGE IN FACE
 //serviceGetMessageFace() => '$url/message/before_liveness';
+
 //GET PROCESS ENROLLED
 serviceProcessEnrolled() => '$url/liveness';
 //GET PERMISION PROCEDURE
@@ -21,7 +22,7 @@ serviceSendImagesProcedure() => '$url/economic_complement';
 //PRINT ECONOMIC COMPLEMENT
 serviceGetPDFEC(int economicComplementId) =>
     '$url/economic_complement/print/$economicComplementId';
-//GET INFO AFFILIATE - COMPLEMENT ECONOMIC
+//GET OBSERVATIONS
 serviceGetObservation(int affiliateId) =>
     '$url/affiliate/$affiliateId/observation';
 serviceEcoComProcedure(int ecoComId) => '$url/eco_com_procedure/$ecoComId';

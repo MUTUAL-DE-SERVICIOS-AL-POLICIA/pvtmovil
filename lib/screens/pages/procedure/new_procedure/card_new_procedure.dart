@@ -21,6 +21,7 @@ import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
 import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
@@ -47,41 +48,20 @@ class _CardNewProcedureState extends State<CardNewProcedure>
   void initState() {
     super.initState();
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state;
-    final appState = Provider.of<AppState>(context, listen: false);
     if (userBloc.phone != null) {
       setState(() => phoneCtrl.text = userBloc.phone!);
     }
-    if (userBloc.controlLive) {
-      if (userBloc.user!.verified!) {
-        appState
-            .updateStateLoadingProcedure(true); //OCULTAMOS EL BTN DE CONTINUAR
-      } else {
-        appState
-            .updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
-      }
-    } else {
-      appState
-          .updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
-    }
-
-    tabController = TabController(
-        initialIndex: userBloc.user!.verified!
-            ? userBloc.controlLive
-                ? appState.files.length
-                : appState.indexTabProcedure
-            : appState.indexTabProcedure,
-        vsync: this,
-        length: !userBloc.controlLive
-            ? appState.files.length + 2
-            : appState.files.length + 1);
   }
 
   @override
   Widget build(BuildContext context) {
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: true).state;
     final appState = Provider.of<AppState>(context, listen: true);
     final procedureBloc =
         Provider.of<ProcedureBloc>(context, listen: true).state;
+    tabController = TabController(
+        initialIndex: appState.indexTabProcedure,
+        vsync: this,
+        length: appState.files.length + 2);
     return Padding(
         padding: const EdgeInsets.all(5),
         child: Form(
@@ -101,7 +81,7 @@ class _CardNewProcedureState extends State<CardNewProcedure>
                     Icons.add,
                     color: Colors.white,
                   )),
-              title: const Text('CREAR NUEVO TRÁMITE',
+              title: Text('CREAR NUEVO TRÁMITE',
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Color(0xff419388))),
               onExpansionChanged: (expands) {
@@ -119,57 +99,60 @@ class _CardNewProcedureState extends State<CardNewProcedure>
                           MediaQuery.of(context).size.width / 1.65
                       ? MediaQuery.of(context).size.height
                       : MediaQuery.of(context).size.height / valueHeigth,
-                  child: TabBarView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: tabController,
-                    children: [
-                      if (!userBloc.controlLive)
-                        Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Flexible(
-                                    child: Text('CONTROL DE VIVENCIA')),
-                                Stack(
-                                  children: <Widget>[
-                                    ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        child: Image.asset(
-                                          'assets/images/certificado.png',
-                                          fit: BoxFit.cover,
-                                          gaplessPlayback: true,
-                                          width: 200,
-                                          height: 200,
-                                        )),
-                                    Positioned(
-                                        bottom: 2,
-                                        right: -14,
-                                        child: IconBtnComponent(
-                                            icon: Icons.camera_alt,
-                                            onPressed: () => initCtrlLive()))
-                                  ],
-                                ),
-                              ],
-                            )),
-                      for (var item in appState.files)
-                        ImageInputComponent(
-                          sizeImage: valueHeigth * 80,
-                          text: item.validateState
-                              ? item.title!
-                              : item.textValidate!,
-                          onPressed: (img, file) =>
-                              detectorText(img, file, item),
-                          itemFile: item,
-                        ),
-                      TabInfoEconomicComplement(
-                        onTap: () {},
-                        onEditingComplete: () => nextPage(),
-                        phoneCtrl: phoneCtrl,
-                      )
-                    ],
-                  ),
+                  child: DefaultTabController(
+                      initialIndex: appState.indexTabProcedure,
+                      length: appState.files.length + 2,
+                      child: TabBarView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        controller: tabController,
+                        children: [
+                          // if (!userBloc.controlLive)
+                          Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Flexible(
+                                      child: Text('CONTROL DE VIVENCIA')),
+                                  Stack(
+                                    children: <Widget>[
+                                      ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          child: Image.asset(
+                                            'assets/images/certificado.png',
+                                            fit: BoxFit.cover,
+                                            gaplessPlayback: true,
+                                            width: 200,
+                                            height: 200,
+                                          )),
+                                      Positioned(
+                                          bottom: 2,
+                                          right: -14,
+                                          child: IconBtnComponent(
+                                              icon: Icons.camera_alt,
+                                              onPressed: () => initCtrlLive()))
+                                    ],
+                                  ),
+                                ],
+                              )),
+                          for (var item in appState.files)
+                            ImageInputComponent(
+                              sizeImage: valueHeigth * 80,
+                              text: item.validateState
+                                  ? item.title!
+                                  : item.textValidate!,
+                              onPressed: (img, file) =>
+                                  detectorText(img, file, item),
+                              itemFile: item,
+                            ),
+                          TabInfoEconomicComplement(
+                            onTap: () {},
+                            onEditingComplete: () => nextPage(),
+                            phoneCtrl: phoneCtrl,
+                          )
+                        ],
+                      )),
                 ),
                 if (procedureBloc.existInfoComplementInfo &&
                     appState.stateLoadingProcedure)
@@ -319,11 +302,24 @@ class _CardNewProcedureState extends State<CardNewProcedure>
           tabController!.animateTo(0);
           appState.clearFiles();
         });
+        await Permission.storage.request();
+        await Permission.manageExternalStorage.request();
+        await Permission.accessMediaLocation.request();
+        Directory documentDirectory =
+            await Directory('/storage/emulated/0/Muserpol/pruebas')
+                .create(recursive: true);
+        String documentPath = documentDirectory.path;
+        var imagen = File(
+            '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.txt');
+        imagen.writeAsString('$data');
+
         card.currentState!.collapse();
         await getEconomicComplement();
         await getProcessingPermit();
+        await getObservations();
         procedureBloc.add(UpdateStateComplementInfo(false));
         await OpenFile.open(pathFile);
+        appState.updateStateProcessing(false);
       });
     } else {
       appState.updateStateLoadingProcedure(true);
@@ -342,6 +338,16 @@ class _CardNewProcedureState extends State<CardNewProcedure>
     }
   }
 
+  getObservations() async {
+    final appState = Provider.of<AppState>(context, listen: false);
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    var response = await serviceMethod(context, 'get', null,
+        serviceGetObservation(userBloc.state.user!.id!), true, true);
+    if (response != null) {
+      appState.updateObservation(json.decode(response.body)['message']);
+    }
+  }
+
   getProcessingPermit() async {
     //REVISANDO SI TIENE UN NUEVO TRÁMITE
     final appState = Provider.of<AppState>(context, listen: false);
@@ -351,12 +357,28 @@ class _CardNewProcedureState extends State<CardNewProcedure>
     if (response != null) {
       userBloc.add(UpdateCtrlLive(
           json.decode(response.body)['data']['liveness_success']));
+      if (json.decode(response.body)['data']['liveness_success']) {
+        print('HIZO SU CONTROL DE VIVIENCIA');
+        if (userBloc.state.user!.verified!) {
+          appState.updateTabProcedure(1 + appState.files.length);
+          appState.updateStateLoadingProcedure(
+              true); //MOSTRAMOS EL BTN DE CONTINUAR
+        } else {
+          appState.updateTabProcedure(1);
+
+          appState.updateStateLoadingProcedure(
+              false); //OCULTAMOS EL BTN DE CONTINUAR
+        }
+      } else {
+        appState.updateTabProcedure(0);
+        appState
+            .updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+      }
       userBloc.add(UpdateProcedureId(
           json.decode(response.body)['data']['procedure_id']));
       userBloc.add(UpdatePhone(
           json.decode(response.body)['data']['cell_phone_number'][0]));
-    } else {
-      appState.updateStateProcessing(false);
+      appState.updateStateProcessing(true);
     }
   }
 }

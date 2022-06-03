@@ -43,13 +43,12 @@ class CheckAuthScreen extends StatelessWidget {
               //redireccionamos al usuario al ScreenLoading
               UserModel user = userModelFromJson(prefs!.getString('user')!);
               userBloc.add(UpdateUser(user.user!));
-
               // appState.addKey(
               //     'cianverso', prefs!.getString('ci')!); //num carnet
               // appState.addKey(
               //     'cireverso', prefs!.getString('ci')!); //num carnet
               // appState.addKey('cireverso', user.user!.fullName!); //nombre
-              controleVerified(context);
+              //controleVerified(context);
 
               Future.microtask(() {
                 Navigator.pushReplacement(
