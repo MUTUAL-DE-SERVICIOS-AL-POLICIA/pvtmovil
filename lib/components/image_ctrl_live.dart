@@ -64,6 +64,7 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
       if (!mounted) {
         return;
       }
+      controllerCam!.setFlashMode(FlashMode.off);
       controllerCam!.addListener(() {
         if (mounted) setState(() {});
         if (controllerCam!.value.hasError) {

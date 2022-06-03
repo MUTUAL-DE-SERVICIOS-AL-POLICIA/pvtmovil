@@ -48,6 +48,7 @@ class _CardNewProcedureState extends State<CardNewProcedure>
   void initState() {
     super.initState();
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state;
+    observationAffiliate();
     if (userBloc.phone != null) {
       setState(() => phoneCtrl.text = userBloc.phone!);
     }
@@ -75,19 +76,11 @@ class _CardNewProcedureState extends State<CardNewProcedure>
               baseColor:
                   ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
               key: card,
-              leading: CircleAvatar(
-                  backgroundColor:
-                      ThemeProvider.themeOf(context).data.primaryColor,
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  )),
-              title: Text('CREAR NUEVO TRÁMITE',
+              title: Text('CREACIÓN DE UN NUEVO TRÁMITE',
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Color(0xff419388))),
               onExpansionChanged: (expands) {
                 if (expands) {
-                  observationAffiliate();
                   setState(() => valueHeigth = 2.5);
                   if (tabController!.index == tabController!.length - 1) {
                     setState(() => valueHeigth = 4);
@@ -107,7 +100,6 @@ class _CardNewProcedureState extends State<CardNewProcedure>
                         physics: const NeverScrollableScrollPhysics(),
                         controller: tabController,
                         children: [
-                          // if (!userBloc.controlLive)
                           Padding(
                               padding: const EdgeInsets.all(5),
                               child: Column(
@@ -117,16 +109,18 @@ class _CardNewProcedureState extends State<CardNewProcedure>
                                       child: Text('CONTROL DE VIVENCIA')),
                                   Stack(
                                     children: <Widget>[
-                                      ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          child: Image.asset(
-                                            'assets/images/certificado.png',
-                                            fit: BoxFit.cover,
-                                            gaplessPlayback: true,
-                                            width: 200,
-                                            height: 200,
-                                          )),
+                                      GestureDetector(
+                                          onTap: () => initCtrlLive(),
+                                          child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: Image.asset(
+                                                'assets/images/face.png',
+                                                fit: BoxFit.cover,
+                                                gaplessPlayback: true,
+                                                width: 200,
+                                                height: 200,
+                                              ))),
                                       Positioned(
                                           bottom: 2,
                                           right: -14,

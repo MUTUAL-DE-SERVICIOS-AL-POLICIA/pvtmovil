@@ -186,6 +186,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
     authService.logout();
     procedureBloc.add(ClearProcedures());
     appState.updateTabProcedure(0);
+    appState.updateStateProcessing(false);
     Navigator.pushReplacementNamed(context, 'login');
     // }
   }

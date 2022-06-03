@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
-import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
 import 'package:muserpol_pvt/screens/pages/procedure/card_economic_complement.dart';
@@ -10,7 +9,6 @@ import 'package:muserpol_pvt/components/heders.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/pages/procedure/new_procedure/card_new_procedure.dart';
 import 'package:provider/provider.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class ScreenProcedures extends StatefulWidget {
   final bool current;

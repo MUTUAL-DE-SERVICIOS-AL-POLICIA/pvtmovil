@@ -44,6 +44,8 @@ Future<dynamic> serviceMethod(
               .get(url, headers: headers)
               .timeout(const Duration(seconds: 20))
               .then((value) {
+            print('statusCode ${value.statusCode}');
+            print('value ${value.body}');
             switch (value.statusCode) {
               case 200:
                 return value;
