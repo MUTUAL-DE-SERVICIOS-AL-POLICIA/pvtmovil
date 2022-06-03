@@ -50,15 +50,16 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
 
   Future<void> _getAvailableCameras() async {
     _availableCameras = await availableCameras();
-    _initCamera(_availableCameras!.last);
+    CameraDescription newDescription;
+    newDescription = _availableCameras!.firstWhere((description) =>
+        description.lensDirection == CameraLensDirection.front);
+    _initCamera(newDescription);
   }
 
   Future<void> _initCamera(CameraDescription description) async {
     final stateCam = BlocProvider.of<UserBloc>(context, listen: false);
-    print('INICIANDO CAMARA');
     controllerCam = CameraController(description, ResolutionPreset.high,
         enableAudio: false);
-    print('INICIANDO CAMARA2');
     _initializeControllerFuture = controllerCam!.initialize().then((_) {
       if (!mounted) {
         return;
@@ -179,6 +180,6 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
       newDescription = _availableCameras!.firstWhere((description) =>
           description.lensDirection == CameraLensDirection.front);
     }
-    // _initCamera(newDescription);
+    _initCamera(newDescription);
   }
 }

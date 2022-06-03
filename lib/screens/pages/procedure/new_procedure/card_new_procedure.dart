@@ -67,6 +67,7 @@ class _CardNewProcedureState extends State<CardNewProcedure>
         child: Form(
             key: formKey,
             child: ExpansionTileCard(
+              initiallyExpanded: true,
               borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               contentPadding: const EdgeInsets.symmetric(vertical: 10),
               expandedColor:

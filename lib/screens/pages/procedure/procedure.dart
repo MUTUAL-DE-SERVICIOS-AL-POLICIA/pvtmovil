@@ -10,6 +10,7 @@ import 'package:muserpol_pvt/components/heders.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/pages/procedure/new_procedure/card_new_procedure.dart';
 import 'package:provider/provider.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class ScreenProcedures extends StatefulWidget {
   final bool current;
@@ -49,7 +50,14 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                               vertical: 20, horizontal: 5),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [Text(appState.messageObservation!)],
+                            children: [
+                              Flexible(
+                                  child: Text(
+                                appState.messageObservation!,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black),
+                              ))
+                            ],
                           ),
                         ),
                         color: const Color(0xffffdead)),

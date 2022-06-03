@@ -121,7 +121,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                   icon: Icons.info_outline,
                   onTap: () => closeSession(context)),
               Center(
-                child: Text('Versión 2.0.6 beta'),
+                child: Text('Versión 2.0.8 beta'),
               )
             ],
           ))),

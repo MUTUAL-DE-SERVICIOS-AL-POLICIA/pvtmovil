@@ -26,6 +26,7 @@ class ImageInputComponent extends StatefulWidget {
 }
 
 class _ImageInputComponentState extends State<ImageInputComponent> {
+  final ImagePicker _picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -73,7 +74,6 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
 
   void _onImageButtonPressed(ImageSource source,
       {BuildContext? context}) async {
-    final ImagePicker _picker = ImagePicker();
     final XFile? pickedFile = await _picker.pickImage(
       source: source,
       maxWidth: 240,
