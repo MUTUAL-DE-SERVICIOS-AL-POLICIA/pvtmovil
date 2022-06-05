@@ -4,19 +4,29 @@ import 'package:theme_provider/theme_provider.dart';
 
 class ButtonComponent extends StatelessWidget {
   final String text;
-  final Function() onPressed;
-  const ButtonComponent({Key? key, required this.text, required this.onPressed})
+  final Function()? onPressed;
+  final bool stateLoading;
+  const ButtonComponent({Key? key, required this.text, required this.onPressed, this.stateLoading = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
+      
         padding: const EdgeInsets.symmetric(vertical: 19),
         splashColor: Colors.transparent,
         color: ThemeProvider.themeOf(context).data.primaryColor,
+        disabledColor: Colors.grey,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(text,
+          stateLoading?
+Center(
+                        child: Image.asset(
+                      'assets/images/load.gif',
+                      fit: BoxFit.cover,
+                      height: 20,
+                    ))
+          :Text(text,
               style: TextStyle(
                 fontSize: 17.sp,
                 fontWeight: FontWeight.bold,

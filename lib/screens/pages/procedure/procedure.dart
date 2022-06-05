@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
+import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
 import 'package:muserpol_pvt/screens/pages/procedure/card_economic_complement.dart';
 import 'package:muserpol_pvt/components/heders.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
-import 'package:muserpol_pvt/screens/pages/procedure/new_procedure/card_new_procedure.dart';
+import 'package:muserpol_pvt/screens/pages/procedure/new_procedure/card_procedure.dart';
 import 'package:provider/provider.dart';
 
 class ScreenProcedures extends StatefulWidget {
@@ -60,12 +62,16 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                         ),
                         color: const Color(0xffffdead)),
                   if (appState.stateProcessing && widget.current)
-                    const CardNewProcedure(),
+                  ButtonComponent(
+                      text: 'CREAR TRAMITE', onPressed: () => create()),
+                  //   const CardNewProcedure(),
                   if (widget.current)
                     Expanded(
                         child: procedureBloc.existCurrentProcedures
                             ? procedureBloc.currentProcedures!.isEmpty
-                                ? const Center(
+                                ? (appState.stateProcessing && widget.current)?
+                                Container()
+                                :const Center(
                                     child: Text('No se encontraron trámites'))
                                 : ListView.builder(
                                     controller: widget.scroll,
@@ -104,5 +110,16 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                                 height: 20,
                               ))),
                 ]))));
+  }
+
+  create() {
+    return showBarModalBottomSheet(
+      duration: Duration(milliseconds: 800),
+      expand: false,
+      enableDrag: false,
+      isDismissible: false,
+      context: context,
+      builder: (context) => StepperProcedure(),
+    );
   }
 }

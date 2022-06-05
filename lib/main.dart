@@ -79,6 +79,7 @@ class MyApp extends StatelessWidget {
                       AppTheme.light().copyWith(
                           id: 'light',
                           data: ThemeData.light().copyWith(
+                            
                               drawerTheme: DrawerThemeData(
                                   elevation: 0,
                                   backgroundColor: const Color(0xffF2F2F2),
@@ -138,7 +139,9 @@ class MyApp extends StatelessWidget {
                                         color: const Color(0xff419388),
                                       )),
                               colorScheme: ColorScheme.fromSwatch()
-                                  .copyWith(secondary: const Color(0xff419388)),
+                                  .copyWith(
+                                    primary: const Color(0xff419388),
+                                    secondary: const Color(0xff419388)),
                               primaryColor: const Color(0xff419388),
                               cardColor: Colors.transparent,
                               highlightColor: Colors.transparent,
@@ -213,7 +216,10 @@ class MyApp extends StatelessWidget {
                                           color: const Color(0xff419388)),
                                       labelStyle:
                                           TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600, color: const Color(0xff419388))),
-                              colorScheme: ColorScheme.fromSwatch().copyWith(secondary: const Color(0xff419388)),
+                              colorScheme: ColorScheme.fromSwatch()
+                                  .copyWith(
+                                    primary: const Color(0xff419388),
+                                    secondary: const Color(0xff419388)),
                               primaryColor: const Color(0xff419388),
                               cardColor: Colors.transparent,
                               highlightColor: Colors.transparent,

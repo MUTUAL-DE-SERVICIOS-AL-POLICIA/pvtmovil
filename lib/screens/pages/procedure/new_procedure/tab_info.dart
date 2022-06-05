@@ -23,10 +23,7 @@ class TabInfoEconomicComplement extends StatelessWidget {
     final appState = Provider.of<AppState>(context, listen: true);
     return procedureBloc.existInfoComplementInfo &&
             appState.stateLoadingProcedure
-        ? Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: SingleChildScrollView(
-              child: Column(
+        ? Column(
                 children: [
                   // Text(procedureBloc.economicComplementInfo!.data!.title!),
                   // const SizedBox(height: 20),
@@ -64,8 +61,7 @@ class TabInfoEconomicComplement extends StatelessWidget {
                           ])
                       ]),
                 ],
-              ),
-            ))
+              )
         : Center(
             child: Image.asset(
             'assets/images/load.gif',

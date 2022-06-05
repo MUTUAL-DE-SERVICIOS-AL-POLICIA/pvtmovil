@@ -9,13 +9,11 @@ import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/model/files_model.dart';
 
 class ImageInputComponent extends StatefulWidget {
-  final String text;
   final double sizeImage;
   final Function(InputImage, File) onPressed;
   final FileDocument itemFile;
   const ImageInputComponent(
       {Key? key,
-      required this.text,
       required this.sizeImage,
       required this.onPressed,
       required this.itemFile})
@@ -37,7 +35,6 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-              Flexible(child: Text(widget.text)),
               Align(
                 alignment: Alignment.center,
                 child: Stack(
@@ -68,7 +65,9 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
                             onPressed: () => _displayPickImageDialog()))
                   ],
                 ),
-              )
+              ),
+                      if(!widget.itemFile.validateState)
+              Flexible(child: Text(widget.itemFile.textValidate!)),
             ]))));
   }
 

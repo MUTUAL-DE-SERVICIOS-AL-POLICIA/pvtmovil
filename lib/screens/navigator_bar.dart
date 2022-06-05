@@ -116,8 +116,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
         }
       } else {
         appState.updateTabProcedure(0);
-        appState
-            .updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+        appState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
       }
       userBloc.add(UpdateProcedureId(
           json.decode(response.body)['data']['procedure_id']));

@@ -8,9 +8,12 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
+import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
+import 'package:muserpol_pvt/components/heders.dart';
 import 'package:muserpol_pvt/components/image_input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
+import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/model/economic_complement_model.dart';
 import 'package:muserpol_pvt/model/files_model.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
@@ -24,26 +27,21 @@ import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
-import 'package:expansion_tile_card/expansion_tile_card.dart';
 
-class CardNewProcedure extends StatefulWidget {
-  const CardNewProcedure({Key? key}) : super(key: key);
+
+class StepperProcedure extends StatefulWidget {
+  const StepperProcedure({Key? key}) : super(key: key);
 
   @override
-  State<CardNewProcedure> createState() => _CardNewProcedureState();
+  State<StepperProcedure> createState() => _StepperProcedureState();
 }
 
-class _CardNewProcedureState extends State<CardNewProcedure>
-    with TickerProviderStateMixin {
+class _StepperProcedureState extends State<StepperProcedure> {
   TextEditingController phoneCtrl = TextEditingController();
-
-  final GlobalKey<ExpansionTileCardState> card = GlobalKey();
-  TabController? tabController;
+  StepperType stepperType = StepperType.vertical;
   final TextRecognizer _textRecognizer = TextRecognizer();
-  ProcedureModel? procedure;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  bool continueProcedure = false;
-  double valueHeigth = 2.5;
+  bool buttonLoading = false;
   @override
   void initState() {
     super.initState();
@@ -52,114 +50,6 @@ class _CardNewProcedureState extends State<CardNewProcedure>
     if (userBloc.phone != null) {
       setState(() => phoneCtrl.text = userBloc.phone!);
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context, listen: true);
-    final procedureBloc =
-        Provider.of<ProcedureBloc>(context, listen: true).state;
-    tabController = TabController(
-        initialIndex: appState.indexTabProcedure,
-        vsync: this,
-        length: appState.files.length + 2);
-    return Padding(
-        padding: const EdgeInsets.all(5),
-        child: Form(
-            key: formKey,
-            child: ExpansionTileCard(
-              initiallyExpanded: true,
-              borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-              contentPadding: const EdgeInsets.symmetric(vertical: 10),
-              expandedColor:
-                  ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
-              baseColor:
-                  ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
-              key: card,
-              title: Text('CREACIÓN DE UN NUEVO TRÁMITE',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Color(0xff419388))),
-              onExpansionChanged: (expands) {
-                if (expands) {
-                  setState(() => valueHeigth = 2.5);
-                  if (tabController!.index == tabController!.length - 1) {
-                    setState(() => valueHeigth = 4);
-                  }
-                }
-              },
-              children: <Widget>[
-                SizedBox(
-                  height: MediaQuery.of(context).size.height <
-                          MediaQuery.of(context).size.width / 1.65
-                      ? MediaQuery.of(context).size.height
-                      : MediaQuery.of(context).size.height / valueHeigth,
-                  child: DefaultTabController(
-                      initialIndex: appState.indexTabProcedure,
-                      length: appState.files.length + 2,
-                      child: TabBarView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        controller: tabController,
-                        children: [
-                          Padding(
-                              padding: const EdgeInsets.all(5),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Flexible(
-                                      child: Text('CONTROL DE VIVENCIA')),
-                                  Stack(
-                                    children: <Widget>[
-                                      GestureDetector(
-                                          onTap: () => initCtrlLive(),
-                                          child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              child: Image.asset(
-                                                'assets/images/face.png',
-                                                fit: BoxFit.cover,
-                                                gaplessPlayback: true,
-                                                width: 200,
-                                                height: 200,
-                                              ))),
-                                      Positioned(
-                                          bottom: 2,
-                                          right: -14,
-                                          child: IconBtnComponent(
-                                              icon: Icons.camera_alt,
-                                              onPressed: () => initCtrlLive()))
-                                    ],
-                                  ),
-                                ],
-                              )),
-                          for (var item in appState.files)
-                            ImageInputComponent(
-                              sizeImage: valueHeigth * 80,
-                              text: item.validateState
-                                  ? item.title!
-                                  : item.textValidate!,
-                              onPressed: (img, file) =>
-                                  detectorText(img, file, item),
-                              itemFile: item,
-                            ),
-                          TabInfoEconomicComplement(
-                            onTap: () {},
-                            onEditingComplete: () => nextPage(),
-                            phoneCtrl: phoneCtrl,
-                          )
-                        ],
-                      )),
-                ),
-                if (procedureBloc.existInfoComplementInfo &&
-                    appState.stateLoadingProcedure)
-                  ButtonComponent(
-                      text: tabController!.index == tabController!.length - 1
-                          ? 'Enviar'
-                          : 'Continuar',
-                      onPressed: () => nextPage()
-                      //=> prepareDocuments()
-                      ),
-              ],
-            )));
   }
 
   Future<void> observationAffiliate() async {
@@ -176,6 +66,121 @@ class _CardNewProcedureState extends State<CardNewProcedure>
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context, listen: true);
+    final procedureBloc =
+        Provider.of<ProcedureBloc>(context, listen: true).state;
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state.user;
+    return WillPopScope(
+        onWillPop: _onBackPressed,
+        child: Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  HedersComponent(title: 'Nuevo tramite'),
+                  Expanded(
+                    child: Stepper(
+                      type: stepperType,
+                      physics: ScrollPhysics(),
+                      currentStep: appState.indexTabProcedure,
+                      onStepContinue: nextPage,
+                      controlsBuilder:
+                          (BuildContext context, ControlsDetails details) {
+                        return appState.indexTabProcedure>0? ButtonComponent(
+                          stateLoading: buttonLoading,
+                          text: appState.files.length + 1 == details.stepIndex
+                              ? 'ENVIAR'
+                              : 'CONTINUAR',
+                          onPressed: procedureBloc.existInfoComplementInfo &&
+                                  appState.stateLoadingProcedure
+                              ? details.onStepContinue!
+                              : null,
+                        ):Container();
+                      },
+                      steps: <Step>[
+                        Step(
+                          title: new Text('Control de viviencia',style:TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark )),
+                          content: Stack(
+                            children: <Widget>[
+                              GestureDetector(
+                                  onTap: () => initCtrlLive(),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: Image.asset(
+                                        'assets/images/face.png',
+                                        fit: BoxFit.cover,
+                                        gaplessPlayback: true,
+                                        width: 200,
+                                        height: 200,
+                                      ))),
+                              Positioned(
+                                  bottom: 2,
+                                  right: -14,
+                                  child: IconBtnComponent(
+                                      icon: Icons.camera_alt,
+                                      onPressed: () => initCtrlLive()))
+                            ],
+                          ),
+                          isActive: appState.indexTabProcedure >= 0,
+                          state: appState.indexTabProcedure >= 0
+                              ? StepState.complete
+                              : StepState.disabled,
+                        ),
+                        for (var item in appState.files)
+                          Step(
+                            title: new Text('Documento:', style:TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark )),
+                            subtitle: new Text(item.title!,style:TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark )),
+                            content: ImageInputComponent(
+                              sizeImage: 200,
+                              onPressed: (img, file) =>
+                                  detectorText(img, file, item),
+                              itemFile: item,
+                            ),
+                            isActive: appState.indexTabProcedure >= 0,
+                            state: userBloc!.verified!?StepState.complete : item.imageFile != null
+                                ? StepState.complete
+                                : StepState.disabled,
+                          ),
+                        Step(
+                          title: new Text('Mis datos',style:TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark )),
+                          content: TabInfoEconomicComplement(
+                            onTap: () {},
+                            onEditingComplete: () => nextPage(),
+                            phoneCtrl: phoneCtrl,
+                          ),
+                          isActive: appState.indexTabProcedure >= 0,
+                          state: appState.indexTabProcedure >= 2
+                              ? StepState.complete
+                              : StepState.disabled,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ));
+  }
+
+  Future<bool> _onBackPressed() async {
+    return await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => ComponentAnimate(
+            child: DialogTwoAction(
+                message: '¿DESEAS CANCELAR EL PROCESO?',
+                actionCorrect: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                messageCorrect: 'Salir')));
+  }
+
   initCtrlLive() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state;
     final appState = Provider.of<AppState>(context, listen: false);
@@ -187,23 +192,37 @@ class _CardNewProcedureState extends State<CardNewProcedure>
         builder: (context) => ModalInsideModal(nextScreen: (message) {
               return showSuccessful(context, message, () async {
                 if (userBloc.user!.verified!) {
-                  appState.updateTabProcedure(
-                      tabController!.index + appState.files.length + 1);
-                  tabController!.animateTo(
-                      tabController!.index + appState.files.length + 1);
-                  appState.updateStateLoadingProcedure(true);
+                  await appState.updateTabProcedure(
+                      appState.indexTabProcedure + appState.files.length + 1);
                 } else {
-                  setState((() {
-                    appState.updateTabProcedure(tabController!.index + 1);
-                    tabController!.animateTo(tabController!.index + 1);
-                  }));
+                  await appState.updateTabProcedure(appState.indexTabProcedure + 1);
                 }
                 Navigator.pop(context);
               });
             }));
   }
 
+  nextPage() async {
+    final appState = Provider.of<AppState>(context, listen: false);
+    FocusScope.of(context).unfocus();
+    if (formKey.currentState!.validate()) {
+      await appState.updateStateLoadingProcedure(false);
+      print('ind ${appState.indexTabProcedure}');
+      if (appState.indexTabProcedure == appState.files.length + 1) {
+        prepareDocuments();
+      } else {
+        appState.updateTabProcedure(appState.indexTabProcedure + 1);
+        if (appState.indexTabProcedure == appState.files.length) {
+          await appState.updateStateLoadingProcedure(true);
+        } else {
+          await appState.updateStateLoadingProcedure(false);
+        }
+      }
+    }
+  }
+
   detectorText(InputImage inputImage, File fileImage, FileDocument item) async {
+    setState(() => buttonLoading = true);
     //VERIFICAMOS QUE LA IMAGEN COINCIDA CON LAS PALABRAS CLAVES
     final appState = Provider.of<AppState>(context, listen: false);
     appState.updateFile(item.id!, fileImage); //ACTUALIZAMOS LA IMAGEN CAPTURADA
@@ -215,41 +234,25 @@ class _CardNewProcedureState extends State<CardNewProcedure>
         // LOOP POR CADA PALABRA CLAVE
         if (!recognizedText.text.contains(element)) {
           // VERIFICAMOS SI LA IMAGEN CONTIENE LA PALABRA CLAVE
-          appState.updateStateFiles(item.id!, false); // CAMBIAMOS DE ESTADO
-          appState.updateStateLoadingProcedure(
+          await appState.updateStateFiles(item.id!, false); // CAMBIAMOS DE ESTADO
+          await appState.updateStateLoadingProcedure(
               false); //OCULTAMOS EL BTN DE CONTINUAR
+          setState(() => buttonLoading = false);
           return;
         }
       }
+      setState(() => buttonLoading = false);
     } else {
       //NO CONTIENE PALABRAS CLAVES
-      appState
+      await appState
           .updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
-    }
-  }
-
-  nextPage() async {
-    final appState = Provider.of<AppState>(context, listen: false);
-    FocusScope.of(context).unfocus();
-    if (formKey.currentState!.validate()) {
-      appState.updateStateLoadingProcedure(false);
-      if (tabController!.index == tabController!.length - 1) {
-        prepareDocuments();
-      } else {
-        appState.updateTabProcedure(tabController!.index + 1);
-        tabController!.animateTo(tabController!.index + 1);
-        if (tabController!.index == tabController!.length - 1) {
-          appState.updateStateLoadingProcedure(true);
-          setState(() {
-            valueHeigth = 4;
-          });
-        }
-      }
+          setState(() => buttonLoading = false);
     }
   }
 
   prepareDocuments() async {
     //PREPARAMOS LOS DOCUMENTOS SOLICITADOS
+    print('REPARAMOS LOS DOCUMENTOS SOLICITADOS');
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state;
     final files = Provider.of<AppState>(context, listen: false).files;
     List<Map<String, String>> data = [];
@@ -284,6 +287,7 @@ class _CardNewProcedureState extends State<CardNewProcedure>
     var response = await serviceMethod(
         context, 'post', data, serviceSendImagesProcedure(), true, true);
     if (response != null) {
+      
       return showSuccessful(context, 'Trámite registrado correctamente',
           () async {
         String pathFile = await saveFile(
@@ -294,7 +298,7 @@ class _CardNewProcedureState extends State<CardNewProcedure>
         );
         setState(() {
           appState.updateTabProcedure(0);
-          tabController!.animateTo(0);
+          // tabController!.animateTo(0);
           appState.clearFiles();
         });
         await Permission.storage.request();
@@ -308,13 +312,15 @@ class _CardNewProcedureState extends State<CardNewProcedure>
             '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.txt');
         imagen.writeAsString('$data');
 
-        card.currentState!.collapse();
+        // card.currentState!.collapse();
         await getEconomicComplement();
         await getProcessingPermit();
         await getObservations();
         procedureBloc.add(UpdateStateComplementInfo(false));
-        await OpenFile.open(pathFile);
         appState.updateStateProcessing(false);
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        await OpenFile.open(pathFile);
       });
     } else {
       appState.updateStateLoadingProcedure(true);
@@ -375,5 +381,10 @@ class _CardNewProcedureState extends State<CardNewProcedure>
           json.decode(response.body)['data']['cell_phone_number'][0]));
       appState.updateStateProcessing(true);
     }
+  }
+
+  continued() {
+    print('siguiente');
+    // _currentStep < 2 ? setState(() => _currentStep += 1) : null;
   }
 }
