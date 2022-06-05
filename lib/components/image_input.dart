@@ -44,7 +44,7 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
                         child: widget.itemFile.imageFile == null
                             ? Image.asset(
                                 widget.itemFile.imagePathDefault!,
-                                fit: BoxFit.cover,
+                                // fit: BoxFit.cover,
                                 gaplessPlayback: true,
                                 width: widget.sizeImage,
                                 height: widget.sizeImage,

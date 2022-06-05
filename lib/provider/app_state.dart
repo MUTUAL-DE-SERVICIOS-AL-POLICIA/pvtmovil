@@ -53,7 +53,7 @@ class AppState with ChangeNotifier {
         textValidate:
             'Verifique que su carnet sea el Anverso y que este vigente',
         imageFile: null,
-        imagePathDefault: 'assets/images/certificado.png',
+        imagePathDefault: 'assets/images/anverso.png',
         wordsKey: [
           //'numCarnet',
           //'CÉDULA DE IDENTIDAD',
@@ -66,7 +66,7 @@ class AppState with ChangeNotifier {
         imageName: 'ci_reverso.jpg',
         textValidate: 'Verifique que su carnet sea el Reverso',
         imageFile: null,
-        imagePathDefault: 'assets/images/certificado.png',
+        imagePathDefault: 'assets/images/reverso.png',
         wordsKey: [
           //'numCarnet',
           // 'nombre'

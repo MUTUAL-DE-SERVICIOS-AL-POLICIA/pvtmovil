@@ -81,7 +81,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
               key: formKey,
               child: Column(
                 children: [
-                  HedersComponent(title: 'Nuevo tramite'),
+                  HedersComponent(title: 'Nuevo trámite'),
                   Expanded(
                     child: Stepper(
                       type: stepperType,

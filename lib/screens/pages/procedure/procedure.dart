@@ -26,10 +26,10 @@ class ScreenProcedures extends StatefulWidget {
 class _ScreenProceduresState extends State<ScreenProcedures> {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    //   DeviceOrientation.portraitDown,
+    // ]);
     final procedureBloc =
         BlocProvider.of<ProcedureBloc>(context, listen: true).state;
     final appState = Provider.of<AppState>(context, listen: true);
@@ -63,7 +63,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                         color: const Color(0xffffdead)),
                   if (appState.stateProcessing && widget.current)
                   ButtonComponent(
-                      text: 'CREAR TRAMITE', onPressed: () => create()),
+                      text: 'CREAR TRÁMITE', onPressed: () => create()),
                   //   const CardNewProcedure(),
                   if (widget.current)
                     Expanded(
