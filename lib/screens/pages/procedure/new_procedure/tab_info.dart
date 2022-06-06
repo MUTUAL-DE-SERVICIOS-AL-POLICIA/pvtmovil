@@ -24,44 +24,60 @@ class TabInfoEconomicComplement extends StatelessWidget {
     return procedureBloc.existInfoComplementInfo &&
             appState.stateLoadingProcedure
         ? Column(
-                children: [
-                  // Text(procedureBloc.economicComplementInfo!.data!.title!),
-                  // const SizedBox(height: 20),
-                  Text('Número telefónico:'),
-                  InputComponent(
-                    textInputAction: TextInputAction.next,
-                    controllerText: phoneCtrl,
-                    onEditingComplete: () => onEditingComplete(),
-                    onTap: () => onTap(),
-                    onTapInput: () => onTap(),
-                    validator: (value) {
-                      if (value.isNotEmpty) {
-                        return null;
-                      } else {
-                        return 'Ingrese su número telefónico';
-                      }
-                    },
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-                    ],
-                    keyboardType: TextInputType.number,
-                    textCapitalization: TextCapitalization.characters,
-                    icon: Icons.person,
-                    labelText: "Número de contacto",
-                  ),
-                  Table(
-                      defaultVerticalAlignment:
-                          TableCellVerticalAlignment.middle,
-                      children: [
-                        for (var item in procedureBloc
-                            .economicComplementInfo!.data!.display!)
-                          TableRow(children: [
-                            Text('${item.key!}  :', textAlign: TextAlign.right),
-                            Text('${item.value}')
-                          ])
-                      ]),
+            children: [
+              // Text(procedureBloc.economicComplementInfo!.data!.title!),
+              // const SizedBox(height: 20),
+              Text('Número telefónico:'),
+              InputComponent(
+                textInputAction: TextInputAction.next,
+                controllerText: phoneCtrl,
+                onEditingComplete: () => onEditingComplete(),
+                onTap: () => onTap(),
+                onTapInput: () => onTap(),
+                validator: (value) {
+                  if (value.isNotEmpty) {
+                    return null;
+                  } else {
+                    return 'Ingrese su número telefónico';
+                  }
+                },
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                 ],
-              )
+                keyboardType: TextInputType.number,
+                textCapitalization: TextCapitalization.characters,
+                icon: Icons.person,
+                labelText: "Número de contacto",
+              ),
+              Table(
+                  columnWidths: {
+                    0: FlexColumnWidth(6),
+                    1: FlexColumnWidth(0.3),
+                    2: FlexColumnWidth(6),
+                  },
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  border: TableBorder(
+                    horizontalInside: BorderSide(
+                      width: 0.5,
+                      color: Colors.grey,
+                      style: BorderStyle.solid,
+                    ),
+                  ),
+                  children: [
+                    for (var item
+                        in procedureBloc.economicComplementInfo!.data!.display!)
+                      TableRow(children: [
+                        Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 10),
+                            child: Text('${item.key!}',
+                                textAlign: TextAlign.right)),
+                        Text(':'),
+                        Text('${item.value}')
+                      ])
+                  ]),
+            ],
+          )
         : Center(
             child: Image.asset(
             'assets/images/load.gif',

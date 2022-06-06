@@ -33,6 +33,7 @@ class ScreenProcedures extends StatefulWidget {
 }
 
 class _ScreenProceduresState extends State<ScreenProcedures> {
+  bool stateLoad = false;
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -71,26 +72,27 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                         ),
                         color: const Color(0xffffdead)),
                   if (appState.stateProcessing && widget.current)
-                  ButtonComponent(
-                      text: 'CREAR TRÁMITE', onPressed: () => create()),
-                  //   const CardNewProcedure(),
+                    ButtonComponent(
+                        text: 'CREAR TRÁMITE', onPressed: () => create()),
                   if (widget.current)
                     Expanded(
                         child: procedureBloc.existCurrentProcedures
                             ? procedureBloc.currentProcedures!.isEmpty
-                                ? (appState.stateProcessing && widget.current)?
-                                Container()
-                                :const Center(
-                                    child: Text('No se encontraron trámites'))
-                                : ListView.builder(
+                                ? (appState.stateProcessing && widget.current)
+                                    ? stateInfo()
+                                    : const Center(
+                                        child:
+                                            Text('No se encontraron trámites'))
+                                : SingleChildScrollView(
                                     controller: widget.scroll,
-                                    scrollDirection: Axis.vertical,
-                                    shrinkWrap: true,
-                                    itemCount:
-                                        procedureBloc.currentProcedures!.length,
-                                    itemBuilder: (c, i) => CardEc(
-                                        item: procedureBloc
-                                            .currentProcedures![i]))
+                                    child: Column(
+                                      children: [
+                                        for (var item
+                                            in procedureBloc.currentProcedures!)
+                                          CardEc(item: item),
+                                        stateInfo()
+                                      ],
+                                    ))
                             : Center(
                                 child: Image.asset(
                                 'assets/images/load.gif',
@@ -121,6 +123,32 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                 ]))));
   }
 
+  Widget stateInfo() {
+    return Center(
+        child: stateLoad
+            ? Image.asset(
+                'assets/images/load.gif',
+                fit: BoxFit.cover,
+                height: 20,
+              )
+            : IconBtnComponent(
+                icon: Icons.refresh,
+                onPressed: () async {
+                  final appState =
+                      Provider.of<AppState>(context, listen: false);
+                  appState.updateTabProcedure(0);
+                  for (var element in appState.files) {
+                    appState.updateFile(element.id!, null);
+                  }
+                  appState.updateStateProcessing(false);
+                  setState(() => stateLoad = true);
+                  await getEconomicComplement();
+                  await getProcessingPermit();
+                  await getObservations();
+                  setState(() => stateLoad = false);
+                }));
+  }
+
   create() {
     return showBarModalBottomSheet(
       duration: Duration(milliseconds: 800),
@@ -129,33 +157,34 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
       isDismissible: false,
       context: context,
       builder: (context) => StepperProcedure(
-        endProcedure:(response) => procedure(response),
+        endProcedure: (response) => procedure(response),
       ),
     );
   }
-  procedure(dynamic response){
 
+  procedure(dynamic response) {
     final appState = Provider.of<AppState>(context, listen: false);
     final procedureBloc = Provider.of<ProcedureBloc>(context, listen: false);
-      return showSuccessful(context, 'Trámite registrado correctamente',
-          () async {
-        String pathFile = await saveFile(
-          context,
-          'Trámites',
-          'sol_eco_com_${DateTime.now().millisecondsSinceEpoch}.pdf',
-          response,
-        );
-        setState(() {
-          appState.updateTabProcedure(0);
-          appState.clearFiles();
-        });
-        await getEconomicComplement();
-        await getProcessingPermit();
-        await getObservations();
-        procedureBloc.add(UpdateStateComplementInfo(false));
-        await OpenFile.open(pathFile);
+    return showSuccessful(context, 'Trámite registrado correctamente',
+        () async {
+      String pathFile = await saveFile(
+        context,
+        'Trámites',
+        'sol_eco_com_${DateTime.now().millisecondsSinceEpoch}.pdf',
+        response,
+      );
+      setState(() {
+        appState.updateTabProcedure(0);
+        appState.clearFiles();
       });
+      await getEconomicComplement();
+      await getProcessingPermit();
+      await getObservations();
+      procedureBloc.add(UpdateStateComplementInfo(false));
+      await OpenFile.open(pathFile);
+    });
   }
+
   getEconomicComplement() async {
     //REINICIO DEL LISTADO DE TRÁMITES VIGENTES
     final procedureBloc =
@@ -183,7 +212,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     var response = await serviceMethod(context, 'get', null,
-        serviceGetProcessingPermit(userBloc.state.user!.id!), true, true);
+        serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
     if (response != null) {
       userBloc.add(UpdateCtrlLive(
           json.decode(response.body)['data']['liveness_success']));

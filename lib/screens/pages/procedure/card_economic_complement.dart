@@ -28,46 +28,89 @@ class _CardEcState extends State<CardEc> {
               Expanded(
                   child: Column(
                 children: [
-                  Text(widget.item!.title!),
+                  // Text(widget.item!.title!),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: (widget.item!.subtitle! != '')
+                          ? MainAxisAlignment.spaceBetween
+                          : MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.item!.title!,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: widget.item!.subtitle! != ''
+                                ? TextAlign.center
+                                : TextAlign.left,
+                          ),
+                        ),
+                        if (widget.item!.subtitle! != '')
+                          Flexible(
+                            child: Text(
+                              widget.item!.subtitle!,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                              ),
+                              textAlign: TextAlign.right,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   Table(
+                      columnWidths: {
+                        0: FlexColumnWidth(5),
+                        1: FlexColumnWidth(0.3),
+                        2: FlexColumnWidth(5),
+                      },
+                      border: TableBorder(
+                        horizontalInside: BorderSide(
+                          width: 0.5,
+                          color: Colors.grey,
+                          style: BorderStyle.solid,
+                        ),
+                      ),
                       defaultVerticalAlignment:
                           TableCellVerticalAlignment.middle,
                       children: [
-                        TableRow(children: [
-                          const Text('Estado  :', textAlign: TextAlign.right),
-                          Text(widget.item!.subtitle!)
-                        ]),
                         for (var itemx in widget.item!.display!)
                           TableRow(children: [
-                            Text('${itemx.key!}  :',
-                                textAlign: TextAlign.right),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 3, horizontal: 10),
+                              child: Text(
+                                '${itemx.key!}',
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                            Text(':'),
                             itemx.value is List
                                 ? Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                        for (var itemy in itemx.value)
-                                          Text('*$itemy')
-                                      ])
-                                : Text('${itemx.value}')
-                          ]),
-                        if (widget.item!.printable!)
-                          TableRow(children: [
-                            const Text(''),
-                            btnAccess
-                                ? ButtonWhiteComponent(
-                                    text: 'Documento PDF',
-                                    onPressed: () => printDocument(context),
+                                      for (var itemy in itemx.value)
+                                        Text('• $itemy')
+                                    ],
                                   )
-                                : Center(
-                                    child: Image.asset(
-                                    'assets/images/load.gif',
-                                    fit: BoxFit.cover,
-                                    height: 20,
-                                  ))
-                          ])
-                      ])
+                                : Text('${itemx.value}'),
+                          ]),
+                      ]),
+                  if (widget.item!.printable!)
+                    btnAccess
+                        ? ButtonWhiteComponent(
+                            text: 'Documento PDF',
+                            onPressed: () => printDocument(context),
+                          )
+                        : Center(
+                            child: Image.asset(
+                            'assets/images/load.gif',
+                            fit: BoxFit.cover,
+                            height: 20,
+                          ))
                 ],
               ))
             ])));

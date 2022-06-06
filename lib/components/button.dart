@@ -6,32 +6,35 @@ class ButtonComponent extends StatelessWidget {
   final String text;
   final Function()? onPressed;
   final bool stateLoading;
-  const ButtonComponent({Key? key, required this.text, required this.onPressed, this.stateLoading = false})
+  const ButtonComponent(
+      {Key? key,
+      required this.text,
+      required this.onPressed,
+      this.stateLoading = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      
         padding: const EdgeInsets.symmetric(vertical: 19),
         splashColor: Colors.transparent,
         color: ThemeProvider.themeOf(context).data.primaryColor,
         disabledColor: Colors.grey,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          stateLoading?
-Center(
-                        child: Image.asset(
-                      'assets/images/load.gif',
-                      fit: BoxFit.cover,
-                      height: 20,
-                    ))
-          :Text(text,
-              style: TextStyle(
-                fontSize: 17.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              )),
+          stateLoading
+              ? Center(
+                  child: Image.asset(
+                  'assets/images/load.gif',
+                  fit: BoxFit.cover,
+                  height: 20,
+                ))
+              : Text(text,
+                  style: TextStyle(
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  )),
         ]),
         onPressed: onPressed);
   }
@@ -93,49 +96,6 @@ class ButtonWhiteComponentOutlined extends StatelessWidget {
               ))
         ]),
         onPressed: onPressed);
-  }
-}
-
-class ButtonOptionsComponent extends StatelessWidget {
-  final String text;
-  final Color? colorText;
-  final Function() onPressed;
-  const ButtonOptionsComponent(
-      {Key? key, required this.text, required this.onPressed, this.colorText})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-        width: MediaQuery.of(context).size.width * 0.4,
-        child: GestureDetector(
-            onTap: onPressed,
-            child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(text,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[600])),
-                    Row(
-                      children: [
-                        const Text('Seleccionar',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey)),
-                        Icon(
-                          Icons.keyboard_arrow_down_sharp,
-                          size: 35,
-                          color:
-                              ThemeProvider.themeOf(context).data.primaryColor,
-                        )
-                      ],
-                    )
-                  ],
-                ))));
   }
 }
 

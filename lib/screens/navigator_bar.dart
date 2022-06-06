@@ -41,6 +41,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
     getEconomicComplement(true);
     getEconomicComplement(false);
     _scrollController.addListener(() {
+      print('SCROLL');
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         if (_currentIndex == 0 && procedureCurrent!.data!.nextPageUrl != null) {
@@ -98,7 +99,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     var response = await serviceMethod(context, 'get', null,
-        serviceGetProcessingPermit(userBloc.state.user!.id!), true, true);
+        serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
     if (response != null) {
       userBloc.add(UpdateCtrlLive(
           json.decode(response.body)['data']['liveness_success']));

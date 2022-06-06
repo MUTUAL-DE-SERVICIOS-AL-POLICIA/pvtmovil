@@ -51,7 +51,9 @@ Future<dynamic> serviceMethod(
               case 200:
                 return value;
               default:
-                callDialogAction(context, json.decode(value.body)['message']);
+                if (errorState) {
+                  callDialogAction(context, json.decode(value.body)['message']);
+                }
                 return null;
             }
           }).catchError((err) {
