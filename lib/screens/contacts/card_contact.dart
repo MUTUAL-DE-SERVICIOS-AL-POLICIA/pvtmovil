@@ -43,7 +43,16 @@ class _CardContactState extends State<CardContact> {
                                 Coords(widget.city.latitude!,
                                     widget.city.longitude!),
                                 widget.city.companyAddress!),
-                            child: Text(widget.city.companyAddress!),
+                            child: Row(
+                              children: [
+                                Icon(Icons.location_on),
+                                Flexible(
+                                    child: Text(
+                                  widget.city.companyAddress!,
+                                  style: TextStyle(color: Color(0xff439CAB)),
+                                ))
+                              ],
+                            ),
                           ),
                         ]),
                         const TableRow(children: [
@@ -61,7 +70,9 @@ class _CardContactState extends State<CardContact> {
                                   GestureDetector(
                                     onTap: () => UrlLauncher.launchUrl(
                                         Uri(scheme: 'tel', path: '$item')),
-                                    child: Text('$item'),
+                                    child: Text('$item',
+                                        style: TextStyle(
+                                            color: Color(0xff439CAB))),
                                   )
                               ],
                             )
@@ -82,7 +93,9 @@ class _CardContactState extends State<CardContact> {
                                   GestureDetector(
                                     onTap: () => UrlLauncher.launchUrl(
                                         Uri(scheme: 'tel', path: '$item')),
-                                    child: Text('$item'),
+                                    child: Text('$item',
+                                        style: TextStyle(
+                                            color: Color(0xff439CAB))),
                                   )
                               ],
                             )

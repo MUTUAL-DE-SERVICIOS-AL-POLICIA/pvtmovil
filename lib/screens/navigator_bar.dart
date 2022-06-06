@@ -158,14 +158,9 @@ class _NavigatorBarState extends State<NavigatorBar> {
                       ThemeProvider.themeOf(context).data.primaryColorDark),
               SalomonBottomBarItem(
                   icon: const Icon(Icons.history),
-                  title: const Text("Trámites Historicos"),
+                  title: const Text("Trámites Históricos"),
                   unselectedColor:
                       ThemeProvider.themeOf(context).data.primaryColorDark),
-              // SalomonBottomBarItem(
-              //     icon: const Icon(Icons.person),
-              //     title: const Text("Perfil"),
-              //     unselectedColor:
-              //         ThemeProvider.themeOf(context).data.primaryColorDark),
             ],
           ),
         ));
