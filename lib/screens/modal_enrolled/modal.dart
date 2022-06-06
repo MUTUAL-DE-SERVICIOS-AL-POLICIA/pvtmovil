@@ -133,7 +133,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
           title = json.decode(response.body)['message'];
           subTitle = json.decode(response.body)['data']['action']['message'];
         });
-        callDialogAction(context, 'Oops. paso algo, intente de nuevo');
+        callDialogAction(context, json.decode(response.body)['message']);
       } else {
         if (json.decode(response.body)['data']['completed']) {
           User user = userBloc.state.user!;

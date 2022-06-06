@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
@@ -54,13 +55,16 @@ Future<dynamic> serviceMethod(
                 return null;
             }
           }).catchError((err) {
-            callDialogAction(context, err);
-            // if ('$err'.contains('html')) {
-            //   callDialogAction(context,
-            //       'Tenemos un problema con nuestro servidor, intente luego');
-            // } else {
-            //   callDialogAction(context, err);
-            // }
+            print('errA $err');
+            if ('$err'.contains('html')) {
+              callDialogAction(context,
+                  'Tenemos un problema con nuestro servidor, intente luego');
+            } else if ('$err' == 'Software caused connection abort') {
+              callDialogAction(context, 'Verifique su conexión a Internet');
+            } else {
+              callDialogAction(
+                  context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+            }
             return null;
           });
         case 'post':
@@ -81,20 +85,30 @@ Future<dynamic> serviceMethod(
             }
           }).catchError((err) {
             print('errA $err');
-            callDialogAction(context, '$err');
+            if ('$err'.contains('html')) {
+              callDialogAction(context,
+                  'Tenemos un problema con nuestro servidor, intente luego');
+            } else if ('$err' == 'Software caused connection abort') {
+              callDialogAction(context, 'Verifique su conexión a Internet');
+            } else {
+              callDialogAction(
+                  context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+            }
             return null;
           });
       }
     }
   } on TimeoutException catch (e) {
     print('errB $e');
-    callDialogAction(context, '${e.message} ');
-    return;
+    return callDialogAction(
+        context, 'Tenemos un problema con nuestro servidor, intente luego');
   } on SocketException catch (_) {
+    return callDialogAction(context, 'Verifique su conexión a Internet');
+  } on ClientException catch (_) {
     return callDialogAction(context, 'Verifique su conexión a Internet');
   } catch (e) {
     print('errD $e');
-    callDialogAction(context, '${e} ');
-    return;
+    return callDialogAction(
+        context, 'Tenemos un problema con nuestro servidor, intente luego');
   }
 }

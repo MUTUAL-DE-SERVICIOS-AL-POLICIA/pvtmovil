@@ -16,21 +16,18 @@ import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/model/economic_complement_model.dart';
 import 'package:muserpol_pvt/model/files_model.dart';
-import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
 import 'package:muserpol_pvt/screens/pages/procedure/new_procedure/tab_info.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
-import 'package:muserpol_pvt/utils/save_document.dart';
-import 'package:open_file/open_file.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
 
-
 class StepperProcedure extends StatefulWidget {
-  const StepperProcedure({Key? key}) : super(key: key);
+  final Function(dynamic) endProcedure;
+  const StepperProcedure({Key? key, required this.endProcedure})
+      : super(key: key);
 
   @override
   State<StepperProcedure> createState() => _StepperProcedureState();
@@ -71,7 +68,8 @@ class _StepperProcedureState extends State<StepperProcedure> {
     final appState = Provider.of<AppState>(context, listen: true);
     final procedureBloc =
         Provider.of<ProcedureBloc>(context, listen: true).state;
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state.user;
+    final userBloc =
+        BlocProvider.of<UserBloc>(context, listen: false).state.user;
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
@@ -90,20 +88,28 @@ class _StepperProcedureState extends State<StepperProcedure> {
                       onStepContinue: nextPage,
                       controlsBuilder:
                           (BuildContext context, ControlsDetails details) {
-                        return appState.indexTabProcedure>0? ButtonComponent(
-                          stateLoading: buttonLoading,
-                          text: appState.files.length + 1 == details.stepIndex
-                              ? 'ENVIAR'
-                              : 'CONTINUAR',
-                          onPressed: procedureBloc.existInfoComplementInfo &&
-                                  appState.stateLoadingProcedure
-                              ? details.onStepContinue!
-                              : null,
-                        ):Container();
+                        return appState.indexTabProcedure > 0
+                            ? ButtonComponent(
+                                stateLoading: buttonLoading,
+                                text: appState.files.length + 1 ==
+                                        details.stepIndex
+                                    ? 'ENVIAR'
+                                    : 'CONTINUAR',
+                                onPressed:
+                                    procedureBloc.existInfoComplementInfo &&
+                                            appState.stateLoadingProcedure
+                                        ? details.onStepContinue!
+                                        : null,
+                              )
+                            : Container();
                       },
                       steps: <Step>[
                         Step(
-                          title: new Text('Control de viviencia',style:TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark )),
+                          title: new Text('Control de vivencia',
+                              style: TextStyle(
+                                  color: ThemeProvider.themeOf(context)
+                                      .data
+                                      .primaryColorDark)),
                           content: Stack(
                             children: <Widget>[
                               GestureDetector(
@@ -132,8 +138,16 @@ class _StepperProcedureState extends State<StepperProcedure> {
                         ),
                         for (var item in appState.files)
                           Step(
-                            title: new Text('Documento:', style:TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark )),
-                            subtitle: new Text(item.title!,style:TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark )),
+                            title: new Text('Documento:',
+                                style: TextStyle(
+                                    color: ThemeProvider.themeOf(context)
+                                        .data
+                                        .primaryColorDark)),
+                            subtitle: new Text(item.title!,
+                                style: TextStyle(
+                                    color: ThemeProvider.themeOf(context)
+                                        .data
+                                        .primaryColorDark)),
                             content: ImageInputComponent(
                               sizeImage: 200,
                               onPressed: (img, file) =>
@@ -141,12 +155,18 @@ class _StepperProcedureState extends State<StepperProcedure> {
                               itemFile: item,
                             ),
                             isActive: appState.indexTabProcedure >= 0,
-                            state: userBloc!.verified!?StepState.complete : item.imageFile != null
+                            state: userBloc!.verified!
                                 ? StepState.complete
-                                : StepState.disabled,
+                                : item.imageFile != null
+                                    ? StepState.complete
+                                    : StepState.disabled,
                           ),
                         Step(
-                          title: new Text('Mis datos',style:TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark )),
+                          title: new Text('Mis datos',
+                              style: TextStyle(
+                                  color: ThemeProvider.themeOf(context)
+                                      .data
+                                      .primaryColorDark)),
                           content: TabInfoEconomicComplement(
                             onTap: () {},
                             onEditingComplete: () => nextPage(),
@@ -195,7 +215,8 @@ class _StepperProcedureState extends State<StepperProcedure> {
                   await appState.updateTabProcedure(
                       appState.indexTabProcedure + appState.files.length + 1);
                 } else {
-                  await appState.updateTabProcedure(appState.indexTabProcedure + 1);
+                  await appState
+                      .updateTabProcedure(appState.indexTabProcedure + 1);
                 }
                 Navigator.pop(context);
               });
@@ -234,7 +255,8 @@ class _StepperProcedureState extends State<StepperProcedure> {
         // LOOP POR CADA PALABRA CLAVE
         if (!recognizedText.text.contains(element)) {
           // VERIFICAMOS SI LA IMAGEN CONTIENE LA PALABRA CLAVE
-          await appState.updateStateFiles(item.id!, false); // CAMBIAMOS DE ESTADO
+          await appState.updateStateFiles(
+              item.id!, false); // CAMBIAMOS DE ESTADO
           await appState.updateStateLoadingProcedure(
               false); //OCULTAMOS EL BTN DE CONTINUAR
           setState(() => buttonLoading = false);
@@ -246,7 +268,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
       //NO CONTIENE PALABRAS CLAVES
       await appState
           .updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
-          setState(() => buttonLoading = false);
+      setState(() => buttonLoading = false);
     }
   }
 
@@ -278,7 +300,6 @@ class _StepperProcedureState extends State<StepperProcedure> {
   sendInfo(List<Map<String, String>> info) async {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state;
-    final procedureBloc = Provider.of<ProcedureBloc>(context, listen: false);
     final Map<String, dynamic> data = {
       'eco_com_procedure_id': userBloc.procedureId,
       'cell_phone_number': phoneCtrl.text.trim(),
@@ -287,104 +308,11 @@ class _StepperProcedureState extends State<StepperProcedure> {
     var response = await serviceMethod(
         context, 'post', data, serviceSendImagesProcedure(), true, true);
     if (response != null) {
-      
-      return showSuccessful(context, 'Trámite registrado correctamente',
-          () async {
-        String pathFile = await saveFile(
-          context,
-          'Trámites',
-          'sol_eco_com_${DateTime.now().millisecondsSinceEpoch}.pdf',
-          response,
-        );
-        setState(() {
-          appState.updateTabProcedure(0);
-          // tabController!.animateTo(0);
-          appState.clearFiles();
-        });
-        await Permission.storage.request();
-        await Permission.manageExternalStorage.request();
-        await Permission.accessMediaLocation.request();
-        Directory documentDirectory =
-            await Directory('/storage/emulated/0/Muserpol/pruebas')
-                .create(recursive: true);
-        String documentPath = documentDirectory.path;
-        var imagen = File(
-            '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.txt');
-        imagen.writeAsString('$data');
-
-        // card.currentState!.collapse();
-        await getEconomicComplement();
-        await getProcessingPermit();
-        await getObservations();
-        procedureBloc.add(UpdateStateComplementInfo(false));
-        appState.updateStateProcessing(false);
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
-        await OpenFile.open(pathFile);
-      });
+      appState.updateStateProcessing(false);
+      Navigator.of(context).pop();
+      widget.endProcedure(response);
     } else {
       appState.updateStateLoadingProcedure(true);
     }
-  }
-
-  getEconomicComplement() async {
-    //REINICIO DEL LISTADO DE TRÁMITES VIGENTES
-    final procedureBloc =
-        BlocProvider.of<ProcedureBloc>(context, listen: false);
-    var response = await serviceMethod(context, 'get', null,
-        serviceGetEconomicComplements(0, true), true, true);
-    if (response != null) {
-      procedureBloc.add(UpdateCurrentProcedures(
-          procedureModelFromJson(response.body).data!.data!));
-    }
-  }
-
-  getObservations() async {
-    final appState = Provider.of<AppState>(context, listen: false);
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(context, 'get', null,
-        serviceGetObservation(userBloc.state.user!.id!), true, true);
-    if (response != null) {
-      appState.updateObservation(json.decode(response.body)['message']);
-    }
-  }
-
-  getProcessingPermit() async {
-    //REVISANDO SI TIENE UN NUEVO TRÁMITE
-    final appState = Provider.of<AppState>(context, listen: false);
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(context, 'get', null,
-        serviceGetProcessingPermit(userBloc.state.user!.id!), true, true);
-    if (response != null) {
-      userBloc.add(UpdateCtrlLive(
-          json.decode(response.body)['data']['liveness_success']));
-      if (json.decode(response.body)['data']['liveness_success']) {
-        print('HIZO SU CONTROL DE VIVIENCIA');
-        if (userBloc.state.user!.verified!) {
-          appState.updateTabProcedure(1 + appState.files.length);
-          appState.updateStateLoadingProcedure(
-              true); //MOSTRAMOS EL BTN DE CONTINUAR
-        } else {
-          appState.updateTabProcedure(1);
-
-          appState.updateStateLoadingProcedure(
-              false); //OCULTAMOS EL BTN DE CONTINUAR
-        }
-      } else {
-        appState.updateTabProcedure(0);
-        appState
-            .updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
-      }
-      userBloc.add(UpdateProcedureId(
-          json.decode(response.body)['data']['procedure_id']));
-      userBloc.add(UpdatePhone(
-          json.decode(response.body)['data']['cell_phone_number'][0]));
-      appState.updateStateProcessing(true);
-    }
-  }
-
-  continued() {
-    print('siguiente');
-    // _currentStep < 2 ? setState(() => _currentStep += 1) : null;
   }
 }

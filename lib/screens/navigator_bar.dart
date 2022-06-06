@@ -103,7 +103,6 @@ class _NavigatorBarState extends State<NavigatorBar> {
       userBloc.add(UpdateCtrlLive(
           json.decode(response.body)['data']['liveness_success']));
       if (json.decode(response.body)['data']['liveness_success']) {
-        print('HIZO SU CONTROL DE VIVIENCIA');
         if (userBloc.state.user!.verified!) {
           appState.updateTabProcedure(1 + appState.files.length);
           appState.updateStateLoadingProcedure(
@@ -116,7 +115,8 @@ class _NavigatorBarState extends State<NavigatorBar> {
         }
       } else {
         appState.updateTabProcedure(0);
-        appState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+        appState
+            .updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
       }
       userBloc.add(UpdateProcedureId(
           json.decode(response.body)['data']['procedure_id']));
@@ -130,14 +130,13 @@ class _NavigatorBarState extends State<NavigatorBar> {
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    //   DeviceOrientation.portraitDown,
-    // ]);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     List<Widget> pageList = [
       ScreenProcedures(current: true, scroll: _scrollController),
       ScreenProcedures(current: false, scroll: _scrollController),
-      // const ScreenProfile()
     ];
     return WillPopScope(
         onWillPop: _onBackPressed,
