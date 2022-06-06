@@ -58,15 +58,67 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 20, horizontal: 5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          child: Column(
                             children: [
-                              Flexible(
-                                  child: Text(
-                                appState.messageObservation!,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.black),
-                              ))
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Flexible(
+                                      child: Text(
+                                    json.decode(appState.messageObservation!)[
+                                        'message'],
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.black),
+                                  ))
+                                ],
+                              ),
+                              if (json
+                                      .decode(appState.messageObservation!)[
+                                          'data']['display']
+                                      .length >
+                                  0)
+                                Table(
+                                    columnWidths: {
+                                      0: FlexColumnWidth(5),
+                                      1: FlexColumnWidth(0.3),
+                                      2: FlexColumnWidth(5),
+                                    },
+                                    border: TableBorder(
+                                      horizontalInside: BorderSide(
+                                        width: 0.5,
+                                        color: Colors.grey,
+                                        style: BorderStyle.solid,
+                                      ),
+                                    ),
+                                    defaultVerticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    children: [
+                                      for (var itemx in json.decode(appState
+                                              .messageObservation!)['data']
+                                          ['display'])
+                                        TableRow(children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 3, horizontal: 10),
+                                            child: Text(
+                                              '${itemx['key']!}',
+                                              textAlign: TextAlign.right,
+                                            ),
+                                          ),
+                                          Text(':'),
+                                          itemx['value'] is List
+                                              ? Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    for (var itemy
+                                                        in itemx['value'])
+                                                      Text('• $itemy')
+                                                  ],
+                                                )
+                                              : Text('${itemx['value']}'),
+                                        ]),
+                                    ]),
                             ],
                           ),
                         ),
@@ -80,9 +132,15 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                             ? procedureBloc.currentProcedures!.isEmpty
                                 ? (appState.stateProcessing && widget.current)
                                     ? stateInfo()
-                                    : const Center(
-                                        child:
-                                            Text('No se encontraron trámites'))
+                                    : Center(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text('No se encontraron trámites'),
+                                            stateInfo()
+                                          ],
+                                        ),
+                                      )
                                 : SingleChildScrollView(
                                     controller: widget.scroll,
                                     child: Column(
@@ -103,7 +161,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                     Expanded(
                         child: procedureBloc.existHistoricalProcedures
                             ? procedureBloc.historicalProcedures!.isEmpty
-                                ? const Center(
+                                ? Center(
                                     child: Text('No se encontraron trámites'))
                                 : ListView.builder(
                                     controller: widget.scroll,
@@ -144,7 +202,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                   setState(() => stateLoad = true);
                   await getEconomicComplement();
                   await getProcessingPermit();
-                  await getObservations();
+
                   setState(() => stateLoad = false);
                 }));
   }
@@ -203,7 +261,10 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
     var response = await serviceMethod(context, 'get', null,
         serviceGetObservation(userBloc.state.user!.id!), true, true);
     if (response != null) {
-      appState.updateObservation(json.decode(response.body)['message']);
+      appState.updateObservation(response.body);
+      if (json.decode(response.body)['data']['enabled']) {
+        appState.updateStateProcessing(true);
+      }
     }
   }
 
@@ -234,9 +295,11 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
       }
       userBloc.add(UpdateProcedureId(
           json.decode(response.body)['data']['procedure_id']));
-      userBloc.add(UpdatePhone(
-          json.decode(response.body)['data']['cell_phone_number'][0]));
-      appState.updateStateProcessing(true);
+      if (json.decode(response.body)['data']['cell_phone_number'].length > 0) {
+        userBloc.add(UpdatePhone(
+            json.decode(response.body)['data']['cell_phone_number'][0]));
+      }
     }
+    await getObservations();
   }
 }

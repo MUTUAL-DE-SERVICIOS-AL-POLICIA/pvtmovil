@@ -37,7 +37,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
   void initState() {
     super.initState();
     getProcessingPermit();
-    getObservations();
+
     getEconomicComplement(true);
     getEconomicComplement(false);
     _scrollController.addListener(() {
@@ -91,7 +91,10 @@ class _NavigatorBarState extends State<NavigatorBar> {
     var response = await serviceMethod(context, 'get', null,
         serviceGetObservation(userBloc.state.user!.id!), true, true);
     if (response != null) {
-      appState.updateObservation(json.decode(response.body)['message']);
+      appState.updateObservation(response.body);
+      if (json.decode(response.body)['data']['enabled']) {
+        appState.updateStateProcessing(true);
+      }
     }
   }
 
@@ -125,8 +128,9 @@ class _NavigatorBarState extends State<NavigatorBar> {
         userBloc.add(UpdatePhone(
             json.decode(response.body)['data']['cell_phone_number'][0]));
       }
-      appState.updateStateProcessing(true);
+      // appState.updateStateProcessing(true);
     }
+    await getObservations();
   }
 
   @override

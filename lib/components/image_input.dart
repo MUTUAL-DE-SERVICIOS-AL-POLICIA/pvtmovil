@@ -39,23 +39,25 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
                 alignment: Alignment.center,
                 child: Stack(
                   children: <Widget>[
-                    ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: widget.itemFile.imageFile == null
-                            ? Image.asset(
-                                widget.itemFile.imagePathDefault!,
-                                // fit: BoxFit.cover,
-                                gaplessPlayback: true,
-                                width: widget.sizeImage,
-                                height: widget.sizeImage,
-                              )
-                            : Image.file(
-                                widget.itemFile.imageFile!,
-                                fit: BoxFit.cover,
-                                gaplessPlayback: true,
-                                width: widget.sizeImage,
-                                height: widget.sizeImage,
-                              )),
+                    GestureDetector(
+                        onTap: () => _displayPickImageDialog(),
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: widget.itemFile.imageFile == null
+                                ? Image.asset(
+                                    widget.itemFile.imagePathDefault!,
+                                    // fit: BoxFit.cover,
+                                    gaplessPlayback: true,
+                                    width: widget.sizeImage,
+                                    height: widget.sizeImage,
+                                  )
+                                : Image.file(
+                                    widget.itemFile.imageFile!,
+                                    fit: BoxFit.cover,
+                                    gaplessPlayback: true,
+                                    width: widget.sizeImage,
+                                    height: widget.sizeImage,
+                                  ))),
                     Positioned(
                         bottom: 2,
                         right: -14,
@@ -66,8 +68,8 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
                   ],
                 ),
               ),
-                      if(!widget.itemFile.validateState)
-              Flexible(child: Text(widget.itemFile.textValidate!)),
+              if (!widget.itemFile.validateState)
+                Flexible(child: Text(widget.itemFile.textValidate!)),
             ]))));
   }
 

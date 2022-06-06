@@ -226,9 +226,9 @@ class _StepperProcedureState extends State<StepperProcedure> {
   nextPage() async {
     final appState = Provider.of<AppState>(context, listen: false);
     FocusScope.of(context).unfocus();
-    if (formKey.currentState!.validate()) {
+    if (formKey.currentState!.validate() ||
+        appState.indexTabProcedure != appState.files.length + 1) {
       await appState.updateStateLoadingProcedure(false);
-      print('ind ${appState.indexTabProcedure}');
       if (appState.indexTabProcedure == appState.files.length + 1) {
         prepareDocuments();
       } else {

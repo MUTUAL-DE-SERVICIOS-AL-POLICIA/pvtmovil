@@ -297,6 +297,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
                             ButtonComponent(
                                 text: 'INGRESAR',
                                 onPressed: () => initSession()),
+                            SizedBox(
+                              height: 30.h,
+                            ),
                             ButtonWhiteComponent(
                                 text: 'Contactos a nivel nacional',
                                 onPressed: () => contacts()),
