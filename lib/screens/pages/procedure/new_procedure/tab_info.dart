@@ -42,6 +42,7 @@ class TabInfoEconomicComplement extends StatelessWidget {
                   }
                 },
                 inputFormatters: [
+                  new LengthLimitingTextInputFormatter(10),
                   FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                 ],
                 keyboardType: TextInputType.number,

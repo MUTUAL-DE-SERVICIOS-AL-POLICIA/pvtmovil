@@ -27,7 +27,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
     with TickerProviderStateMixin {
   TabController? tabController;
   String title = '';
-  String subTitle = '';
+  // String subTitle = '';
   String textContent = '';
   String message = '';
   LivenesData? infoLivenes;
@@ -75,15 +75,15 @@ class _ModalInsideModalState extends State<ModalInsideModal>
                             .data
                             .primaryColorDark),
                   ),
-                  if (subTitle != '')
-                    Text(
-                      subTitle,
-                      style: TextStyle(
-                          fontSize: 17.sp,
-                          color: ThemeProvider.themeOf(context)
-                              .data
-                              .primaryColorDark),
-                    )
+                  // if (subTitle != '')
+                  //   Text(
+                  //     subTitle,
+                  //     style: TextStyle(
+                  //         fontSize: 17.sp,
+                  //         color: ThemeProvider.themeOf(context)
+                  //             .data
+                  //             .primaryColorDark),
+                  //   )
                 ],
               )),
           child: SizedBox(
@@ -130,8 +130,8 @@ class _ModalInsideModalState extends State<ModalInsideModal>
     if (response != null) {
       if (json.decode(response.body)['error']) {
         setState(() {
-          title = json.decode(response.body)['message'];
-          subTitle = json.decode(response.body)['data']['action']['message'];
+          // title = json.decode(response.body)['message'];
+          title = json.decode(response.body)['data']['action']['message'];
         });
         callDialogAction(context, json.decode(response.body)['message']);
       } else {
@@ -143,7 +143,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
         } else {
           setState(() {
             title = json.decode(response.body)['data']['action']['message'];
-            subTitle = '';
+            // subTitle = '';
           });
         }
       }

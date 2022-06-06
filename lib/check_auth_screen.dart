@@ -48,7 +48,7 @@ class CheckAuthScreen extends StatelessWidget {
               // appState.addKey(
               //     'cireverso', prefs!.getString('ci')!); //num carnet
               // appState.addKey('cireverso', user.user!.fullName!); //nombre
-              //controleVerified(context);
+              controleVerified(context);
 
               Future.microtask(() {
                 Navigator.pushReplacement(
@@ -66,18 +66,12 @@ class CheckAuthScreen extends StatelessWidget {
   }
 
   Future<void> controleVerified(BuildContext context) async {
-    final authService = Provider.of<AuthService>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    final Map<String, dynamic> data = json.decode(await authService.readData());
     var response = await serviceMethod(
-        context, 'post', data, serviceAuthSession(), false, false);
+        context, 'get', null, serviceGetMessageFace(), true, false);
     if (response != null) {
-      UserModel user =
-          userModelFromJson(json.encode(json.decode(response.body)['data']));
-
-      authService.login(context, user.apiToken!, data);
-      userBloc.add(UpdateUser(user.user!));
-      prefs!.setString('user', json.encode(json.decode(response.body)['data']));
+      userBloc.add(UpdateVerifiedDocument(
+          json.decode(response.body)['data']['verified']));
     }
   }
 }

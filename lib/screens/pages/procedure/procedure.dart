@@ -34,6 +34,7 @@ class ScreenProcedures extends StatefulWidget {
 
 class _ScreenProceduresState extends State<ScreenProcedures> {
   bool stateLoad = false;
+  bool stateBtn = true;
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -125,7 +126,14 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                         color: const Color(0xffffdead)),
                   if (appState.stateProcessing && widget.current)
                     ButtonComponent(
-                        text: 'CREAR TRÁMITE', onPressed: () => create()),
+                        text: 'CREAR TRÁMITE',
+                        onPressed: stateBtn ? () => create() : null),
+                  if (!stateBtn)
+                    Image.asset(
+                      'assets/images/load.gif',
+                      fit: BoxFit.cover,
+                      height: 20,
+                    ),
                   if (widget.current)
                     Expanded(
                         child: procedureBloc.existCurrentProcedures
@@ -202,12 +210,20 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                   setState(() => stateLoad = true);
                   await getEconomicComplement();
                   await getProcessingPermit();
-
+                  await getObservations();
                   setState(() => stateLoad = false);
                 }));
   }
 
-  create() {
+  create() async {
+    setState(() {
+      stateBtn = false;
+    });
+    await controleVerified();
+    await getProcessingPermit();
+    setState(() {
+      stateBtn = true;
+    });
     return showBarModalBottomSheet(
       duration: Duration(milliseconds: 800),
       expand: false,
@@ -268,8 +284,17 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
     }
   }
 
+  controleVerified() async {
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    var response = await serviceMethod(
+        context, 'get', null, serviceGetMessageFace(), true, false);
+    if (response != null) {
+      userBloc.add(UpdateVerifiedDocument(
+          json.decode(response.body)['data']['verified']));
+    }
+  }
+
   getProcessingPermit() async {
-    //REVISANDO SI TIENE UN NUEVO TRÁMITE
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     var response = await serviceMethod(context, 'get', null,
@@ -278,15 +303,15 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
       userBloc.add(UpdateCtrlLive(
           json.decode(response.body)['data']['liveness_success']));
       if (json.decode(response.body)['data']['liveness_success']) {
+        appState.updateTabProcedure(1);
         if (userBloc.state.user!.verified!) {
-          appState.updateTabProcedure(1 + appState.files.length);
           appState.updateStateLoadingProcedure(
               true); //MOSTRAMOS EL BTN DE CONTINUAR
+          setState(() {});
         } else {
-          appState.updateTabProcedure(1);
-
           appState.updateStateLoadingProcedure(
               false); //OCULTAMOS EL BTN DE CONTINUAR
+          setState(() {});
         }
       } else {
         appState.updateTabProcedure(0);
@@ -300,6 +325,5 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
             json.decode(response.body)['data']['cell_phone_number'][0]));
       }
     }
-    await getObservations();
   }
 }

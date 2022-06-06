@@ -19,5 +19,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         (event, emit) => emit(state.copyWith(stateCam: event.state)));
     on<UpdateStateBtntoggleCameraLens>((event, emit) =>
         emit(state.copyWith(stateBtntoggleCameraLens: event.state)));
+    on<UpdateVerifiedDocument>((event, emit) => emit(
+        state.copyWith(user: state.user!.copyWith(verified: event.state))));
   }
 }

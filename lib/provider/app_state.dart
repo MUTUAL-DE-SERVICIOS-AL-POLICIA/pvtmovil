@@ -48,7 +48,7 @@ class AppState with ChangeNotifier {
     //     validateState: true),
     FileDocument(
         id: 'cianverso',
-        title: 'CI Anverso',
+        title: 'Cédula de Identidad Anverso',
         imageName: 'ci_anverso.jpg',
         textValidate:
             'Verifique que su carnet sea el Anverso y que este vigente',
@@ -62,7 +62,7 @@ class AppState with ChangeNotifier {
         validateState: true),
     FileDocument(
         id: 'cireverso',
-        title: 'CI Reverso',
+        title: 'Cédula de Identidad Reverso',
         imageName: 'ci_reverso.jpg',
         textValidate: 'Verifique que su carnet sea el Reverso',
         imageFile: null,

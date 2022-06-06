@@ -110,7 +110,6 @@ Future<dynamic> serviceMethod(
     return callDialogAction(context, 'Verifique su conexión a Internet');
   } catch (e) {
     print('errD $e');
-    return callDialogAction(
-        context, 'Tenemos un problema con nuestro servidor, intente luego');
+    return callDialogAction(context, '$e');
   }
 }

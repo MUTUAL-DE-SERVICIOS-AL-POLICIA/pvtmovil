@@ -91,7 +91,10 @@ class _StepperProcedureState extends State<StepperProcedure> {
                         return appState.indexTabProcedure > 0
                             ? ButtonComponent(
                                 stateLoading: buttonLoading,
-                                text: appState.files.length + 1 ==
+                                text: (!userBloc!.verified!
+                                                ? appState.files.length
+                                                : 0) +
+                                            1 ==
                                         details.stepIndex
                                     ? 'ENVIAR'
                                     : 'CONTINUAR',
@@ -136,31 +139,32 @@ class _StepperProcedureState extends State<StepperProcedure> {
                               ? StepState.complete
                               : StepState.disabled,
                         ),
-                        for (var item in appState.files)
-                          Step(
-                            title: new Text('Documento:',
-                                style: TextStyle(
-                                    color: ThemeProvider.themeOf(context)
-                                        .data
-                                        .primaryColorDark)),
-                            subtitle: new Text(item.title!,
-                                style: TextStyle(
-                                    color: ThemeProvider.themeOf(context)
-                                        .data
-                                        .primaryColorDark)),
-                            content: ImageInputComponent(
-                              sizeImage: 200,
-                              onPressed: (img, file) =>
-                                  detectorText(img, file, item),
-                              itemFile: item,
+                        if (!userBloc!.verified!)
+                          for (var item in appState.files)
+                            Step(
+                              title: new Text('Documento:',
+                                  style: TextStyle(
+                                      color: ThemeProvider.themeOf(context)
+                                          .data
+                                          .primaryColorDark)),
+                              subtitle: new Text(item.title!,
+                                  style: TextStyle(
+                                      color: ThemeProvider.themeOf(context)
+                                          .data
+                                          .primaryColorDark)),
+                              content: ImageInputComponent(
+                                sizeImage: 200,
+                                onPressed: (img, file) =>
+                                    detectorText(img, file, item),
+                                itemFile: item,
+                              ),
+                              isActive: appState.indexTabProcedure >= 0,
+                              state: userBloc!.verified!
+                                  ? StepState.complete
+                                  : item.imageFile != null
+                                      ? StepState.complete
+                                      : StepState.disabled,
                             ),
-                            isActive: appState.indexTabProcedure >= 0,
-                            state: userBloc!.verified!
-                                ? StepState.complete
-                                : item.imageFile != null
-                                    ? StepState.complete
-                                    : StepState.disabled,
-                          ),
                         Step(
                           title: new Text('Mis datos',
                               style: TextStyle(
@@ -211,9 +215,11 @@ class _StepperProcedureState extends State<StepperProcedure> {
         context: context,
         builder: (context) => ModalInsideModal(nextScreen: (message) {
               return showSuccessful(context, message, () async {
+                // await appState.updateStateLoadingProcedure(true);
                 if (userBloc.user!.verified!) {
-                  await appState.updateTabProcedure(
-                      appState.indexTabProcedure + appState.files.length + 1);
+                  await appState.updateTabProcedure(appState.indexTabProcedure +
+                      (!userBloc.user!.verified! ? appState.files.length : 0) +
+                      1);
                 } else {
                   await appState
                       .updateTabProcedure(appState.indexTabProcedure + 1);
@@ -225,15 +231,20 @@ class _StepperProcedureState extends State<StepperProcedure> {
 
   nextPage() async {
     final appState = Provider.of<AppState>(context, listen: false);
+    final userBloc =
+        BlocProvider.of<UserBloc>(context, listen: false).state.user;
     FocusScope.of(context).unfocus();
     if (formKey.currentState!.validate() ||
-        appState.indexTabProcedure != appState.files.length + 1) {
+        appState.indexTabProcedure !=
+            (!userBloc!.verified! ? appState.files.length : 0) + 1) {
       await appState.updateStateLoadingProcedure(false);
-      if (appState.indexTabProcedure == appState.files.length + 1) {
+      if (appState.indexTabProcedure ==
+          (!userBloc!.verified! ? appState.files.length : 0) + 1) {
         prepareDocuments();
       } else {
         appState.updateTabProcedure(appState.indexTabProcedure + 1);
-        if (appState.indexTabProcedure == appState.files.length) {
+        if (appState.indexTabProcedure ==
+            (!userBloc.verified! ? appState.files.length : 0)) {
           await appState.updateStateLoadingProcedure(true);
         } else {
           await appState.updateStateLoadingProcedure(false);

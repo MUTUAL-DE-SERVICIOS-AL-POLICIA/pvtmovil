@@ -10,8 +10,8 @@ serviceGetPrivacyPolicy() => '$url/policy';
 //HISTORY
 serviceGetEconomicComplements(int page, bool current) =>
     '$url/economic_complement/?page=$page&current=$current';
-//GET MESSAGE IN FACE
-//serviceGetMessageFace() => '$url/message/before_liveness';
+//GET VERIFIED DOCUMENT
+serviceGetMessageFace() => '$url/message/verified';
 
 //GET PROCESS ENROLLED
 serviceProcessEnrolled() => '$url/liveness';

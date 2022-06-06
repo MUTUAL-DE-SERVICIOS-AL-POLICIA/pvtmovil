@@ -37,7 +37,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
   void initState() {
     super.initState();
     getProcessingPermit();
-
+    getObservations();
     getEconomicComplement(true);
     getEconomicComplement(false);
     _scrollController.addListener(() {
@@ -107,15 +107,15 @@ class _NavigatorBarState extends State<NavigatorBar> {
       userBloc.add(UpdateCtrlLive(
           json.decode(response.body)['data']['liveness_success']));
       if (json.decode(response.body)['data']['liveness_success']) {
+        appState.updateTabProcedure(1);
         if (userBloc.state.user!.verified!) {
-          appState.updateTabProcedure(1 + appState.files.length);
           appState.updateStateLoadingProcedure(
               true); //MOSTRAMOS EL BTN DE CONTINUAR
+          setState(() {});
         } else {
-          appState.updateTabProcedure(1);
-
           appState.updateStateLoadingProcedure(
               false); //OCULTAMOS EL BTN DE CONTINUAR
+          setState(() {});
         }
       } else {
         appState.updateTabProcedure(0);
@@ -128,9 +128,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
         userBloc.add(UpdatePhone(
             json.decode(response.body)['data']['cell_phone_number'][0]));
       }
-      // appState.updateStateProcessing(true);
     }
-    await getObservations();
   }
 
   @override

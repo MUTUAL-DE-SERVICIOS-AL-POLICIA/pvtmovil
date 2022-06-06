@@ -44,3 +44,9 @@ class UpdateStateBtntoggleCameraLens extends UserEvent {
 
   UpdateStateBtntoggleCameraLens(this.state);
 }
+
+class UpdateVerifiedDocument extends UserEvent {
+  final bool state;
+
+  UpdateVerifiedDocument(this.state);
+}
