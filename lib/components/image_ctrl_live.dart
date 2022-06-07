@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
 
@@ -21,31 +23,17 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
   CameraController? controllerCam;
   bool? isCameraReady;
   Future<void>? _initializeControllerFuture;
+  double mirror = 0;
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     _getAvailableCameras();
   }
 
   @override
   void dispose() {
     controllerCam!.dispose();
-    WidgetsBinding.instance.removeObserver(this);
-    print('CERRANDO CAMARA');
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      print('REGRESE');
-      setState(() {
-        _initializeControllerFuture = null;
-        controllerCam != null;
-        _getAvailableCameras();
-      });
-    }
   }
 
   Future<void> _getAvailableCameras() async {
@@ -74,6 +62,7 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
       stateCam.add(UpdateStateBtntoggleCameraLens(true));
       setState(() {});
     }).catchError((Object e) {
+      print('error $e');
       if (e is CameraException) {
         switch (e.code) {
           case 'CameraAccessDenied':
@@ -96,9 +85,19 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
         if (snapshot.connectionState == ConnectionState.done &&
             stateCam.stateCam) {
           // If the Future is complete, display the preview.
-          return CameraPreview(
-            controllerCam!,
-            child: stateCam.stateBtntoggleCameraLens
+          return Stack(children: <Widget>[
+            Positioned(
+                bottom: 0,
+                right: 0,
+                left: 0,
+                child: Transform(
+                    alignment: Alignment.center,
+                    child: CameraPreview(
+                      controllerCam!,
+                      // child:
+                    ),
+                    transform: Matrix4.rotationY(mirror))),
+            stateCam.stateBtntoggleCameraLens
                 ? Positioned(
                     bottom: 20,
                     right: 20,
@@ -116,7 +115,7 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
                       ],
                     ))
                 : Container(),
-          );
+          ]);
         } else {
           return Center(
               child: Image.asset(
@@ -142,14 +141,7 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
     try {
       if (userBloc.state.stateBtntoggleCameraLens) {
         userBloc.add(UpdateStateCam(false));
-        XFile picture = await controllerCam!.takePicture();
-        var imagebytes = await FlutterImageCompress.compressWithFile(
-          picture.path,
-          minWidth: 240,
-          minHeight: 320,
-          quality: 100,
-        );
-        String base64 = base64Encode(imagebytes!);
+        final picture = await controllerCam!.takePicture();
         // await Permission.storage.request();
         // await Permission.manageExternalStorage.request();
         // await Permission.accessMediaLocation.request();
@@ -157,6 +149,17 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
         //     await Directory('/storage/emulated/0/Muserpol/pruebas')
         //         .create(recursive: true);
         // String documentPath = documentDirectory.path;
+        ImageProperties properties =
+            await FlutterNativeImage.getImageProperties(picture.path);
+        File compressedFile = await FlutterNativeImage.compressImage(
+          picture.path,
+          quality: 70,
+          targetWidth: properties.height! > properties.width! ? 240 : 320,
+          targetHeight: properties.height! > properties.width! ? 320 : 240,
+        );
+
+        String base64 = base64Encode(compressedFile.readAsBytesSync());
+
         // var imagen = File(
         //     '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.txt');
         // var imagen2 = File(
@@ -175,9 +178,11 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
     final lensDirection = controllerCam!.description.lensDirection;
     CameraDescription newDescription;
     if (lensDirection == CameraLensDirection.front) {
+      setState(() => mirror = math.pi);
       newDescription = _availableCameras!.firstWhere((description) =>
           description.lensDirection == CameraLensDirection.back);
     } else {
+      setState(() => mirror = 0);
       newDescription = _availableCameras!.firstWhere((description) =>
           description.lensDirection == CameraLensDirection.front);
     }

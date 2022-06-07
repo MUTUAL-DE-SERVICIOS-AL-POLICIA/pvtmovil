@@ -217,6 +217,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
               return showSuccessful(context, message, () async {
                 // await appState.updateStateLoadingProcedure(true);
                 if (userBloc.user!.verified!) {
+                  await appState.updateStateLoadingProcedure(true);
                   await appState.updateTabProcedure(appState.indexTabProcedure +
                       (!userBloc.user!.verified! ? appState.files.length : 0) +
                       1);

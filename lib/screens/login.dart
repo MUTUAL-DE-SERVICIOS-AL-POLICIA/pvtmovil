@@ -305,7 +305,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                 onPressed: () => contacts()),
                             ButtonWhiteComponent(
                                 text: 'Política de privacidad',
-                                onPressed: () => privacyPolicy(context))
+                                onPressed: () => privacyPolicy(context)),
+                            SizedBox(
+                              height: 30.h,
+                            ),
+                            Text('Versión 2.0.14')
                           ],
                         )),
                   if (!btnAccess)
@@ -372,7 +376,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
               '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-' + dniComCtrl.text.trim()}',
           "birth_date": dateCtrlText,
           "device_id": deviceId
-          // "device_id": "8cf128a40f2c91e4"
         };
         var response = await serviceMethod(
             context, 'post', data, serviceAuthSession(), false, true);

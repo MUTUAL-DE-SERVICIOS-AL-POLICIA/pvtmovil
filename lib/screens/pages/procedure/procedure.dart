@@ -216,14 +216,14 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   }
 
   create() async {
-    setState(() {
-      stateBtn = false;
-    });
+    final appState = Provider.of<AppState>(context, listen: false);
+    setState(() => stateBtn = false);
     await controleVerified();
     await getProcessingPermit();
-    setState(() {
-      stateBtn = true;
-    });
+    setState(() => stateBtn = true);
+    for (var element in appState.files) {
+      appState.updateFile(element.id!, null);
+    }
     return showBarModalBottomSheet(
       duration: Duration(milliseconds: 800),
       expand: false,
