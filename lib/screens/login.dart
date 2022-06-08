@@ -309,7 +309,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
                             SizedBox(
                               height: 30.h,
                             ),
-                            Text('Versión 2.0.14')
+                            Center(
+                              child: Text('Versión 2.0.14 beta'),
+                            )
                           ],
                         )),
                   if (!btnAccess)

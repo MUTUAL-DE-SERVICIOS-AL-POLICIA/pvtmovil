@@ -77,8 +77,8 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
       {BuildContext? context}) async {
     final XFile? pickedFile = await _picker.pickImage(
       source: source,
-      maxWidth: 640,
-      maxHeight: 480,
+      maxWidth: 540,
+      maxHeight: 380,
       imageQuality: 100,
     );
     if (pickedFile == null) return;

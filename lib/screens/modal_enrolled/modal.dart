@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
+import 'package:muserpol_pvt/components/heders.dart';
 import 'package:muserpol_pvt/components/image_ctrl_live.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/model/liveness_data_model.dart';
@@ -27,7 +28,6 @@ class _ModalInsideModalState extends State<ModalInsideModal>
     with TickerProviderStateMixin {
   TabController? tabController;
   String title = '';
-  // String subTitle = '';
   String textContent = '';
   String message = '';
   LivenesData? infoLivenes;
@@ -60,34 +60,13 @@ class _ModalInsideModalState extends State<ModalInsideModal>
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: _onBackPressed,
-        child: CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(
-              backgroundColor:
-                  ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
-              automaticallyImplyLeading: false,
-              middle: Column(
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                        fontSize: 17.sp,
-                        color: ThemeProvider.themeOf(context)
-                            .data
-                            .primaryColorDark),
-                  ),
-                  // if (subTitle != '')
-                  //   Text(
-                  //     subTitle,
-                  //     style: TextStyle(
-                  //         fontSize: 17.sp,
-                  //         color: ThemeProvider.themeOf(context)
-                  //             .data
-                  //             .primaryColorDark),
-                  //   )
-                ],
-              )),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height / 1,
+        child: Scaffold(
+            body: SizedBox(
+                child: Column(children: [
+          Padding(
+              padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+              child: HedersComponent(title: title)),
+          Expanded(
             child: DefaultTabController(
                 length: 2,
                 child: TabBarView(
@@ -104,7 +83,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
                   ],
                 )),
           ),
-        ));
+        ]))));
   }
 
   Future<bool> _onBackPressed() async {
@@ -143,7 +122,6 @@ class _ModalInsideModalState extends State<ModalInsideModal>
         } else {
           setState(() {
             title = json.decode(response.body)['data']['action']['message'];
-            // subTitle = '';
           });
         }
       }
