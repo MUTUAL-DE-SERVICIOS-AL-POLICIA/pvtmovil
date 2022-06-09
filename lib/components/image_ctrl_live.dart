@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ImageCtrlLive extends StatefulWidget {
   final Function(String) sendImage;

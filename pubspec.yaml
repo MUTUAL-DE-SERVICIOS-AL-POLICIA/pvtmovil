@@ -29,12 +29,11 @@ environment:
 dependencies:
   animate_do: ^2.1.0
   bloc: ^8.0.3
-  camera: ^0.9.4+19
+  camera: ^0.9.7+1
   connectivity_plus: ^2.3.2
   cupertino_icons: ^1.0.4
   device_info: ^2.0.3
   device_info_plus: ^3.2.3
-  expansion_tile_card: ^2.0.0
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
@@ -52,7 +51,7 @@ dependencies:
   intl: ^0.17.0
   map_launcher: ^2.2.3
   modal_bottom_sheet: ^2.0.1
-  new_version: ^0.3.0
+  new_version: ^0.3.1
   open_file: ^3.2.1
   path_provider: ^2.0.10
   permission_handler: ^9.2.0
@@ -69,8 +68,8 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icons/favicon.png"
-  adaptive_icon_background: "assets/icons/favicon.png"
+  image_path: "assets/icons/favicon.jpg"
+  adaptive_icon_background: "assets/icons/favicon.jpg"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

@@ -25,6 +25,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
+import 'package:new_version/new_version.dart';
 import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -55,7 +56,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   @override
   void initState() {
     super.initState();
-    // _checkVersion();
+    _checkVersion();
     initializeDateFormatting();
     initPlatformState();
 
@@ -87,36 +88,25 @@ class _ScreenLoginState extends State<ScreenLogin> {
       }
     });
   }
-  // @override
-  // void initState() {
-  //   super.initState();
 
-  //   _checkVersion();
-  // }
-
-  // void _checkVersion() async {
-  //   final newVersion = NewVersion(
-  //     androidId: "com.snapchat.android",
-  //   );
-  //   final status = await newVersion.getVersionStatus();
-  //   newVersion.showUpdateDialog(
-  //     context: context,
-  //     versionStatus: status!,
-  //     dialogTitle: "UPDATE!!!",
-  //     dismissButtonText: "Skip",
-  //     dialogText: "Please update the app from " +
-  //         "${status.localVersion}" +
-  //         " to " +
-  //         "${status.storeVersion}",
-  //     dismissAction: () {
-  //       SystemNavigator.pop();
-  //     },
-  //     updateButtonText: "Lets update",
-  //   );
-
-  //   print("DEVICE : " + status.localVersion);
-  //   print("STORE : " + status.storeVersion);
-  // }
+  void _checkVersion() async {
+    final newVersion = NewVersion(
+      androidId: "com.muserpol.pvt",
+    );
+    final status = await newVersion.getVersionStatus();
+    print("DEVICE : " + status!.localVersion);
+    print("STORE : " + status.storeVersion);
+    if (status.localVersion == status.storeVersion) return;
+    newVersion.showUpdateDialog(
+      context: context,
+      allowDismissal: false,
+      versionStatus: status!,
+      dialogTitle: "Actualiza la nueva versión",
+      dialogText:
+          "Para mejorar la experiencia, Porfavor actualiza la nueva versión de ${status.localVersion} a la ${status.storeVersion}",
+      updateButtonText: "Actualizar",
+    );
+  }
 
   Future<void> initPlatformState() async {
     Map<String, dynamic> deviceData = <String, dynamic>{};
@@ -307,10 +297,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                 text: 'Política de privacidad',
                                 onPressed: () => privacyPolicy(context)),
                             SizedBox(
-                              height: 30.h,
+                              height: 20.h,
                             ),
                             Center(
-                              child: Text('Versión 2.0.14 beta'),
+                              child: Text('Versión 2.0.15 beta'),
                             )
                           ],
                         )),
@@ -327,7 +317,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   privacyPolicy(BuildContext context) async {
     setState(() => btnAccess = false);
     var response = await serviceMethod(
-        context, 'get', null, serviceGetPrivacyPolicy(), false, true);
+        context, 'get', null, serviceGetPrivacyPolicy(), false, false);
     setState(() => btnAccess = true);
     if (response != null) {
       String pathFile = await saveFile(
@@ -377,7 +367,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
           "identity_card":
               '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-' + dniComCtrl.text.trim()}',
           "birth_date": dateCtrlText,
-          "device_id": deviceId
+          "device_id": deviceId,
+          "is_new_app": true
         };
         var response = await serviceMethod(
             context, 'post', data, serviceAuthSession(), false, true);

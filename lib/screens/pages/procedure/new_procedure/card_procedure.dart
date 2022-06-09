@@ -159,7 +159,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
                                 itemFile: item,
                               ),
                               isActive: appState.indexTabProcedure >= 0,
-                              state: userBloc!.verified!
+                              state: userBloc.verified!
                                   ? StepState.complete
                                   : item.imageFile != null
                                       ? StepState.complete
@@ -172,7 +172,6 @@ class _StepperProcedureState extends State<StepperProcedure> {
                                       .data
                                       .primaryColorDark)),
                           content: TabInfoEconomicComplement(
-                            onTap: () {},
                             onEditingComplete: () => nextPage(),
                             phoneCtrl: phoneCtrl,
                           ),

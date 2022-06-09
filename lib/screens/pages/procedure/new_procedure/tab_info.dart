@@ -8,12 +8,8 @@ import 'package:provider/provider.dart';
 class TabInfoEconomicComplement extends StatelessWidget {
   final TextEditingController phoneCtrl;
   final Function() onEditingComplete;
-  final Function() onTap;
   const TabInfoEconomicComplement(
-      {Key? key,
-      required this.phoneCtrl,
-      required this.onEditingComplete,
-      required this.onTap})
+      {Key? key, required this.phoneCtrl, required this.onEditingComplete})
       : super(key: key);
 
   @override
@@ -25,15 +21,11 @@ class TabInfoEconomicComplement extends StatelessWidget {
             appState.stateLoadingProcedure
         ? Column(
             children: [
-              // Text(procedureBloc.economicComplementInfo!.data!.title!),
-              // const SizedBox(height: 20),
               Text('Número telefónico:'),
               InputComponent(
                 textInputAction: TextInputAction.next,
                 controllerText: phoneCtrl,
                 onEditingComplete: () => onEditingComplete(),
-                onTap: () => onTap(),
-                onTapInput: () => onTap(),
                 validator: (value) {
                   if (value.isNotEmpty) {
                     return null;

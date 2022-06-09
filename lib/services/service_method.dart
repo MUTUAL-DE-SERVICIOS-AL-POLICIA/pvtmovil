@@ -4,11 +4,16 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
+import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
+import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
+import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 Future<dynamic> serviceMethod(
@@ -51,7 +56,7 @@ Future<dynamic> serviceMethod(
           case 'get':
             return await http
                 .get(url, headers: headers)
-                .timeout(const Duration(seconds: 20))
+                .timeout(const Duration(seconds: 40))
                 .then((value) {
               print('statusCode ${value.statusCode}');
               print('value ${value.body}');
@@ -60,8 +65,9 @@ Future<dynamic> serviceMethod(
                   return value;
                 default:
                   if (errorState) {
-                    callDialogAction(
-                        context, json.decode(value.body)['message']);
+                    return confirmDeleteSession(context);
+                    // callDialogAction(
+                    //     context, json.decode(value.body)['message']);
                   }
                   return null;
               }
@@ -89,10 +95,7 @@ Future<dynamic> serviceMethod(
                 case 200:
                   return value;
                 default:
-                  if (errorState) {
-                    callDialogAction(
-                        context, json.decode(value.body)['message']);
-                  }
+                  callDialogAction(context, json.decode(value.body)['message']);
                   return null;
               }
             }).catchError((err) {
@@ -128,4 +131,29 @@ Future<dynamic> serviceMethod(
       }
     }
   }
+}
+
+confirmDeleteSession(BuildContext context) async {
+  final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: false);
+  final authService = Provider.of<AuthService>(context, listen: false);
+  final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+  final appState = Provider.of<AppState>(context, listen: false);
+  // var response = await serviceMethod( context, 'delete', null, serviceAuthSession(), true);
+  // if ( response != null ) {
+  prefs!.getKeys();
+  for (String key in prefs!.getKeys()) {
+    prefs!.remove(key);
+  }
+  for (var element in appState.files) {
+    appState.updateFile(element.id!, null);
+  }
+  userBloc.add(UpdateCtrlLive(false));
+  var appDir = (await getTemporaryDirectory()).path;
+  new Directory(appDir).delete(recursive: true);
+  authService.logout();
+  procedureBloc.add(ClearProcedures());
+  appState.updateTabProcedure(0);
+  appState.updateStateProcessing(false);
+  Navigator.pushReplacementNamed(context, 'login');
+  // }
 }

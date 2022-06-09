@@ -1,9 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/heders.dart';
@@ -14,7 +12,6 @@ import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/tab_info.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class ModalInsideModal extends StatefulWidget {
   final Function(String) nextScreen;
@@ -65,7 +62,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
                 child: Column(children: [
           Padding(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-              child: HedersComponent(title: title)),
+              child: HedersComponent(title: title, center: true)),
           Expanded(
             child: DefaultTabController(
                 length: 2,

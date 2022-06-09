@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
@@ -8,8 +6,6 @@ import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/screens/login.dart';
 import 'package:muserpol_pvt/screens/navigator_bar.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
-import 'package:muserpol_pvt/services/service_method.dart';
-import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
 
 //WIDGET: verifica la autenticación del usuario
@@ -48,7 +44,6 @@ class CheckAuthScreen extends StatelessWidget {
               // appState.addKey(
               //     'cireverso', prefs!.getString('ci')!); //num carnet
               // appState.addKey('cireverso', user.user!.fullName!); //nombre
-              controleVerified(context);
 
               Future.microtask(() {
                 Navigator.pushReplacement(
@@ -63,15 +58,5 @@ class CheckAuthScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<void> controleVerified(BuildContext context) async {
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(
-        context, 'get', null, serviceGetMessageFace(), true, false);
-    if (response != null) {
-      userBloc.add(UpdateVerifiedDocument(
-          json.decode(response.body)['data']['verified']));
-    }
   }
 }

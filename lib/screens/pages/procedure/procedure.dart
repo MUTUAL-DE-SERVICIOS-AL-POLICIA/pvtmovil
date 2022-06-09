@@ -209,7 +209,6 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                   appState.updateStateProcessing(false);
                   setState(() => stateLoad = true);
                   await getEconomicComplement();
-                  await getProcessingPermit();
                   await getObservations();
                   setState(() => stateLoad = false);
                 }));
@@ -252,7 +251,6 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
         appState.clearFiles();
       });
       await getEconomicComplement();
-      await getProcessingPermit();
       await getObservations();
       procedureBloc.add(UpdateStateComplementInfo(false));
       await OpenFile.open(pathFile);
@@ -287,7 +285,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   controleVerified() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     var response = await serviceMethod(
-        context, 'get', null, serviceGetMessageFace(), true, false);
+        context, 'get', null, serviceGetMessageFace(), true, true);
     if (response != null) {
       userBloc.add(UpdateVerifiedDocument(
           json.decode(response.body)['data']['verified']));
@@ -317,6 +315,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
         appState.updateTabProcedure(0);
         appState
             .updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+        setState(() {});
       }
       userBloc.add(UpdateProcedureId(
           json.decode(response.body)['data']['procedure_id']));

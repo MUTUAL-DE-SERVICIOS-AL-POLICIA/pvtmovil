@@ -121,7 +121,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                   icon: Icons.info_outline,
                   onTap: () => closeSession(context)),
               Center(
-                child: Text('Versión 2.0.14 beta'),
+                child: Text('Versión 2.0.15 beta'),
               )
             ],
           ))),
@@ -165,31 +165,31 @@ class _MenuDrawerState extends State<MenuDrawer> {
         });
   }
 
-  confirmDeleteSession(BuildContext context) async {
-    final procedureBloc =
-        BlocProvider.of<ProcedureBloc>(context, listen: false);
-    final authService = Provider.of<AuthService>(context, listen: false);
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    final appState = Provider.of<AppState>(context, listen: false);
-    // var response = await serviceMethod( context, 'delete', null, serviceAuthSession(), true);
-    // if ( response != null ) {
-    prefs!.getKeys();
-    for (String key in prefs!.getKeys()) {
-      prefs!.remove(key);
-    }
-    for (var element in appState.files) {
-      appState.updateFile(element.id!, null);
-    }
-    userBloc.add(UpdateCtrlLive(false));
-    var appDir = (await getTemporaryDirectory()).path;
-    new Directory(appDir).delete(recursive: true);
-    authService.logout();
-    procedureBloc.add(ClearProcedures());
-    appState.updateTabProcedure(0);
-    appState.updateStateProcessing(false);
-    Navigator.pushReplacementNamed(context, 'login');
-    // }
-  }
+  // confirmDeleteSession(BuildContext context) async {
+  //   final procedureBloc =
+  //       BlocProvider.of<ProcedureBloc>(context, listen: false);
+  //   final authService = Provider.of<AuthService>(context, listen: false);
+  //   final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+  //   final appState = Provider.of<AppState>(context, listen: false);
+  //   // var response = await serviceMethod( context, 'delete', null, serviceAuthSession(), true);
+  //   // if ( response != null ) {
+  //   prefs!.getKeys();
+  //   for (String key in prefs!.getKeys()) {
+  //     prefs!.remove(key);
+  //   }
+  //   for (var element in appState.files) {
+  //     appState.updateFile(element.id!, null);
+  //   }
+  //   userBloc.add(UpdateCtrlLive(false));
+  //   var appDir = (await getTemporaryDirectory()).path;
+  //   new Directory(appDir).delete(recursive: true);
+  //   authService.logout();
+  //   procedureBloc.add(ClearProcedures());
+  //   appState.updateTabProcedure(0);
+  //   appState.updateStateProcessing(false);
+  //   Navigator.pushReplacementNamed(context, 'login');
+  //   // }
+  // }
 }
 
 class IconName extends StatelessWidget {

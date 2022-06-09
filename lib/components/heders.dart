@@ -8,12 +8,14 @@ class HedersComponent extends StatelessWidget {
   final bool stateBack;
   final bool menu;
   final Function()? onPressMenu;
+  final bool center;
   const HedersComponent(
       {Key? key,
       required this.title,
       this.stateBack = false,
       this.menu = false,
-      this.onPressMenu})
+      this.onPressMenu,
+      this.center = false})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,7 @@ class HedersComponent extends StatelessWidget {
                   children: [
                     const Text('MUSERPOL'),
                     Text(title,
+                        textAlign: center ? TextAlign.center : TextAlign.start,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20.sp)),
                   ],
