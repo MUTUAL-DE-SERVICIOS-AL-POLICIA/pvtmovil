@@ -67,7 +67,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
     newVersion.showUpdateDialog(
       context: context,
       allowDismissal: false,
-      versionStatus: status!,
+      versionStatus: status,
       dialogTitle: "Actualiza la nueva versión",
       dialogText:
           "Para mejorar la experiencia, Porfavor actualiza la nueva versión de ${status.localVersion} a la ${status.storeVersion}",

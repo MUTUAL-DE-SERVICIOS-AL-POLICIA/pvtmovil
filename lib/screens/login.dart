@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
@@ -27,7 +28,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
 import 'package:new_version/new_version.dart';
 import 'package:open_file/open_file.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
 
@@ -100,7 +100,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
     newVersion.showUpdateDialog(
       context: context,
       allowDismissal: false,
-      versionStatus: status!,
+      versionStatus: status,
       dialogTitle: "Actualiza la nueva versión",
       dialogText:
           "Para mejorar la experiencia, Porfavor actualiza la nueva versión de ${status.localVersion} a la ${status.storeVersion}",
@@ -300,7 +300,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                               height: 20.h,
                             ),
                             Center(
-                              child: Text('Versión 2.0.15 beta'),
+                              child: Text('Versión ${dotenv.env['version']}'),
                             )
                           ],
                         )),
@@ -321,7 +321,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
     setState(() => btnAccess = true);
     if (response != null) {
       String pathFile = await saveFile(
-          context, 'Políticas', 'Política de privacidad.pdf', response);
+          'Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
+      // context, 'Políticas', 'Política de privacidad.pdf', response);
       await OpenFile.open(pathFile);
     }
   }
@@ -387,9 +388,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
           // files.addKey('cireverso', dniCtrl.text.trim()); //num carnet
           // files.addKey('cireverso',
           //     '${response.data['data']['user']['full_name']}'); //nombre
-          await Permission.storage.request();
-          await Permission.manageExternalStorage.request();
-          await Permission.accessMediaLocation.request();
+          // await Permission.storage.request();
+          // await Permission.manageExternalStorage.request();
+          // await Permission.accessMediaLocation.request();
           if (!json.decode(response.body)['data']['user']['enrolled']) {
             _showModalInside(user.apiToken!, data);
           } else {

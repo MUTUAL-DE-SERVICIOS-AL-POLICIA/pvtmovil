@@ -8,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class ImageCtrlLive extends StatefulWidget {
   final Function(String) sendImage;
@@ -96,6 +95,16 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
                     child: CameraPreview(
                       controllerCam!,
                       // child:
+                      // Positioned(
+                      //     top: 30,
+                      //     bottom: 30,
+                      //     right: 30,
+                      //     left: 30,
+                      //     child: Image.asset('assets/images/cuadrado.png',
+                      //         fit: BoxFit.contain
+                      //         // height: 5,
+                      //         // width: -5,
+                      //         ))
                     ),
                     transform: Matrix4.rotationY(mirror))),
             stateCam.stateBtntoggleCameraLens

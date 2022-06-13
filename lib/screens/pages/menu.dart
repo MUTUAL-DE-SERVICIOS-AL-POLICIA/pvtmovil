@@ -1,22 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/section_title.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
-import 'package:muserpol_pvt/main.dart';
-import 'package:muserpol_pvt/provider/app_state.dart';
-import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class MenuDrawer extends StatefulWidget {
@@ -121,7 +114,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                   icon: Icons.info_outline,
                   onTap: () => closeSession(context)),
               Center(
-                child: Text('Versión 2.0.15 beta'),
+                child: Text('Versión ${dotenv.env['version']}'),
               )
             ],
           ))),
@@ -135,7 +128,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
     setState(() => stateLoading = false);
     if (response != null) {
       String pathFile = await saveFile(
-          context, 'Políticas', 'Política de privacidad.pdf', response);
+          'Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
       await OpenFile.open(pathFile);
     }
   }

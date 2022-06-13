@@ -241,11 +241,9 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
     return showSuccessful(context, 'Trámite registrado correctamente',
         () async {
       String pathFile = await saveFile(
-        context,
-        'Trámites',
-        'sol_eco_com_${DateTime.now().millisecondsSinceEpoch}.pdf',
-        response,
-      );
+          'Documents',
+          'sol_eco_com_${DateTime.now().millisecondsSinceEpoch}.pdf',
+          response.bodyBytes);
       setState(() {
         appState.updateTabProcedure(0);
         appState.clearFiles();

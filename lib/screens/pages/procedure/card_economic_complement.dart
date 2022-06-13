@@ -123,10 +123,9 @@ class _CardEcState extends State<CardEc> {
     setState(() => btnAccess = true);
     if (response != null) {
       String pathFile = await saveFile(
-          context,
-          'Trámites',
+          'Documents',
           'eco_com_${widget.item!.title!.replaceAll(' ', '_').replaceAll('/', '_').toLowerCase()}.pdf',
-          response);
+          response.bodyBytes);
       await OpenFile.open(pathFile);
     }
   }
