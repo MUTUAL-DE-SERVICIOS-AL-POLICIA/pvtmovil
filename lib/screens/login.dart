@@ -7,12 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
+import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/dialogs/dialog_back.dart';
 import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
@@ -26,7 +28,6 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
-import 'package:new_version/new_version.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
@@ -51,12 +52,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
   DateTime currentDate = DateTime(1950, 1, 1);
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   FocusNode textSecondFocusNode = FocusNode();
-
   bool stateCom = false;
   @override
   void initState() {
     super.initState();
-    _checkVersion();
+    checkVersion(context);
     initializeDateFormatting();
     initPlatformState();
 
@@ -87,25 +87,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
         }
       }
     });
-  }
-
-  void _checkVersion() async {
-    final newVersion = NewVersion(
-      androidId: "com.muserpol.pvt",
-    );
-    final status = await newVersion.getVersionStatus();
-    print("DEVICE : " + status!.localVersion);
-    print("STORE : " + status.storeVersion);
-    if (status.localVersion == status.storeVersion) return;
-    newVersion.showUpdateDialog(
-      context: context,
-      allowDismissal: false,
-      versionStatus: status,
-      dialogTitle: "Actualiza la nueva versión",
-      dialogText:
-          "Para mejorar la experiencia, Porfavor actualiza la nueva versión de ${status.localVersion} a la ${status.storeVersion}",
-      updateButtonText: "Actualizar",
-    );
   }
 
   Future<void> initPlatformState() async {
@@ -361,9 +342,15 @@ class _ScreenLoginState extends State<ScreenLogin> {
       final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
       final authService = Provider.of<AuthService>(context, listen: false);
       final appState = Provider.of<AppState>(context, listen: false);
-      // final files = Provider.of<AppState>(context, listen: false);
       if (dateCtrlText != null) {
         setState(() => btnAccess = false);
+        if (await InternetConnectionChecker().connectionStatus ==
+            await InternetConnectionStatus.disconnected) {
+          setState(() => btnAccess = true);
+          return callDialogAction(context, 'Verifique su conexión a Internet');
+        }
+        await checkVersion(context);
+
         final Map<String, dynamic> data = {
           "identity_card":
               '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-' + dniComCtrl.text.trim()}',

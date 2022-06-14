@@ -12,7 +12,6 @@ import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/pages/procedure/procedure.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
-import 'package:new_version/new_version.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:theme_provider/theme_provider.dart';
@@ -37,7 +36,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
   @override
   void initState() {
     super.initState();
-    _checkVersion();
+    checkVersion(context);
     getProcessingPermit();
     getObservations();
     getEconomicComplement(true);
@@ -54,25 +53,6 @@ class _NavigatorBarState extends State<NavigatorBar> {
         }
       }
     });
-  }
-
-  void _checkVersion() async {
-    final newVersion = NewVersion(
-      androidId: "com.muserpol.pvt",
-    );
-    final status = await newVersion.getVersionStatus();
-    print("DEVICE : " + status!.localVersion);
-    print("STORE : " + status.storeVersion);
-    if (status.localVersion == status.storeVersion) return;
-    newVersion.showUpdateDialog(
-      context: context,
-      allowDismissal: false,
-      versionStatus: status,
-      dialogTitle: "Actualiza la nueva versión",
-      dialogText:
-          "Para mejorar la experiencia, Porfavor actualiza la nueva versión de ${status.localVersion} a la ${status.storeVersion}",
-      updateButtonText: "Actualizar",
-    );
   }
 
   getEconomicComplement(bool current) async {
