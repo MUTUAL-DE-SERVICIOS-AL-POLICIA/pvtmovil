@@ -285,7 +285,6 @@ class _StepperProcedureState extends State<StepperProcedure> {
 
   prepareDocuments() async {
     //PREPARAMOS LOS DOCUMENTOS SOLICITADOS
-    print('REPARAMOS LOS DOCUMENTOS SOLICITADOS');
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state;
     final files = Provider.of<AppState>(context, listen: false).files;
     List<Map<String, String>> data = [];

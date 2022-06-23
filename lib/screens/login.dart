@@ -258,7 +258,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                               ),
                               ButtonWhiteComponent(
                                   text: 'Contactos a nivel nacional',
-                                  onPressed: () =>  Navigator.pushNamed(context, 'contacts')),
+                                  onPressed: () =>
+                                      Navigator.pushNamed(context, 'contacts')),
                               ButtonWhiteComponent(
                                   text: 'Política de privacidad',
                                   onPressed: () => privacyPolicy(context)),
@@ -309,20 +310,19 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   Widget _buildDateTimePicker() {
     return Container(
-      height: 200,
-      child:
-    CupertinoDatePicker(
-        mode: CupertinoDatePickerMode.date,
-        initialDateTime: currentDate,
-        onDateTimeChanged: (DateTime newDataTime) {
-          print('date ${newDataTime}');
-          setState(() {
-            currentDate = newDataTime;
-            dateCtrl =
-                DateFormat(' dd, MMMM yyyy ', "es_ES").format(newDataTime);
-            dateState = false;
-          });
-        }));
+        height: 200,
+        child: CupertinoDatePicker(
+            mode: CupertinoDatePickerMode.date,
+            initialDateTime: currentDate,
+            onDateTimeChanged: (DateTime newDataTime) {
+              print('date ${newDataTime}');
+              setState(() {
+                currentDate = newDataTime;
+                dateCtrl =
+                    DateFormat(' dd, MMMM yyyy ', "es_ES").format(newDataTime);
+                dateState = false;
+              });
+            }));
   }
 
   selectDate(BuildContext context) {

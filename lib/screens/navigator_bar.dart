@@ -36,13 +36,12 @@ class _NavigatorBarState extends State<NavigatorBar> {
   @override
   void initState() {
     super.initState();
-    // checkVersion(context);
+    checkVersion(context);
     getProcessingPermit();
     getObservations();
     getEconomicComplement(true);
     getEconomicComplement(false);
     _scrollController.addListener(() {
-      print('SCROLL');
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         if (_currentIndex == 0 && procedureCurrent!.data!.nextPageUrl != null) {

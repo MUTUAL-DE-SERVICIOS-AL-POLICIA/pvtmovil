@@ -18,6 +18,5 @@ Future<String> saveFile(
 
 Future<String> getDir(String path) async {
   final externalDirectory = await getTemporaryDirectory();
-  print('externalDirectory ${externalDirectory.path}');
   return externalDirectory.path + '/' + path + '/';
 }
