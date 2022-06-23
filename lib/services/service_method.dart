@@ -13,9 +13,9 @@ import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
-import 'package:new_version/new_version.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:new_version/new_version.dart';
 
 Future<dynamic> serviceMethod(
     BuildContext context,

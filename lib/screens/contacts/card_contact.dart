@@ -18,11 +18,11 @@ class CardContact extends StatefulWidget {
 
 class _CardContactState extends State<CardContact> {
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
+  AvailableMap? itemSelect;
   @override
   Widget build(BuildContext context) {
     return ContainerComponent(
         color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
-        // width: 200,
         child: Container(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
             child: Row(children: [

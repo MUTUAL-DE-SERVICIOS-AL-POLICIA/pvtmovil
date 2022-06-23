@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/check_auth_screen.dart';
 import 'package:muserpol_pvt/screens/login.dart';
@@ -242,7 +243,8 @@ class MyApp extends StatelessWidget {
                                 GlobalCupertinoLocalizations.delegate,
                               ],
                               supportedLocales: const [
-                                Locale('es', ''), // Spanish, no country code
+                                Locale('es', 'ES'), // Spanish
+                                Locale('en', 'US'), // English
                               ],
                               debugShowCheckedModeBanner: false,
                               theme: ThemeProvider.themeOf(themeContext).data,

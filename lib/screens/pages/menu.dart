@@ -88,11 +88,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 'Configuración de preferencias',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              // SectiontitleSwitchComponent(
-              //   title: 'Autenticación',
-              //   valueSwitch: autentificaction,
-              //   onChangedSwitch: (v) => guardar(v),
-              // ),
               SectiontitleSwitchComponent(
                 title: 'Tema Oscuro',
                 valueSwitch: colorValue,
@@ -104,8 +99,13 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SectiontitleComponent(
+                  title: 'Contactos a nivel nacional',
+                  icon: Icons.contact_phone_rounded ,
+                  stateLoading: stateLoading,
+                  onTap: () => Navigator.pushNamed(context, 'contacts')),
+              SectiontitleComponent(
                   title: 'Políticas de Privacidad',
-                  icon: Icons.info_outline,
+                  icon: Icons.privacy_tip ,
                   stateLoading: stateLoading,
                   onTap: () => privacyPolicy(context)),
 
@@ -140,11 +140,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
     ThemeProvider.controllerOf(context).nextTheme();
   }
 
-  void guardar(v) async {
-    // setState(() => autentificaction = v);
-    // await prefs!.setBool('autentificaction', v);
-  }
-
   closeSession(BuildContext context) async {
     return showDialog(
         barrierDismissible: false,
@@ -157,32 +152,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
                   messageCorrect: 'Salir'));
         });
   }
-
-  // confirmDeleteSession(BuildContext context) async {
-  //   final procedureBloc =
-  //       BlocProvider.of<ProcedureBloc>(context, listen: false);
-  //   final authService = Provider.of<AuthService>(context, listen: false);
-  //   final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-  //   final appState = Provider.of<AppState>(context, listen: false);
-  //   // var response = await serviceMethod( context, 'delete', null, serviceAuthSession(), true);
-  //   // if ( response != null ) {
-  //   prefs!.getKeys();
-  //   for (String key in prefs!.getKeys()) {
-  //     prefs!.remove(key);
-  //   }
-  //   for (var element in appState.files) {
-  //     appState.updateFile(element.id!, null);
-  //   }
-  //   userBloc.add(UpdateCtrlLive(false));
-  //   var appDir = (await getTemporaryDirectory()).path;
-  //   new Directory(appDir).delete(recursive: true);
-  //   authService.logout();
-  //   procedureBloc.add(ClearProcedures());
-  //   appState.updateTabProcedure(0);
-  //   appState.updateStateProcessing(false);
-  //   Navigator.pushReplacementNamed(context, 'login');
-  //   // }
-  // }
 }
 
 class IconName extends StatelessWidget {

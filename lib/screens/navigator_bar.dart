@@ -36,7 +36,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
   @override
   void initState() {
     super.initState();
-    checkVersion(context);
+    // checkVersion(context);
     getProcessingPermit();
     getObservations();
     getEconomicComplement(true);

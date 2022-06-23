@@ -84,7 +84,6 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
             stateCam.stateCam) {
-          // If the Future is complete, display the preview.
           return Stack(children: <Widget>[
             Positioned(
                 bottom: 0,
@@ -94,17 +93,6 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
                     alignment: Alignment.center,
                     child: CameraPreview(
                       controllerCam!,
-                      // child:
-                      // Positioned(
-                      //     top: 30,
-                      //     bottom: 30,
-                      //     right: 30,
-                      //     left: 30,
-                      //     child: Image.asset('assets/images/cuadrado.png',
-                      //         fit: BoxFit.contain
-                      //         // height: 5,
-                      //         // width: -5,
-                      //         ))
                     ),
                     transform: Matrix4.rotationY(mirror))),
             stateCam.stateBtntoggleCameraLens
@@ -152,13 +140,6 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
       if (userBloc.state.stateBtntoggleCameraLens) {
         userBloc.add(UpdateStateCam(false));
         final picture = await controllerCam!.takePicture();
-        // await Permission.storage.request();
-        // await Permission.manageExternalStorage.request();
-        // await Permission.accessMediaLocation.request();
-        // Directory documentDirectory =
-        //     await Directory('/storage/emulated/0/Muserpol/pruebas')
-        //         .create(recursive: true);
-        // String documentPath = documentDirectory.path;
         ImageProperties properties =
             await FlutterNativeImage.getImageProperties(picture.path);
         File compressedFile = await FlutterNativeImage.compressImage(
@@ -169,14 +150,6 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
         );
 
         String base64 = base64Encode(compressedFile.readAsBytesSync());
-
-        // var imagen = File(
-        //     '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.txt');
-        // var imagen2 = File(
-        //     '$documentPath/imagen${DateTime.now().millisecondsSinceEpoch}.jpg');
-        // imagen.writeAsString('$base64');
-        // final file = await picture.readAsBytes();
-        // imagen2.writeAsBytesSync(file);
         widget.sendImage(base64);
       }
     } catch (_) {

@@ -124,10 +124,10 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                           ),
                         ),
                         color: const Color(0xffffdead)),
-                  if (appState.stateProcessing && widget.current)
+                  if (widget.current)
                     ButtonComponent(
                         text: 'CREAR TRÁMITE',
-                        onPressed: stateBtn ? () => create() : null),
+                        onPressed: stateBtn && appState.stateProcessing ? () => create() : null),
                   if (!stateBtn)
                     Image.asset(
                       'assets/images/load.gif',

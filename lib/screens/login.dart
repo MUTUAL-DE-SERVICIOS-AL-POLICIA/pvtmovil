@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
@@ -24,7 +26,6 @@ import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:muserpol_pvt/services/services.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
@@ -45,6 +46,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool btnAccess = true;
   String dateCtrl = '';
+  DateTime? dateTime;
   String? deviceId;
   String? dateCtrlText;
   bool dateState = false;
@@ -52,41 +54,14 @@ class _ScreenLoginState extends State<ScreenLogin> {
   DateTime currentDate = DateTime(1950, 1, 1);
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   FocusNode textSecondFocusNode = FocusNode();
+  final tooltipController = JustTheController();
   bool stateCom = false;
   @override
   void initState() {
     super.initState();
-    checkVersion(context);
+    // checkVersion(context);
     initializeDateFormatting();
     initPlatformState();
-
-    dniCtrl.addListener(() {
-      if (dniCtrl.text == '') return;
-      var text = dniCtrl.text.replaceAll(RegExp("[0-9]"), "");
-      if (text != '') {
-        setState(() {
-          dniComplement = true;
-        });
-
-        Future.delayed(const Duration(milliseconds: 30), () {
-          FocusScope.of(context).requestFocus(textSecondFocusNode);
-          setState(() {
-            dniCtrl.text = dniCtrl.text.replaceAll(RegExp("[-]"), "");
-            dniCtrl.text = dniCtrl.text.replaceAll(RegExp("[.]"), "");
-          });
-        });
-      }
-    });
-    dniComCtrl.addListener(() {
-      if (dniComCtrl.text != '') {
-        setState(() => stateCom = true);
-      }
-      if (stateCom) {
-        if (dniComCtrl.text == '') {
-          setState(() => dniComplement = false);
-        }
-      }
-    });
   }
 
   Future<void> initPlatformState() async {
@@ -106,7 +81,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
     }
 
     if (!mounted) return;
-    setState(() => deviceId = deviceData['androidId']);
+    print('deviceData $deviceData');
+    if (Platform.isAndroid) {
+      setState(() => deviceId = deviceData['androidId']);
+    }
+    if (Platform.isIOS) {
+      setState(() => deviceId = deviceData['identifierForVendor']);
+    }
   }
 
   Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
@@ -158,133 +139,145 @@ class _ScreenLoginState extends State<ScreenLogin> {
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 50),
                   if (btnAccess)
-                    Form(
-                        key: formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Cédula de identidad:'),
-                            Row(
-                              children: <Widget>[
-                                Flexible(
-                                  child: InputComponent(
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20.sp,
-                                        color: const Color(0xff419388)),
-                                    textInputAction: TextInputAction.next,
-                                    controllerText: dniCtrl,
-                                    onEditingComplete: () => node.nextFocus(),
-                                    validator: (value) {
-                                      if (value.length > 3) {
-                                        return null;
-                                      } else {
-                                        return 'Ingrese su cédula de indentidad';
-                                      }
-                                    },
-                                    inputFormatters: [
-                                      new LengthLimitingTextInputFormatter(10),
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp("[0-9-.]"))
-                                    ],
-                                    keyboardType: TextInputType.number,
-                                    textCapitalization:
-                                        TextCapitalization.characters,
-                                    icon: Icons.person,
-                                    labelText: "Cédula de indentidad",
+                    Stack(children: [
+                      Form(
+                          key: formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Cédula de identidad:'),
+                              Row(
+                                children: <Widget>[
+                                  Flexible(
+                                    child: InputComponent(
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20.sp,
+                                          color: const Color(0xff419388)),
+                                      textInputAction: TextInputAction.next,
+                                      controllerText: dniCtrl,
+                                      onEditingComplete: () => node.nextFocus(),
+                                      validator: (value) {
+                                        if (value.length > 3) {
+                                          return null;
+                                        } else {
+                                          return 'Ingrese su cédula de indentidad';
+                                        }
+                                      },
+                                      inputFormatters: [
+                                        new LengthLimitingTextInputFormatter(
+                                            10),
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp("[0-9]"))
+                                      ],
+                                      keyboardType: TextInputType.number,
+                                      textCapitalization:
+                                          TextCapitalization.characters,
+                                      icon: Icons.person,
+                                      labelText: "Cédula de indentidad",
+                                    ),
                                   ),
-                                ),
-                                if (dniComplement)
-                                  Text(
-                                    '  _  ',
-                                    style: TextStyle(
-                                        fontSize: 15.sp,
-                                        color: const Color(0xff419388)),
-                                  ),
-                                if (dniComplement)
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 3.4,
-                                    child: RawKeyboardListener(
-                                        focusNode: FocusNode(),
-                                        onKey: (event) {
-                                          if (event.logicalKey ==
-                                              LogicalKeyboardKey.backspace) {
-                                            setState(
-                                                () => dniComplement = false);
-                                          }
-                                        },
-                                        child: InputComponent(
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 15.sp,
-                                              color: const Color(0xff419388)),
-                                          focusNode: textSecondFocusNode,
-                                          textInputAction: TextInputAction.next,
-                                          controllerText: dniComCtrl,
-                                          inputFormatters: [
-                                            new LengthLimitingTextInputFormatter(
-                                                2),
-                                            FilteringTextInputFormatter.allow(
-                                                RegExp("[0-9a-zA-Z]"))
-                                          ],
-                                          onEditingComplete: () =>
-                                              node.nextFocus(),
-                                          validator: (value) {
-                                            if (value.isNotEmpty) {
-                                              return null;
-                                            } else {
-                                              return 'complemento';
+                                  if (dniComplement)
+                                    Text(
+                                      '  _  ',
+                                      style: TextStyle(
+                                          fontSize: 15.sp,
+                                          color: const Color(0xff419388)),
+                                    ),
+                                  if (dniComplement)
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width /
+                                          3.4,
+                                      child: RawKeyboardListener(
+                                          focusNode: FocusNode(),
+                                          onKey: (event) {
+                                            if (event.logicalKey ==
+                                                LogicalKeyboardKey.backspace) {
+                                              setState(
+                                                  () => dniComplement = false);
                                             }
                                           },
-                                          keyboardType: TextInputType.text,
-                                          textCapitalization:
-                                              TextCapitalization.characters,
-                                          icon: Icons.person,
-                                          labelText: "Complemento",
-                                        )),
-                                  ), //container
-                              ], //widget
-                            ),
-                            SizedBox(
-                              height: 20.h,
-                            ),
-                            Text('Fecha de nacimiento:'),
-                            ButtonDate(
-                                text: dateCtrl, onPressed: () => selectDate()),
-                            if (dateState)
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15),
-                                child: Text(
-                                  'Ingrese su fecha de nacimiento',
-                                  style: TextStyle(
-                                      color: Colors.red, fontSize: 15.sp),
-                                ),
+                                          child: InputComponent(
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 15.sp,
+                                                color: const Color(0xff419388)),
+                                            focusNode: textSecondFocusNode,
+                                            textInputAction:
+                                                TextInputAction.next,
+                                            controllerText: dniComCtrl,
+                                            inputFormatters: [
+                                              new LengthLimitingTextInputFormatter(
+                                                  2),
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp("[0-9a-zA-Z]"))
+                                            ],
+                                            onEditingComplete: () =>
+                                                node.nextFocus(),
+                                            validator: (value) {
+                                              if (value.isNotEmpty) {
+                                                return null;
+                                              } else {
+                                                return 'complemento';
+                                              }
+                                            },
+                                            keyboardType: TextInputType.text,
+                                            textCapitalization:
+                                                TextCapitalization.characters,
+                                            icon: Icons.person,
+                                            labelText: "Complemento",
+                                          )),
+                                    ), //container
+                                ], //widget
                               ),
-                            SizedBox(
-                              height: 20.h,
-                            ),
-                            ButtonComponent(
-                                text: 'INGRESAR',
-                                onPressed: () => initSession()),
-                            SizedBox(
-                              height: 30.h,
-                            ),
-                            ButtonWhiteComponent(
-                                text: 'Contactos a nivel nacional',
-                                onPressed: () => contacts()),
-                            ButtonWhiteComponent(
-                                text: 'Política de privacidad',
-                                onPressed: () => privacyPolicy(context)),
-                            SizedBox(
-                              height: 20.h,
-                            ),
-                            Center(
-                              child: Text('Versión ${dotenv.env['version']}'),
-                            )
-                          ],
-                        )),
+                              SizedBox(
+                                height: 20.h,
+                              ),
+                              Text('Fecha de nacimiento:'),
+                              ButtonDate(
+                                  text: dateCtrl,
+                                  onPressed: () => selectDate(context)),
+                              if (dateState)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: Text(
+                                    'Ingrese su fecha de nacimiento',
+                                    style: TextStyle(
+                                        color: Colors.red, fontSize: 15.sp),
+                                  ),
+                                ),
+                              SizedBox(
+                                height: 20.h,
+                              ),
+                              ButtonComponent(
+                                  text: 'INGRESAR',
+                                  onPressed: () => initSession()),
+                              SizedBox(
+                                height: 30.h,
+                              ),
+                              ButtonWhiteComponent(
+                                  text: 'Contactos a nivel nacional',
+                                  onPressed: () =>  Navigator.pushNamed(context, 'contacts')),
+                              ButtonWhiteComponent(
+                                  text: 'Política de privacidad',
+                                  onPressed: () => privacyPolicy(context)),
+                              SizedBox(
+                                height: 20.h,
+                              ),
+                              Center(
+                                child: Text('Versión ${dotenv.env['version']}'),
+                              )
+                            ],
+                          )),
+                      Positioned(
+                          top: 0,
+                          right: 0,
+                          child: Buttontoltip(
+                            tooltipController: tooltipController,
+                            onPressed: (bool state) => functionToltip(state),
+                          ))
+                    ]),
                   if (!btnAccess)
                     Center(
                         child: Image.asset(
@@ -295,6 +288,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 ]))))));
   }
 
+  functionToltip(bool state) async {
+    setState(() {
+      dniComplement = state;
+      tooltipController.hideTooltip();
+    });
+  }
+
   privacyPolicy(BuildContext context) async {
     setState(() => btnAccess = false);
     var response = await serviceMethod(
@@ -303,36 +303,45 @@ class _ScreenLoginState extends State<ScreenLogin> {
     if (response != null) {
       String pathFile = await saveFile(
           'Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
-      // context, 'Políticas', 'Política de privacidad.pdf', response);
       await OpenFile.open(pathFile);
     }
   }
 
-  selectDate() {
-    DatePicker.showDatePicker(context,
-        theme: DatePickerTheme(
-            backgroundColor:
-                ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
-            cancelStyle: TextStyle(color: Color(0xff419388), fontSize: 15.sp),
-            doneStyle: TextStyle(color: Color(0xff419388), fontSize: 15.sp),
-            itemStyle: TextStyle(color: Color(0xff419388), fontSize: 25.sp),
-            itemHeight: 0.05.sh,
-            containerHeight: 0.35.sh),
-        showTitleActions: true,
-        maxTime: DateTime.now(),
-        minTime: DateTime(1900, 6, 7),
-        currentTime: currentDate,
-        locale: LocaleType.es, onChanged: (date) {
-      setState(() {
-        currentDate = date;
-      });
-    }, onConfirm: (date) {
-      setState(() {
-        dateCtrl = DateFormat(' dd, MMMM yyyy ', "es_ES").format(date);
-        dateCtrlText = DateFormat('dd-MM-yyyy').format(date);
-        dateState = false;
-      });
-    });
+  Widget _buildDateTimePicker() {
+    return Container(
+      height: 200,
+      child:
+    CupertinoDatePicker(
+        mode: CupertinoDatePickerMode.date,
+        initialDateTime: currentDate,
+        onDateTimeChanged: (DateTime newDataTime) {
+          print('date ${newDataTime}');
+          setState(() {
+            currentDate = newDataTime;
+            dateCtrl =
+                DateFormat(' dd, MMMM yyyy ', "es_ES").format(newDataTime);
+            dateState = false;
+          });
+        }));
+  }
+
+  selectDate(BuildContext context) {
+    showCupertinoModalPopup<String>(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoActionSheet(
+            actions: <Widget>[_buildDateTimePicker()],
+            cancelButton: CupertinoActionSheetAction(
+              child: const Text('Elegir'),
+              onPressed: () {
+                dateCtrl =
+                    DateFormat(' dd, MMMM yyyy ', "es_ES").format(currentDate);
+                dateCtrlText = DateFormat('dd-MM-yyyy').format(currentDate);
+                Navigator.of(context, rootNavigator: true).pop("Discard");
+              },
+            ),
+          );
+        });
   }
 
   initSession() async {
@@ -349,8 +358,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
           setState(() => btnAccess = true);
           return callDialogAction(context, 'Verifique su conexión a Internet');
         }
-        await checkVersion(context);
-
+        // await checkVersion(context);
         final Map<String, dynamic> data = {
           "identity_card":
               '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-' + dniComCtrl.text.trim()}',
@@ -415,10 +423,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
     } else {
       setState(() => dateState = true);
     }
-  }
-
-  contacts() async {
-    return Navigator.pushNamed(context, 'contacts');
   }
 
   Future<bool> _onBackPressed() async {
