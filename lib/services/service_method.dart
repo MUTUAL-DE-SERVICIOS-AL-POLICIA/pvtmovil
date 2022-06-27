@@ -158,17 +158,21 @@ checkVersion(BuildContext context) async {
     return callDialogAction(context, 'Verifique su conexión a Internet');
   }
   final newVersion = NewVersion(
+    iOSId: 'com.muserpol.pvt',
     androidId: "com.muserpol.pvt",
   );
   final status = await newVersion.getVersionStatus();
-  if (status!.localVersion == status.storeVersion) return;
-  return newVersion.showUpdateDialog(
-    context: context,
-    allowDismissal: false,
-    versionStatus: status,
-    dialogTitle: "Actualiza la nueva versión",
-    dialogText:
-        "Para mejorar la experiencia, Porfavor actualiza la nueva versión",
-    updateButtonText: "Actualizar",
-  );
+  print('status $status' );
+  if (status != null) {
+    if (status.localVersion == status.storeVersion) return;
+    return newVersion.showUpdateDialog(
+      context: context,
+      allowDismissal: false,
+      versionStatus: status,
+      dialogTitle: "Actualiza la nueva versión",
+      dialogText:
+          "Para mejorar la experiencia, Porfavor actualiza la nueva versión",
+      updateButtonText: "Actualizar",
+    );
+  }
 }

@@ -59,7 +59,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   @override
   void initState() {
     super.initState();
-    // checkVersion(context);
+    checkVersion(context);
     initializeDateFormatting();
     getId();
   }
@@ -317,7 +317,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
           setState(() => btnAccess = true);
           return callDialogAction(context, 'Verifique su conexión a Internet');
         }
-        // await checkVersion(context);
+        await checkVersion(context);
         final Map<String, dynamic> data = {
           "identity_card":
               '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-' + dniComCtrl.text.trim()}',
