@@ -18,6 +18,7 @@ class InputComponent extends StatelessWidget {
   final Function(String)? onChanged;
   final Function()? onTapInput;
   final TextStyle? style;
+  final bool? stateAutofocus;
   const InputComponent(
       {Key? key,
       required this.labelText,
@@ -35,12 +36,14 @@ class InputComponent extends StatelessWidget {
       this.textCapitalization = TextCapitalization.none,
       this.onChanged,
       this.onTapInput,
-      this.style})
+      this.style,
+      this.stateAutofocus = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+        autofocus: stateAutofocus!,
         textAlignVertical: TextAlignVertical.center,
         textAlign: TextAlign.center,
         style: style,

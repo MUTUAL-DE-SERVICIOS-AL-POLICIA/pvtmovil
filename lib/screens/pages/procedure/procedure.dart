@@ -7,7 +7,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
-import 'package:muserpol_pvt/components/containers.dart';
+import 'package:muserpol_pvt/components/card_observation.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
@@ -54,80 +54,13 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                       title: 'Complemento Económico',
                       menu: true,
                       onPressMenu: () => Scaffold.of(context).openDrawer()),
-                  if (appState.messageObservation != null)
-                    ContainerComponent(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 5),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Flexible(
-                                      child: Text(
-                                    json.decode(appState.messageObservation!)[
-                                        'message'],
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(color: Colors.black),
-                                  ))
-                                ],
-                              ),
-                              if (json
-                                      .decode(appState.messageObservation!)[
-                                          'data']['display']
-                                      .length >
-                                  0)
-                                Table(
-                                    columnWidths: {
-                                      0: FlexColumnWidth(5),
-                                      1: FlexColumnWidth(0.3),
-                                      2: FlexColumnWidth(5),
-                                    },
-                                    border: TableBorder(
-                                      horizontalInside: BorderSide(
-                                        width: 0.5,
-                                        color: Colors.grey,
-                                        style: BorderStyle.solid,
-                                      ),
-                                    ),
-                                    defaultVerticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    children: [
-                                      for (var itemx in json.decode(appState
-                                              .messageObservation!)['data']
-                                          ['display'])
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 3, horizontal: 10),
-                                            child: Text(
-                                              '${itemx['key']!}',
-                                              textAlign: TextAlign.right,
-                                            ),
-                                          ),
-                                          Text(':'),
-                                          itemx['value'] is List
-                                              ? Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    for (var itemy
-                                                        in itemx['value'])
-                                                      Text('• $itemy')
-                                                  ],
-                                                )
-                                              : Text('${itemx['value']}'),
-                                        ]),
-                                    ]),
-                            ],
-                          ),
-                        ),
-                        color: const Color(0xffffdead)),
+                  if (appState.messageObservation != null) CardObservation(),
                   if (widget.current)
                     ButtonComponent(
                         text: 'CREAR TRÁMITE',
-                        onPressed: stateBtn && appState.stateProcessing ? () => create() : null),
+                        onPressed: stateBtn && appState.stateProcessing
+                            ? () => create()
+                            : null),
                   if (!stateBtn)
                     Image.asset(
                       'assets/images/load.gif',
@@ -159,12 +92,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                                         stateInfo()
                                       ],
                                     ))
-                            : Center(
-                                child: Image.asset(
-                                'assets/images/load.gif',
-                                fit: BoxFit.cover,
-                                height: 20,
-                              ))),
+                            : stateInfo()),
                   if (!widget.current)
                     Expanded(
                         child: procedureBloc.existHistoricalProcedures
@@ -264,6 +192,8 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
     if (response != null) {
       procedureBloc.add(UpdateCurrentProcedures(
           procedureModelFromJson(response.body).data!.data!));
+    } else {
+      return setState(() => stateLoad = false);
     }
   }
 
@@ -277,6 +207,9 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
       if (json.decode(response.body)['data']['enabled']) {
         appState.updateStateProcessing(true);
       }
+    } else {
+      print('hollllllla');
+      return setState(() => stateLoad = false);
     }
   }
 

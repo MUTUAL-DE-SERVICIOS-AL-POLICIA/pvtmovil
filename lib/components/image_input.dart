@@ -46,7 +46,6 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
                             child: widget.itemFile.imageFile == null
                                 ? Image.asset(
                                     widget.itemFile.imagePathDefault!,
-                                    // fit: BoxFit.cover,
                                     gaplessPlayback: true,
                                     width: widget.sizeImage,
                                     height: widget.sizeImage,
@@ -55,8 +54,8 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
                                     widget.itemFile.imageFile!,
                                     fit: BoxFit.cover,
                                     gaplessPlayback: true,
-                                    width: widget.sizeImage,
-                                    height: widget.sizeImage,
+                                    // width: widget.sizeImage,
+                                    // height: 300,
                                   ))),
                     Positioned(
                         bottom: 2,
@@ -73,18 +72,18 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
             ]))));
   }
 
-  void _onImageButtonPressed(ImageSource source,
-      {BuildContext? context}) async {
+  void _onImageButtonPressed(ImageSource source, BuildContext context) async {
     final XFile? pickedFile = await _picker.pickImage(
       source: source,
       maxWidth: 540,
       maxHeight: 380,
       imageQuality: 100,
     );
+    Navigator.pop(context);
     if (pickedFile == null) return;
     final inputImage = InputImage.fromFilePath(pickedFile.path);
     final file = File(pickedFile.path);
-    widget.onPressed(inputImage, file);
+    return widget.onPressed(inputImage, file);
   }
 
   _displayPickImageDialog() {
@@ -98,18 +97,13 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
               actions: <Widget>[
                 CupertinoActionSheetAction(
                   child: const Text('Cámara'),
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).pop("Discard");
-                    _onImageButtonPressed(ImageSource.camera, context: context);
-                  },
+                  onPressed: () =>
+                      _onImageButtonPressed(ImageSource.camera, context),
                 ),
                 CupertinoActionSheetAction(
                   child: const Text('Galería'),
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).pop("Discard");
-                    _onImageButtonPressed(ImageSource.gallery,
-                        context: context);
-                  },
+                  onPressed: () =>
+                      _onImageButtonPressed(ImageSource.gallery, context),
                 ),
               ],
               cancelButton: CupertinoActionSheetAction(

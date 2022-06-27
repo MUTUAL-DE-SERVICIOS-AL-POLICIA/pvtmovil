@@ -27,13 +27,30 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _getAvailableCameras();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     controllerCam!.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // App state changed before we got the chance to initialize.
+    if (controllerCam == null || !controllerCam!.value.isInitialized) {
+      return;
+    }
+    if (state == AppLifecycleState.inactive) {
+      controllerCam?.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      if (controllerCam != null) {
+        _getAvailableCameras();
+      }
+    }
   }
 
   Future<void> _getAvailableCameras() async {

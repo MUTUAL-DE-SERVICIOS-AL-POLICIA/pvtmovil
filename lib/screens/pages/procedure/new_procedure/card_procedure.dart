@@ -66,10 +66,8 @@ class _StepperProcedureState extends State<StepperProcedure> {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: true);
-    final procedureBloc =
-        Provider.of<ProcedureBloc>(context, listen: true).state;
     final userBloc =
-        BlocProvider.of<UserBloc>(context, listen: false).state.user;
+        BlocProvider.of<UserBloc>(context, listen: true).state.user;
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
@@ -82,6 +80,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
                   HedersComponent(title: 'Nuevo trámite'),
                   Expanded(
                     child: Stepper(
+                      onStepTapped: (step) => tapped(step),
                       type: stepperType,
                       physics: ScrollPhysics(),
                       currentStep: appState.indexTabProcedure,
@@ -89,21 +88,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
                       controlsBuilder:
                           (BuildContext context, ControlsDetails details) {
                         return appState.indexTabProcedure > 0
-                            ? ButtonComponent(
-                                stateLoading: buttonLoading,
-                                text: (!userBloc!.verified!
-                                                ? appState.files.length
-                                                : 0) +
-                                            1 ==
-                                        details.stepIndex
-                                    ? 'ENVIAR'
-                                    : 'CONTINUAR',
-                                onPressed:
-                                    procedureBloc.existInfoComplementInfo &&
-                                            appState.stateLoadingProcedure
-                                        ? details.onStepContinue!
-                                        : null,
-                              )
+                            ? buttonStep(context, details)
                             : Container();
                       },
                       steps: <Step>[
@@ -153,7 +138,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
                                           .data
                                           .primaryColorDark)),
                               content: ImageInputComponent(
-                                sizeImage: 200,
+                                sizeImage: 250,
                                 onPressed: (img, file) =>
                                     detectorText(img, file, item),
                                 itemFile: item,
@@ -176,7 +161,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
                             phoneCtrl: phoneCtrl,
                           ),
                           isActive: appState.indexTabProcedure >= 0,
-                          state: appState.indexTabProcedure >= 2
+                          state: appState.indexTabProcedure > 2
                               ? StepState.complete
                               : StepState.disabled,
                         ),
@@ -188,6 +173,34 @@ class _StepperProcedureState extends State<StepperProcedure> {
             ),
           ),
         ));
+  }
+
+  Widget buttonStep(BuildContext context, ControlsDetails details) {
+    final procedureBloc =
+        Provider.of<ProcedureBloc>(context, listen: true).state;
+    final userBloc =
+        BlocProvider.of<UserBloc>(context, listen: true).state.user;
+    final appState = Provider.of<AppState>(context, listen: true);
+    return ButtonComponent(
+      stateLoading: buttonLoading,
+      text: (!userBloc!.verified! ? appState.files.length : 0) + 1 ==
+              details.stepIndex
+          ? 'ENVIAR'
+          : 'CONTINUAR',
+      onPressed: procedureBloc.existInfoComplementInfo &&
+              appState.stateLoadingProcedure
+          ? details.onStepContinue!
+          : null,
+    );
+  }
+
+  tapped(int step) async {
+    if (step == 0) return;
+    final appState = Provider.of<AppState>(context, listen: false);
+    if (step <= appState.indexTabProcedure) {
+      await appState.updateStateLoadingProcedure(true);
+      await appState.updateTabProcedure(step);
+    }
   }
 
   Future<bool> _onBackPressed() async {
@@ -214,7 +227,6 @@ class _StepperProcedureState extends State<StepperProcedure> {
         context: context,
         builder: (context) => ModalInsideModal(nextScreen: (message) {
               return showSuccessful(context, message, () async {
-                // await appState.updateStateLoadingProcedure(true);
                 if (userBloc.user!.verified!) {
                   await appState.updateStateLoadingProcedure(true);
                   await appState.updateTabProcedure(appState.indexTabProcedure +
@@ -247,7 +259,11 @@ class _StepperProcedureState extends State<StepperProcedure> {
             (!userBloc.verified! ? appState.files.length : 0)) {
           await appState.updateStateLoadingProcedure(true);
         } else {
-          await appState.updateStateLoadingProcedure(false);
+          if (appState.files[appState.indexTabProcedure].imageFile != null) {
+            await appState.updateStateLoadingProcedure(true);
+          } else {
+            await appState.updateStateLoadingProcedure(false);
+          }
         }
       }
     }

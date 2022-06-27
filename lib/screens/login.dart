@@ -52,65 +52,28 @@ class _ScreenLoginState extends State<ScreenLogin> {
   bool dateState = false;
   bool dniComplement = false;
   DateTime currentDate = DateTime(1950, 1, 1);
-  static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   FocusNode textSecondFocusNode = FocusNode();
   final tooltipController = JustTheController();
+  final deviceInfo = DeviceInfoPlugin();
   bool stateCom = false;
   @override
   void initState() {
     super.initState();
     // checkVersion(context);
     initializeDateFormatting();
-    initPlatformState();
+    getId();
   }
 
-  Future<void> initPlatformState() async {
-    Map<String, dynamic> deviceData = <String, dynamic>{};
-
-    try {
-      if (Platform.isAndroid) {
-        deviceData = _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
-      }
-      if (Platform.isIOS) {
-        deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
-      }
-    } on PlatformException {
-      deviceData = <String, dynamic>{
-        'Error:': 'Failed to get platform version.'
-      };
-    }
-
-    if (!mounted) return;
-    print('deviceData $deviceData');
-    if (Platform.isAndroid) {
-      setState(() => deviceId = deviceData['androidId']);
-    }
+  Future<void> getId() async {
     if (Platform.isIOS) {
-      setState(() => deviceId = deviceData['identifierForVendor']);
+      var iosDeviceInfo = await deviceInfo.iosInfo;
+      print('iosDeviceInfo $iosDeviceInfo');
+      return setState(() => deviceId = iosDeviceInfo.identifierForVendor);
+    } else if (Platform.isAndroid) {
+      var androidDeviceInfo = await deviceInfo.androidInfo;
+      print('androidDeviceInfo ${androidDeviceInfo.androidId}');
+      return setState(() => deviceId = androidDeviceInfo.androidId);
     }
-  }
-
-  Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
-    return <String, dynamic>{
-      'androidId': build.androidId,
-    };
-  }
-
-  Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
-    return <String, dynamic>{
-      'name': data.name,
-      'systemName': data.systemName,
-      'systemVersion': data.systemVersion,
-      'model': data.model,
-      'localizedModel': data.localizedModel,
-      'identifierForVendor': data.identifierForVendor,
-      'isPhysicalDevice': data.isPhysicalDevice,
-      'utsname.sysname:': data.utsname.sysname,
-      'utsname.nodename:': data.utsname.nodename,
-      'utsname.release:': data.utsname.release,
-      'utsname.version:': data.utsname.version,
-      'utsname.machine:': data.utsname.machine,
-    };
   }
 
   @override
@@ -156,7 +119,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                           color: const Color(0xff419388)),
                                       textInputAction: TextInputAction.next,
                                       controllerText: dniCtrl,
-                                      onEditingComplete: () => node.nextFocus(),
+                                      onEditingComplete: () => dniComplement
+                                          ? node.nextFocus()
+                                          : selectDate(context),
                                       validator: (value) {
                                         if (value.length > 3) {
                                           return null;
@@ -188,45 +153,35 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width /
                                           3.4,
-                                      child: RawKeyboardListener(
-                                          focusNode: FocusNode(),
-                                          onKey: (event) {
-                                            if (event.logicalKey ==
-                                                LogicalKeyboardKey.backspace) {
-                                              setState(
-                                                  () => dniComplement = false);
-                                            }
-                                          },
-                                          child: InputComponent(
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 15.sp,
-                                                color: const Color(0xff419388)),
-                                            focusNode: textSecondFocusNode,
-                                            textInputAction:
-                                                TextInputAction.next,
-                                            controllerText: dniComCtrl,
-                                            inputFormatters: [
-                                              new LengthLimitingTextInputFormatter(
-                                                  2),
-                                              FilteringTextInputFormatter.allow(
-                                                  RegExp("[0-9a-zA-Z]"))
-                                            ],
-                                            onEditingComplete: () =>
-                                                node.nextFocus(),
-                                            validator: (value) {
-                                              if (value.isNotEmpty) {
-                                                return null;
-                                              } else {
-                                                return 'complemento';
-                                              }
-                                            },
-                                            keyboardType: TextInputType.text,
-                                            textCapitalization:
-                                                TextCapitalization.characters,
-                                            icon: Icons.person,
-                                            labelText: "Complemento",
-                                          )),
+                                      child: InputComponent(
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15.sp,
+                                            color: const Color(0xff419388)),
+                                        focusNode: textSecondFocusNode,
+                                        textInputAction: TextInputAction.next,
+                                        controllerText: dniComCtrl,
+                                        inputFormatters: [
+                                          new LengthLimitingTextInputFormatter(
+                                              2),
+                                          FilteringTextInputFormatter.allow(
+                                              RegExp("[0-9a-zA-Z]"))
+                                        ],
+                                        onEditingComplete: () =>
+                                            selectDate(context),
+                                        validator: (value) {
+                                          if (value.isNotEmpty) {
+                                            return null;
+                                          } else {
+                                            return 'complemento';
+                                          }
+                                        },
+                                        keyboardType: TextInputType.text,
+                                        textCapitalization:
+                                            TextCapitalization.characters,
+                                        icon: Icons.person,
+                                        labelText: "Complemento",
+                                      ),
                                     ), //container
                                 ], //widget
                               ),
@@ -291,6 +246,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   functionToltip(bool state) async {
     setState(() {
+      if (!state) dniComCtrl.text = '';
       dniComplement = state;
       tooltipController.hideTooltip();
     });
@@ -334,10 +290,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
             cancelButton: CupertinoActionSheetAction(
               child: const Text('Elegir'),
               onPressed: () {
-                dateCtrl =
-                    DateFormat(' dd, MMMM yyyy ', "es_ES").format(currentDate);
-                dateCtrlText = DateFormat('dd-MM-yyyy').format(currentDate);
+                setState(() {
+                  dateCtrl = DateFormat(' dd, MMMM yyyy ', "es_ES")
+                      .format(currentDate);
+                  dateCtrlText = DateFormat('dd-MM-yyyy').format(currentDate);
+                });
                 Navigator.of(context, rootNavigator: true).pop("Discard");
+                FocusScope.of(context).unfocus();
               },
             ),
           );
