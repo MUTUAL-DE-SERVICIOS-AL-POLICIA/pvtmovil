@@ -1,10 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:muserpol_pvt/screens/notification.dart';
+import 'package:muserpol_pvt/services/push_notifications.dart';
+import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/check_auth_screen.dart';
 import 'package:muserpol_pvt/screens/login.dart';
@@ -25,13 +27,34 @@ SharedPreferences? prefs;
 void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   prefs = await SharedPreferences.getInstance();
-
+  await PushNotificationService.initializeapp();
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  final GlobalKey<ScaffoldMessengerState> messengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+  // final SharedPreferences prefs;
+  @override
+  void initState() {
+    super.initState();
+    PushNotificationService.messagesStream.listen((message) {
+      print('NO TI FI CA CION $message');
+      navigatorKey.currentState!.pushNamed('message', arguments: message);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -247,6 +270,7 @@ class MyApp extends StatelessWidget {
                                 Locale('en', 'US'), // English
                               ],
                               debugShowCheckedModeBanner: false,
+                              navigatorKey: navigatorKey,
                               theme: ThemeProvider.themeOf(themeContext).data,
                               title: 'MUSERPOL PVT',
                               initialRoute: 'check_auth',
@@ -255,6 +279,7 @@ class MyApp extends StatelessWidget {
                                 'login': (_) => const ScreenLogin(),
                                 'navigator': (_) => const NavigatorBar(),
                                 'contacts': (_) => const ScreenContact(),
+                                'message': (_) => const ScreenNotification(),
                               })),
                     ),
                   )),
