@@ -16,6 +16,7 @@ import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
+import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/dialogs/dialog_back.dart';
 import 'package:muserpol_pvt/main.dart';
@@ -329,6 +330,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
             context, 'post', data, serviceAuthSession(), false, true);
         setState(() => btnAccess = true);
         if (response != null) {
+          DBProvider.db.database;
           UserModel user = userModelFromJson(
               json.encode(json.decode(response.body)['data']));
           await authService.auxtoken(user.apiToken!);

@@ -58,13 +58,12 @@ class HedersComponent extends StatelessWidget {
             ],
           ),
         ),
-        Center(
-            child: Image.asset(
+        Image.asset(
           'assets/icons/favicon.png',
           color: const Color(0xff419388),
           fit: BoxFit.cover,
           height: 40.sp,
-        )),
+        ),
       ],
     );
   }

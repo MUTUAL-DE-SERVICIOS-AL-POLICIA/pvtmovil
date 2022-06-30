@@ -158,6 +158,7 @@ class IconBtnComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return RawMaterialButton(
       onPressed: () {},
+      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
       elevation: 2.0,
       fillColor: Colors.white,
       child: IconButton(
@@ -167,62 +168,58 @@ class IconBtnComponent extends StatelessWidget {
             color: const Color(0xff419388),
           ),
           onPressed: () => onPressed()),
-      padding: const EdgeInsets.all(0),
       shape: const CircleBorder(),
     );
   }
 }
+
 class Buttontoltip extends StatelessWidget {
   final JustTheController tooltipController;
   final Function(bool) onPressed;
-  const Buttontoltip({Key? key, required this.tooltipController, required this.onPressed}) : super(key: key);
+  const Buttontoltip(
+      {Key? key, required this.tooltipController, required this.onPressed})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return JustTheTooltip(
-                              controller: tooltipController,
-                              showWhenUnlinked: true,
-                              barrierDismissible: true,
-                              isModal: true,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(18)),
-                              child: Material(
-                                color: ThemeProvider.themeOf(context)
-                                  .data.primaryColor,
-                                shape: const CircleBorder(),
-                                elevation: 0,
-                                child: const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.question_mark_outlined,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              backgroundColor: ThemeProvider.themeOf(context)
-                                  .data
-                                  .scaffoldBackgroundColor,
-                              content: Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        '¿Cuenta con un un carnet alfanumerico? Ej. 123456-7L',
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          ButtonWhiteComponent(
-                                              text: 'SI',
-                                              onPressed: () => onPressed(true)),
-                                          ButtonWhiteComponent(
-                                              text: 'NO',
-                                              onPressed: () => onPressed(false)),
-                                        ],
-                                      )
-                                    ],
-                                  )));
+        controller: tooltipController,
+        showWhenUnlinked: true,
+        barrierDismissible: true,
+        isModal: true,
+        borderRadius: const BorderRadius.all(Radius.circular(18)),
+        child: Material(
+          color: ThemeProvider.themeOf(context).data.primaryColor,
+          shape: const CircleBorder(),
+          elevation: 0,
+          child: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Icon(
+              Icons.question_mark_outlined,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        backgroundColor:
+            ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+        content: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '¿Cuenta con un un carnet alfanumerico? Ej. 123456-7L',
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ButtonWhiteComponent(
+                        text: 'SI', onPressed: () => onPressed(true)),
+                    ButtonWhiteComponent(
+                        text: 'NO', onPressed: () => onPressed(false)),
+                  ],
+                )
+              ],
+            )));
   }
 }

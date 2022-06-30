@@ -100,15 +100,14 @@ class _MenuDrawerState extends State<MenuDrawer> {
               ),
               SectiontitleComponent(
                   title: 'Contactos a nivel nacional',
-                  icon: Icons.contact_phone_rounded ,
+                  icon: Icons.contact_phone_rounded,
                   stateLoading: stateLoading,
                   onTap: () => Navigator.pushNamed(context, 'contacts')),
               SectiontitleComponent(
                   title: 'Políticas de Privacidad',
-                  icon: Icons.privacy_tip ,
+                  icon: Icons.privacy_tip,
                   stateLoading: stateLoading,
                   onTap: () => privacyPolicy(context)),
-
               SectiontitleComponent(
                   title: 'Cerrar Sesión',
                   icon: Icons.info_outline,
