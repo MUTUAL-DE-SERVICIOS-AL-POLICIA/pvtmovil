@@ -298,7 +298,7 @@ class _ProjectMuserpolState extends State<ProjectMuserpol>
                       bodyText2: TextStyle(fontSize: 20.sp),
                     )
                     .apply(fontFamily: 'Ubuntu'),
-                dialogBackgroundColor: const Color(0xff21232A),
+                dialogBackgroundColor: const Color(0xff060d09),
                 scaffoldBackgroundColor: const Color(0xff060d09),
                 primaryColorDark: const Color(0xfff2f2f2),
                 iconTheme: const IconThemeData(color: Color(0xff419388)))),

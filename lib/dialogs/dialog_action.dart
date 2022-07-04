@@ -52,7 +52,7 @@ class DialogTwoAction extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
             )),
             Expanded(
-                child: ButtonWhiteComponentOutlined(
+                child: ButtonWhiteComponent(
                     text: messageCorrect, onPressed: () => actionCorrect()))
           ],
         )

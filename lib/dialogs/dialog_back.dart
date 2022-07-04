@@ -19,15 +19,16 @@ class DialogBack extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Expanded(child: ButtonWhiteComponent(
-                text: 'Salir',
-                onPressed: () => SystemChannels.platform
-                    .invokeMethod('SystemNavigator.pop'))),
-            Expanded(child:ButtonWhiteComponentOutlined(
+            Expanded(
+                child: ButtonWhiteComponent(
+                    text: 'Salir',
+                    onPressed: () => SystemChannels.platform
+                        .invokeMethod('SystemNavigator.pop'))),
+            Expanded(
+                child: ButtonWhiteComponent(
               text: 'Cancelar',
               onPressed: () => Navigator.of(context).pop(),
             ))
-            
           ],
         )
       ],

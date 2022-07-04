@@ -161,7 +161,10 @@ class _NavigatorBarState extends State<NavigatorBar> {
                     : Colors.transparent
                 : Colors.transparent,
             elevation: 0,
-            badgeContent: notificationBloc.existNotifications
+            badgeContent: notificationBloc.existNotifications &&
+                    notificationBloc.listNotifications!
+                        .where((e) => e.read == false)
+                        .isNotEmpty
                 ? Text(
                     notificationBloc.listNotifications!
                         .where((e) => e.read == false)

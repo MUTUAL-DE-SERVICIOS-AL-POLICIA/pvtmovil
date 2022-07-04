@@ -75,7 +75,6 @@ class _ScreenInboxState extends State<ScreenInbox> {
                       children: [
                         Text(
                           'Titulo: ${item.title}',
-                          textAlign: TextAlign.center,
                           style: TextStyle(
                               color: item.read
                                   ? ThemeProvider.themeOf(context)

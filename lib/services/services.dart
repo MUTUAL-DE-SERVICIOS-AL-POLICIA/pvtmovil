@@ -12,7 +12,6 @@ serviceGetEconomicComplements(int page, bool current) =>
     '$url/economic_complement/?page=$page&current=$current';
 //GET VERIFIED DOCUMENT
 serviceGetMessageFace() => '$url/message/verified';
-
 //GET PROCESS ENROLLED
 serviceProcessEnrolled() => '$url/liveness';
 //GET PERMISION PROCEDURE
