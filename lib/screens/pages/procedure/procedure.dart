@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
@@ -24,8 +23,16 @@ import 'package:provider/provider.dart';
 class ScreenProcedures extends StatefulWidget {
   final bool current;
   final ScrollController scroll;
+  final GlobalKey? keyProcedure;
+  final GlobalKey? keyMenu;
+  final GlobalKey? keyRefresh;
   const ScreenProcedures(
-      {Key? key, required this.current, required this.scroll})
+      {Key? key,
+      required this.current,
+      required this.scroll,
+      this.keyProcedure,
+      this.keyMenu,
+      this.keyRefresh})
       : super(key: key);
 
   @override
@@ -37,10 +44,10 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   bool stateBtn = true;
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    //   DeviceOrientation.portraitDown,
+    // ]);
     final procedureBloc =
         BlocProvider.of<ProcedureBloc>(context, listen: true).state;
     final appState = Provider.of<AppState>(context, listen: true);
@@ -53,10 +60,12 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                   HedersComponent(
                       title: 'Complemento Económico',
                       menu: true,
+                      keyMenu: widget.keyMenu,
                       onPressMenu: () => Scaffold.of(context).openDrawer()),
                   if (appState.messageObservation != null) CardObservation(),
-                  if (widget.current)
+                  if (widget.current && stateBtn)
                     ButtonComponent(
+                        key: widget.keyProcedure,
                         text: 'CREAR TRÁMITE',
                         onPressed: stateBtn && appState.stateProcessing
                             ? () => create()
@@ -126,7 +135,8 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                 height: 20,
               )
             : IconBtnComponent(
-                icon: Icons.refresh,
+                key: widget.keyRefresh,
+                iconText: 'assets/icons/reload.svg',
                 onPressed: () async {
                   final appState =
                       Provider.of<AppState>(context, listen: false);

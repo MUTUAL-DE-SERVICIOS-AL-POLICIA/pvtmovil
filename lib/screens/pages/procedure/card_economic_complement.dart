@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
@@ -98,19 +99,45 @@ class _CardEcState extends State<CardEc> {
                                   )
                                 : Text('${itemx.value}'),
                           ]),
+                        if (widget.item!.printable!)
+                          TableRow(children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 3, horizontal: 10),
+                              child: Text(
+                                'Comprovante del trámite',
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                            Text(':'),
+                            btnAccess
+                                ? Row(
+                                    children: [
+                                      Center(
+                                          child: SvgPicture.asset(
+                                        'assets/icons/printer.svg',
+                                        height: 30.0,
+                                        color: ThemeProvider.themeOf(context)
+                                            .data
+                                            .hintColor,
+                                      )),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      ButtonWhiteComponent(
+                                        text: 'Documento PDF',
+                                        onPressed: () => printDocument(context),
+                                      ),
+                                    ],
+                                  )
+                                : Center(
+                                    child: Image.asset(
+                                    'assets/images/load.gif',
+                                    fit: BoxFit.cover,
+                                    height: 20,
+                                  ))
+                          ]),
                       ]),
-                  if (widget.item!.printable!)
-                    btnAccess
-                        ? ButtonWhiteComponent(
-                            text: 'Documento PDF',
-                            onPressed: () => printDocument(context),
-                          )
-                        : Center(
-                            child: Image.asset(
-                            'assets/images/load.gif',
-                            fit: BoxFit.cover,
-                            height: 20,
-                          ))
                 ],
               ))
             ])));

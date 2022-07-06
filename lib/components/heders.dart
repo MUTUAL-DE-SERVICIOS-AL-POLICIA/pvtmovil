@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 //  widget que se ajusta en la parte superior
@@ -9,13 +10,15 @@ class HedersComponent extends StatelessWidget {
   final bool menu;
   final Function()? onPressMenu;
   final bool center;
+  final GlobalKey? keyMenu;
   const HedersComponent(
       {Key? key,
       required this.title,
       this.stateBack = false,
       this.menu = false,
       this.onPressMenu,
-      this.center = false})
+      this.center = false,
+      this.keyMenu})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -30,18 +33,23 @@ class HedersComponent extends StatelessWidget {
                     onTap: () => Navigator.pop(context),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Icon(Icons.arrow_back_ios,
-                          size: 17.sp,
-                          color: ThemeProvider.themeOf(context).data.hintColor),
+                      child: SvgPicture.asset(
+                        'assets/icons/back.svg',
+                        height: 17.sp,
+                        color: ThemeProvider.themeOf(context).data.hintColor,
+                      ),
                     )),
               if (menu)
                 GestureDetector(
+                    key: keyMenu,
                     onTap: () => onPressMenu!(),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Icon(Icons.menu,
-                          size: 17.sp,
-                          color: ThemeProvider.themeOf(context).data.hintColor),
+                      child: SvgPicture.asset(
+                        'assets/icons/menu.svg',
+                        height: 17.sp,
+                        color: ThemeProvider.themeOf(context).data.hintColor,
+                      ),
                     )),
               Flexible(
                 child: Column(

@@ -113,9 +113,9 @@ class _StepperProcedureState extends State<StepperProcedure> {
                                       ))),
                               Positioned(
                                   bottom: 2,
-                                  right: -14,
+                                  right: 0,
                                   child: IconBtnComponent(
-                                      icon: Icons.camera_alt,
+                                      iconText: 'assets/icons/camera.svg',
                                       onPressed: () => initCtrlLive()))
                             ],
                           ),

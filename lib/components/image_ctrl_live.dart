@@ -119,14 +119,17 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
                     left: 20,
                     child: Row(
                       children: [
+                        IconBtnComponent(
+                          iconText: 'assets/icons/camera-switch.svg',
+                          onPressed: () => switchCam(),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
                         Expanded(
                             child: ButtonComponent(
                                 text: 'CAPTURAR',
                                 onPressed: () => takePhoto())),
-                        IconBtnComponent(
-                          icon: Icons.cameraswitch_outlined,
-                          onPressed: () => switchCam(),
-                        )
                       ],
                     ))
                 : Container(),

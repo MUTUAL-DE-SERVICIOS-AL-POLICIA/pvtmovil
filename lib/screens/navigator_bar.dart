@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:badges/badges.dart';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
@@ -17,8 +18,9 @@ import 'package:muserpol_pvt/screens/pages/procedure/procedure.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
-import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import 'package:theme_provider/theme_provider.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+
+import 'dart:math' as math;
 
 class NavigatorBar extends StatefulWidget {
   const NavigatorBar({Key? key}) : super(key: key);
@@ -28,6 +30,8 @@ class NavigatorBar extends StatefulWidget {
 }
 
 class _NavigatorBarState extends State<NavigatorBar> {
+  late TutorialCoachMark tutorialCoachMark;
+  List<TargetFocus> targets = <TargetFocus>[];
   ProcedureModel? procedureCurrent;
   ProcedureModel? procedureHistory;
   final ScrollController _scrollController = ScrollController();
@@ -37,8 +41,16 @@ class _NavigatorBarState extends State<NavigatorBar> {
   int pageHistory = 1;
   bool stateProcessing = false;
 
+  GlobalKey keyBottomNavigation1 = GlobalKey();
+  GlobalKey keyBottomNavigation2 = GlobalKey();
+  GlobalKey keyCreateProcedure = GlobalKey();
+  GlobalKey keyNotification = GlobalKey();
+  GlobalKey keyMenu = GlobalKey();
+  GlobalKey keyRefresh = GlobalKey();
+
   @override
   void initState() {
+    Future.delayed(Duration.zero, showTutorial);
     super.initState();
     checkVersion(context);
     getProcessingPermit();
@@ -137,12 +149,17 @@ class _NavigatorBarState extends State<NavigatorBar> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    //   DeviceOrientation.portraitDown,
+    // ]);
     List<Widget> pageList = [
-      ScreenProcedures(current: true, scroll: _scrollController),
+      ScreenProcedures(
+          current: true,
+          scroll: _scrollController,
+          keyProcedure: keyCreateProcedure,
+          keyMenu: keyMenu,
+          keyRefresh: keyRefresh),
       ScreenProcedures(current: false, scroll: _scrollController),
     ];
     final notificationBloc =
@@ -151,6 +168,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
         onWillPop: _onBackPressed,
         child: Scaffold(
           floatingActionButton: Badge(
+            key: keyNotification,
             animationDuration: const Duration(milliseconds: 300),
             animationType: BadgeAnimationType.slide,
             badgeColor: notificationBloc.existNotifications
@@ -174,23 +192,60 @@ class _NavigatorBarState extends State<NavigatorBar> {
                   )
                 : Container(),
             child: IconBtnComponent(
-                icon: Icons.mail, onPressed: () => dialogInbox(context)),
+                iconText: 'assets/icons/email.svg',
+                onPressed: () => dialogInbox(context)),
           ),
           body: pageList.elementAt(_currentIndex),
-          bottomNavigationBar: SalomonBottomBar(
-            currentIndex: _currentIndex,
-            onTap: (i) => setState(() => _currentIndex = i),
-            items: [
-              SalomonBottomBarItem(
-                  icon: const Icon(Icons.home),
-                  title: const Text("Trámites Vigentes"),
-                  unselectedColor:
-                      ThemeProvider.themeOf(context).data.primaryColorDark),
-              SalomonBottomBarItem(
-                  icon: const Icon(Icons.history),
-                  title: const Text("Trámites Históricos"),
-                  unselectedColor:
-                      ThemeProvider.themeOf(context).data.primaryColorDark),
+          bottomNavigationBar: Stack(
+            children: [
+              Container(
+                height: 50,
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Center(
+                      child: SizedBox(
+                        key: keyBottomNavigation1,
+                        height: 40,
+                        width: MediaQuery.of(context).size.width / 4,
+                      ),
+                    )),
+                    Expanded(
+                        child: Center(
+                      child: SizedBox(
+                        key: keyBottomNavigation2,
+                        height: 40,
+                        width: MediaQuery.of(context).size.width / 4,
+                      ),
+                    )),
+                  ],
+                ),
+              ),
+              ConvexAppBar(
+                  elevation: 0,
+                  backgroundColor: Color(0xff419388),
+                  // color: Color(0xff419388),
+                  style: TabStyle.react,
+                  items: [
+                    TabItem(
+                        icon: SvgPicture.asset(
+                          'assets/icons/newProcedure.svg',
+                          height: 30.0,
+                          width: 30.0,
+                          color: Colors.white,
+                        ),
+                        title: "Trámites Vigentes"),
+                    TabItem(
+                        icon: SvgPicture.asset(
+                          'assets/icons/historyProcedure.svg',
+                          height: 30.0,
+                          width: 30.0,
+                          color: Colors.white,
+                        ),
+                        title: "Trámites Históricos"),
+                  ],
+                  initialActiveIndex: 0,
+                  onTap: (int i) => setState(() => _currentIndex = i)),
             ],
           ),
         ));
@@ -208,5 +263,250 @@ class _NavigatorBarState extends State<NavigatorBar> {
         barrierDismissible: false,
         context: context,
         builder: (context) => const ComponentAnimate(child: DialogBack()));
+  }
+
+  void showTutorial() {
+    initTargets();
+    tutorialCoachMark = TutorialCoachMark(
+      context,
+      targets: targets,
+      colorShadow: Color(0xff419388),
+      textSkip: "OMITIR",
+      paddingFocus: 10,
+      opacityShadow: 0.8,
+      onFinish: () {
+        print("finish");
+      },
+      onClickTarget: (target) {
+        print('onClickTarget: $target');
+      },
+      onClickTargetWithTapPosition: (target, tapDetails) {
+        print("target: $target");
+        print(
+            "clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
+      },
+      onClickOverlay: (target) {
+        print('onClickOverlay: $target');
+      },
+      onSkip: () {
+        print("skip");
+      },
+    )..show();
+  }
+
+  void initTargets() {
+    targets.clear();
+    targets.add(
+      TargetFocus(
+        identify: "keyBottomNavigation1",
+        keyTarget: keyBottomNavigation1,
+        alignSkip: Alignment.topRight,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Column(
+                children: <Widget>[
+                  Padding(
+                      padding: const EdgeInsets.only(bottom: 30.0),
+                      child: Text(
+                        "Aquí podrás ver tus Tramites disponibles ",
+                        style: TextStyle(color: Colors.white),
+                      )),
+                  Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.rotationY(180),
+                      child: RotationTransition(
+                          turns: new AlwaysStoppedAnimation(15 / 180),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Image.asset(
+                              'assets/images/arrow.png',
+                              color: Colors.white,
+                              height: 100,
+                            ),
+                          ))),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+
+    targets.add(
+      TargetFocus(
+        identify: "keyBottomNavigation2",
+        keyTarget: keyBottomNavigation2,
+        alignSkip: Alignment.topRight,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Column(
+                // crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                      padding: const EdgeInsets.only(bottom: 30.0),
+                      child: Text(
+                        "Aquí podrás ver el historial de tus tramites ",
+                        style: TextStyle(color: Colors.white),
+                      )),
+                  Transform.rotate(
+                    angle: math.pi / 7,
+                    child: Image.asset(
+                      'assets/images/arrow.png',
+                      color: Colors.white,
+                      height: 100,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+    targets.add(
+      TargetFocus(
+        identify: "keyCreateProcedure",
+        keyTarget: keyCreateProcedure,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "CREACIÓN DE TRÁMITE",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 20.0),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      "Si ves el botón de color verde, puedes crear tu trámite correspondiente al semestre",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
+        shape: ShapeLightFocus.RRect,
+        radius: 20,
+      ),
+    );
+    targets.add(
+      TargetFocus(
+        identify: "keyNotification",
+        keyTarget: keyNotification,
+        alignSkip: Alignment.topRight,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Container(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "BUZÓN DE MENSAJES",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20.0),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        "Acá podrás observar todos los mensajes que la MUSERPOL tiene para ti ",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+    targets.add(
+      TargetFocus(
+        identify: "keyMenu",
+        keyTarget: keyMenu,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return Container(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "MENÚ",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20.0),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        "Aquí podras observar un menú donde encontraras tus datos y diferentes opciones",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+    targets.add(
+      TargetFocus(
+        identify: "keyRefresh",
+        keyTarget: keyRefresh,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return Container(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "ACTUALIZAR",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20.0),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        "con este botón podrás refrescar la pantalla",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

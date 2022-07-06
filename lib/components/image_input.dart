@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
@@ -59,10 +58,10 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
                                   ))),
                     Positioned(
                         bottom: 2,
-                        right: -14,
+                        right: 0,
                         child: IconBtnComponent(
                             iconSize: 20.w,
-                            icon: Icons.camera_alt,
+                            iconText: 'assets/icons/camera.svg',
                             onPressed: () => _displayPickImageDialog()))
                   ],
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:theme_provider/theme_provider.dart';
 
@@ -143,13 +144,13 @@ class ButtonDate extends StatelessWidget {
 
 class IconBtnComponent extends StatelessWidget {
   final Function() onPressed;
-  final IconData icon;
+  final String iconText;
   final Color? iconColor;
   final double? iconSize;
   const IconBtnComponent(
       {Key? key,
       required this.onPressed,
-      required this.icon,
+      required this.iconText,
       this.iconColor,
       this.iconSize = 30})
       : super(key: key);
@@ -162,10 +163,12 @@ class IconBtnComponent extends StatelessWidget {
       elevation: 2.0,
       fillColor: Colors.white,
       child: IconButton(
-          iconSize: iconSize,
-          icon: Icon(
-            icon,
-            color: const Color(0xff419388),
+          iconSize: 40,
+          icon: SvgPicture.asset(
+            iconText,
+            height: 100.0,
+            // width: 30.0,
+            // color: Colors.white,
           ),
           onPressed: () => onPressed()),
       shape: const CircleBorder(),
