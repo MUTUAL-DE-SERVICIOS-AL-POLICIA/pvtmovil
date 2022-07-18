@@ -52,24 +52,29 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
         BlocProvider.of<ProcedureBloc>(context, listen: true).state;
     final appState = Provider.of<AppState>(context, listen: true);
     return Scaffold(
-        drawer: MenuDrawer(),
+        drawer: const MenuDrawer(),
         body: Builder(
-            builder: (context) => Padding(
-                padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
-                child: Column(children: [
-                  HedersComponent(
-                      title: 'Complemento Económico',
-                      menu: true,
-                      keyMenu: widget.keyMenu,
-                      onPressMenu: () => Scaffold.of(context).openDrawer()),
-                  if (appState.messageObservation != null) CardObservation(),
+            builder: (context) => Column(children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
+                    child: HedersComponent(
+                        title: 'Complemento Económico',
+                        menu: true,
+                        keyMenu: widget.keyMenu,
+                        onPressMenu: () => Scaffold.of(context).openDrawer()),
+                  ),
+                  if (appState.messageObservation != "")
+                    const CardObservation(),
                   if (widget.current && stateBtn)
-                    ButtonComponent(
-                        key: widget.keyProcedure,
-                        text: 'CREAR TRÁMITE',
-                        onPressed: stateBtn && appState.stateProcessing
-                            ? () => create()
-                            : null),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: ButtonComponent(
+                          key: widget.keyProcedure,
+                          text: 'CREAR TRÁMITE',
+                          onPressed: stateBtn && appState.stateProcessing
+                              ? () => create()
+                              : null),
+                    ),
                   if (!stateBtn)
                     Image.asset(
                       'assets/images/load.gif',
@@ -86,7 +91,8 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text('No se encontraron trámites'),
+                                            const Text(
+                                                'No se encontraron trámites'),
                                             stateInfo()
                                           ],
                                         ),
@@ -106,7 +112,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                     Expanded(
                         child: procedureBloc.existHistoricalProcedures
                             ? procedureBloc.historicalProcedures!.isEmpty
-                                ? Center(
+                                ? const Center(
                                     child: Text('No se encontraron trámites'))
                                 : ListView.builder(
                                     controller: widget.scroll,
@@ -123,7 +129,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                                 fit: BoxFit.cover,
                                 height: 20,
                               ))),
-                ]))));
+                ])));
   }
 
   Widget stateInfo() {
@@ -162,7 +168,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
       appState.updateFile(element.id!, null);
     }
     return showBarModalBottomSheet(
-      duration: Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 800),
       expand: false,
       enableDrag: false,
       isDismissible: false,
@@ -197,7 +203,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
     //REINICIO DEL LISTADO DE TRÁMITES VIGENTES
     final procedureBloc =
         BlocProvider.of<ProcedureBloc>(context, listen: false);
-    var response = await serviceMethod(context, 'get', null,
+    var response = await serviceMethod(mounted, context, 'get', null,
         serviceGetEconomicComplements(0, true), true, true);
     if (response != null) {
       procedureBloc.add(UpdateCurrentProcedures(
@@ -210,7 +216,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   getObservations() async {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(context, 'get', null,
+    var response = await serviceMethod(mounted, context, 'get', null,
         serviceGetObservation(userBloc.state.user!.id!), true, true);
     if (response != null) {
       appState.updateObservation(response.body);
@@ -218,7 +224,6 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
         appState.updateStateProcessing(true);
       }
     } else {
-      print('hollllllla');
       return setState(() => stateLoad = false);
     }
   }
@@ -226,7 +231,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   controleVerified() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     var response = await serviceMethod(
-        context, 'get', null, serviceGetMessageFace(), true, true);
+        mounted, context, 'get', null, serviceGetMessageFace(), true, true);
     if (response != null) {
       userBloc.add(UpdateVerifiedDocument(
           json.decode(response.body)['data']['verified']));
@@ -236,7 +241,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   getProcessingPermit() async {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(context, 'get', null,
+    var response = await serviceMethod(mounted, context, 'get', null,
         serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
     if (response != null) {
       userBloc.add(UpdateCtrlLive(

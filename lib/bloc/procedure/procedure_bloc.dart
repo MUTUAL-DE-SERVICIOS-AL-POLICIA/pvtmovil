@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:muserpol_pvt/model/economic_complement_model.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
 

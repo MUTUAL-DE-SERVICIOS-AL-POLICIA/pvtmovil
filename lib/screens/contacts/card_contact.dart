@@ -6,7 +6,7 @@ import 'package:map_launcher/map_launcher.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/model/contacts_model.dart';
 import 'package:theme_provider/theme_provider.dart';
-import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
+import 'package:url_launcher/url_launcher.dart' as urlauncher;
 
 class CardContact extends StatefulWidget {
   final City city;
@@ -32,6 +32,12 @@ class _CardContactState extends State<CardContact> {
                   Text(widget.city.name!),
                   const SizedBox(height: 20),
                   Table(
+                      // ignore: prefer_const_literals_to_create_immutables
+                      columnWidths: {
+                        0: const FlexColumnWidth(3.5),
+                        1: const FlexColumnWidth(8.5),
+                        // 2: FlexColumnWidth(6),
+                      },
                       defaultVerticalAlignment:
                           TableCellVerticalAlignment.middle,
                       children: [
@@ -45,19 +51,16 @@ class _CardContactState extends State<CardContact> {
                                 widget.city.companyAddress!),
                             child: Row(
                               children: [
-                                Icon(Icons.location_on),
+                                const Icon(Icons.location_on),
                                 Flexible(
                                     child: Text(
                                   widget.city.companyAddress!,
-                                  style: TextStyle(color: Color(0xff439CAB)),
+                                  style:
+                                      const TextStyle(color: Color(0xff439CAB)),
                                 ))
                               ],
                             ),
                           ),
-                        ]),
-                        const TableRow(children: [
-                          SizedBox(height: 20),
-                          SizedBox(height: 20),
                         ]),
                         if (json.decode(widget.city.companyPhones!).length > 0)
                           TableRow(children: [
@@ -68,19 +71,15 @@ class _CardContactState extends State<CardContact> {
                                 for (var item
                                     in json.decode(widget.city.companyPhones!))
                                   GestureDetector(
-                                    onTap: () => UrlLauncher.launchUrl(
+                                    onTap: () => urlauncher.launchUrl(
                                         Uri(scheme: 'tel', path: '$item')),
                                     child: Text('$item',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             color: Color(0xff439CAB))),
                                   )
                               ],
                             )
                           ]),
-                        const TableRow(children: [
-                          SizedBox(height: 20),
-                          SizedBox(height: 20),
-                        ]),
                         if (json.decode(widget.city.companyCellphones!).length >
                             0)
                           TableRow(children: [
@@ -91,10 +90,10 @@ class _CardContactState extends State<CardContact> {
                                 for (var item in json
                                     .decode(widget.city.companyCellphones!))
                                   GestureDetector(
-                                    onTap: () => UrlLauncher.launchUrl(
+                                    onTap: () => urlauncher.launchUrl(
                                         Uri(scheme: 'tel', path: '$item')),
                                     child: Text('$item',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             color: Color(0xff439CAB))),
                                   )
                               ],
@@ -115,30 +114,28 @@ class _CardContactState extends State<CardContact> {
         builder: (BuildContext context) {
           return SafeArea(
             child: SingleChildScrollView(
-              child: Container(
-                child: Wrap(
-                  children: <Widget>[
-                    for (var map in availableMaps)
-                      ListTile(
-                          onTap: () => map.showMarker(
-                                coords: coords,
-                                title: title,
-                              ),
-                          title: Text('Abrir: ${map.mapName}'),
-                          leading: SvgPicture.asset(
-                            map.icon,
-                            height: 30.0,
-                            width: 30.0,
-                          )),
-                  ],
-                ),
+              child: Wrap(
+                children: <Widget>[
+                  for (var map in availableMaps)
+                    ListTile(
+                        onTap: () => map.showMarker(
+                              coords: coords,
+                              title: title,
+                            ),
+                        title: Text('Abrir: ${map.mapName}'),
+                        leading: SvgPicture.asset(
+                          map.icon,
+                          height: 30.0,
+                          width: 30.0,
+                        )),
+                ],
               ),
             ),
           );
         },
       );
     } catch (e) {
-      print(e);
+      debugPrint('e $e');
     }
   }
 }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
@@ -24,37 +25,58 @@ class _ScreenInboxState extends State<ScreenInbox> {
         BlocProvider.of<NotificationBloc>(context, listen: true).state;
     return ComponentAnimate(
         child: AlertDialog(
+      actionsAlignment: MainAxisAlignment.spaceAround,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      title: Container(
-        height: 400,
-        child: SingleChildScrollView(
-            child: Column(
+      title: SizedBox(
+        height: MediaQuery.of(context).size.height / 3,
+        child: Column(
           children: [
-            Text('Buzón de mensajes'),
-            if (notificationBloc.existNotifications)
-              for (final item in notificationBloc.listNotifications!.reversed)
-                messageWidget(item)
+            const Text('Buzón de mensajes',
+                style: TextStyle(fontFamily: 'Poppins')),
+            Expanded(
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      if (!notificationBloc.existNotifications ||
+                          notificationBloc.listNotifications!.isEmpty)
+                        Column(
+                          children: [
+                            Image.asset(
+                              'assets/icons/clouds.png',
+                              fit: BoxFit.cover,
+                              height: 100.sp,
+                            ),
+                            const Text(
+                              'No tienes mensajes para leer',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontFamily: 'Poppins'),
+                            ),
+                          ],
+                        ),
+                      if (notificationBloc.existNotifications)
+                        for (final item
+                            in notificationBloc.listNotifications!.reversed)
+                          messageWidget(item)
+                    ],
+                  ),
+                ),
+              ),
+            )
           ],
-        )),
+        ),
       ),
       actions: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-                child: ButtonWhiteComponent(
-              text: 'Aceptar',
-              onPressed: () => Navigator.of(context).pop(),
-            )),
-            if (notificationBloc.existNotifications &&
-                notificationBloc.listNotifications!
-                    .where((e) => e.selected == true)
-                    .isNotEmpty)
-              Expanded(
-                  child: ButtonWhiteComponent(
-                      text: 'Eliminar', onPressed: () => deleteMessage()))
-          ],
-        )
+        ButtonWhiteComponent(
+          text: 'Aceptar',
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        if (notificationBloc.existNotifications &&
+            notificationBloc.listNotifications!
+                .where((e) => e.selected == true)
+                .isNotEmpty)
+          ButtonWhiteComponent(
+              text: 'Eliminar', onPressed: () => deleteMessage())
       ],
     ));
   }
@@ -64,6 +86,9 @@ class _ScreenInboxState extends State<ScreenInbox> {
       onTap: () => Navigator.pushNamed(context, 'message',
           arguments: json.decode(item.content)),
       child: ContainerComponent(
+          color: item.read
+              ? ThemeProvider.themeOf(context).data.scaffoldBackgroundColor
+              : ThemeProvider.themeOf(context).data.primaryColor,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: Row(
@@ -122,7 +147,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
                   child: Checkbox(
                     value: item.selected,
                     onChanged: (value) {
-                      print('value $value');
+                      debugPrint('value $value');
                       setState(() {
                         item.selected = value!;
                       });
@@ -131,10 +156,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
                 ),
               ],
             ),
-          ),
-          color: item.read
-              ? ThemeProvider.themeOf(context).data.scaffoldBackgroundColor
-              : ThemeProvider.themeOf(context).data.primaryColor),
+          )),
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class InputComponent extends StatelessWidget {
   final IconData? icon;
@@ -17,7 +18,6 @@ class InputComponent extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final Function(String)? onChanged;
   final Function()? onTapInput;
-  final TextStyle? style;
   final bool? stateAutofocus;
   const InputComponent(
       {Key? key,
@@ -36,27 +36,38 @@ class InputComponent extends StatelessWidget {
       this.textCapitalization = TextCapitalization.none,
       this.onChanged,
       this.onTapInput,
-      this.style,
       this.stateAutofocus = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-        autofocus: stateAutofocus!,
-        textAlignVertical: TextAlignVertical.center,
-        textAlign: TextAlign.center,
-        style: style,
-        focusNode: focusNode,
-        textCapitalization: textCapitalization,
-        textInputAction: textInputAction,
-        onEditingComplete: onEditingComplete,
-        validator: (text) => validator(text!),
-        controller: controllerText,
-        inputFormatters: inputFormatters,
-        onChanged: onChanged,
-        onTap: onTapInput,
-        keyboardType: keyboardType,
-        obscureText: obscureText);
+      autofocus: stateAutofocus!,
+      textAlignVertical: TextAlignVertical.center,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20.sp,
+          color: const Color(0xff419388),
+          fontFamily: 'Poppins'),
+      focusNode: focusNode,
+      textCapitalization: textCapitalization,
+      textInputAction: textInputAction,
+      onEditingComplete: onEditingComplete,
+      validator: (text) => validator(text!),
+      controller: controllerText,
+      inputFormatters: inputFormatters,
+      onChanged: onChanged,
+      onTap: onTapInput,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+          suffixIcon: InkWell(
+        onTap: onTap,
+        child: Icon(
+          iconOnTap,
+        ),
+      )),
+    );
   }
 }

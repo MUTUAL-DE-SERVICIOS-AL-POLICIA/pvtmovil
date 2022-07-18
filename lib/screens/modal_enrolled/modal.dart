@@ -6,6 +6,7 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/heders.dart';
 import 'package:muserpol_pvt/components/image_ctrl_live.dart';
+import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/model/liveness_data_model.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
@@ -17,8 +18,9 @@ class ModalInsideModal extends StatefulWidget {
   final Function(String) nextScreen;
   const ModalInsideModal({Key? key, required this.nextScreen})
       : super(key: key);
+
   @override
-  _ModalInsideModalState createState() => _ModalInsideModalState();
+  State<ModalInsideModal> createState() => _ModalInsideModalState();
 }
 
 class _ModalInsideModalState extends State<ModalInsideModal>
@@ -39,7 +41,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
   getMessage() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     var response = await serviceMethod(
-        context, 'get', null, serviceProcessEnrolled(), true, true);
+        mounted, context, 'get', null, serviceProcessEnrolled(), true, true);
     if (response != null) {
       userBloc.add(UpdateStateCam(true));
       setState(() {
@@ -101,7 +103,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     final Map<String, dynamic> data = {'image': image};
     var response = await serviceMethod(
-        context, 'post', data, serviceProcessEnrolled(), true, true);
+        mounted, context, 'post', data, serviceProcessEnrolled(), true, true);
     userBloc.add(UpdateStateCam(true));
     if (response != null) {
       if (json.decode(response.body)['error']) {
@@ -109,7 +111,12 @@ class _ModalInsideModalState extends State<ModalInsideModal>
           // title = json.decode(response.body)['message'];
           title = json.decode(response.body)['data']['action']['message'];
         });
-        callDialogAction(context, json.decode(response.body)['message']);
+        // callDialogAction(context, json.decode(response.body)['message']);
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) =>
+                DialogAction(message: json.decode(response.body)['message']));
       } else {
         if (json.decode(response.body)['data']['completed']) {
           User user = userBloc.state.user!;
@@ -117,8 +124,12 @@ class _ModalInsideModalState extends State<ModalInsideModal>
           userBloc.add(UpdateUser(user));
           return widget.nextScreen(json.decode(response.body)['message']);
         } else {
-          setState(() {
-            title = json.decode(response.body)['data']['action']['message'];
+          if (!mounted) return;
+          showSuccessful(context,
+              'Correcto, ${json.decode(response.body)['data']['action']['message']}',
+              () async {
+            setState(() => title =
+                json.decode(response.body)['data']['action']['message']);
           });
         }
       }

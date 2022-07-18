@@ -19,10 +19,9 @@ class ButtonComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
         padding: const EdgeInsets.symmetric(vertical: 19),
-        splashColor: Colors.transparent,
         color: ThemeProvider.themeOf(context).data.primaryColor,
         disabledColor: Colors.grey,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        onPressed: onPressed,
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           stateLoading
               ? Center(
@@ -37,8 +36,7 @@ class ButtonComponent extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   )),
-        ]),
-        onPressed: onPressed);
+        ]));
   }
 }
 
@@ -53,51 +51,10 @@ class ButtonWhiteComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-        padding: const EdgeInsets.symmetric(vertical: 0),
-        splashColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(text,
-              style: TextStyle(
-                fontSize: 15.sp,
-                color: ThemeProvider.themeOf(context).data.primaryColor,
-              )),
-        ]),
-        onPressed: onPressed);
-  }
-}
-
-class ButtonWhiteComponentOutlined extends StatelessWidget {
-  final String text;
-  final Color? colorText;
-  final FontWeight? fontWeight;
-  final bool iconState;
-  final Function() onPressed;
-  const ButtonWhiteComponentOutlined(
-      {Key? key,
-      required this.text,
-      required this.onPressed,
-      this.iconState = false,
-      this.colorText,
-      this.fontWeight})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialButton(
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        splashColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        color: const Color(0xfff2f2f2),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(text,
-              style: TextStyle(
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w600,
-                color: ThemeProvider.themeOf(context).data.primaryColor,
-              ))
-        ]),
-        onPressed: onPressed);
+        onPressed: onPressed,
+        child: Text(
+          text,
+        ));
   }
 }
 
@@ -125,11 +82,10 @@ class ButtonDate extends StatelessWidget {
         onPressed: onPressed,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
-            side: BorderSide(
+            side: const BorderSide(
               color: Colors.grey,
               width: 2.0,
             )),
-        // color: Colors.red,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(text,
@@ -162,16 +118,14 @@ class IconBtnComponent extends StatelessWidget {
       constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
       elevation: 2.0,
       fillColor: Colors.white,
+      shape: const CircleBorder(),
       child: IconButton(
           iconSize: 40,
           icon: SvgPicture.asset(
             iconText,
             height: 100.0,
-            // width: 30.0,
-            // color: Colors.white,
           ),
           onPressed: () => onPressed()),
-      shape: const CircleBorder(),
     );
   }
 }
@@ -191,26 +145,14 @@ class Buttontoltip extends StatelessWidget {
         barrierDismissible: true,
         isModal: true,
         borderRadius: const BorderRadius.all(Radius.circular(18)),
-        child: Material(
-          color: ThemeProvider.themeOf(context).data.primaryColor,
-          shape: const CircleBorder(),
-          elevation: 0,
-          child: const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(
-              Icons.question_mark_outlined,
-              color: Colors.white,
-            ),
-          ),
-        ),
         backgroundColor:
             ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
         content: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const Text(
                   '¿Cuenta con un un carnet alfanumerico? Ej. 123456-7L',
                 ),
                 Row(
@@ -223,6 +165,18 @@ class Buttontoltip extends StatelessWidget {
                   ],
                 )
               ],
-            )));
+            )),
+        child: Material(
+          color: ThemeProvider.themeOf(context).data.primaryColor,
+          shape: const CircleBorder(),
+          elevation: 0,
+          child: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Icon(
+              Icons.question_mark_outlined,
+              color: Colors.white,
+            ),
+          ),
+        ));
   }
 }

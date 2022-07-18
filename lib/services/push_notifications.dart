@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/main.dart';
 
@@ -14,7 +15,7 @@ class PushNotificationService {
   static Stream<String> get messagesStream => _messageStream.stream;
 
   static Future _backgroundHandle(RemoteMessage message) async {
-    print('_backgroundHandle');
+    debugPrint('_backgroundHandle');
     //cuando el telefono esta bloqueado
     final notification = NotificationModel(
         title: message.data['title'],
@@ -23,20 +24,20 @@ class PushNotificationService {
         date: DateTime.now(),
         selected: false);
     await DBProvider.db.newNotificationModel(notification);
-    print('REGISTRADO');
+    debugPrint('REGISTRADO');
     // _messageStream.add(message.data['type']);
     _messageStream.add(json.encode(message.data));
   }
 
   static Future _onMessageHandler(RemoteMessage message) async {
-    print('_onMessageHandler');
+    debugPrint('_onMessageHandler');
     message.data['origin'] = '_onMessageHandler';
     // _messageStream.add(message.data['type']);
     _messageStream.add(json.encode(message.data));
   }
 
   static Future _onMessageOpenApp(RemoteMessage message) async {
-    print('_onMessageOpenApp');
+    debugPrint('_onMessageOpenApp');
     //cuando abres la app por el mensaje
     _messageStream.add(json.encode(message.data));
   }
@@ -45,7 +46,7 @@ class PushNotificationService {
     //push notifications
     await Firebase.initializeApp();
     token = await FirebaseMessaging.instance.getToken();
-    print('tokenNotification $token');
+    debugPrint('tokenNotification $token');
     prefs!.setString('tokenNotification', token!);
 
     //Handlers

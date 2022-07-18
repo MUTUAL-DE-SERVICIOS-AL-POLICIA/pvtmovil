@@ -1,12 +1,11 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:muserpol_pvt/database/notification_model.dart';
 
 part 'notification_event.dart';
 part 'notification_state.dart';
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
-  NotificationBloc() : super(NotificationState()) {
+  NotificationBloc() : super(const NotificationState()) {
     on<AddNotifications>((event, emit) {
       List<NotificationModel> listNotifications = state.existNotifications
           ? [...state.listNotifications!, event.notification]
@@ -16,7 +15,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     });
     on<UpdateNotifications>((event, emit) {
       emit(state.copyWith(
-          existNotifications: true, listNotifications: event.ListNotification));
+          existNotifications: true, listNotifications: event.listNotification));
     });
   }
 }

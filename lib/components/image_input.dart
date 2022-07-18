@@ -7,11 +7,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/model/files_model.dart';
 
-class ImageInputComponent extends StatefulWidget {
+class ImageInput extends StatefulWidget {
   final double sizeImage;
   final Function(InputImage, File) onPressed;
   final FileDocument itemFile;
-  const ImageInputComponent(
+  const ImageInput(
       {Key? key,
       required this.sizeImage,
       required this.onPressed,
@@ -19,10 +19,10 @@ class ImageInputComponent extends StatefulWidget {
       : super(key: key);
 
   @override
-  _ImageInputComponentState createState() => _ImageInputComponentState();
+  ImageInputState createState() => ImageInputState();
 }
 
-class _ImageInputComponentState extends State<ImageInputComponent> {
+class ImageInputState extends State<ImageInput> {
   final ImagePicker _picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
@@ -53,8 +53,6 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
                                     widget.itemFile.imageFile!,
                                     fit: BoxFit.cover,
                                     gaplessPlayback: true,
-                                    // width: widget.sizeImage,
-                                    // height: 300,
                                   ))),
                     Positioned(
                         bottom: 2,
@@ -71,13 +69,15 @@ class _ImageInputComponentState extends State<ImageInputComponent> {
             ]))));
   }
 
-  void _onImageButtonPressed(ImageSource source, BuildContext context) async {
+  _onImageButtonPressed(ImageSource source, BuildContext context) async {
     final XFile? pickedFile = await _picker.pickImage(
       source: source,
       maxWidth: 540,
       maxHeight: 380,
       imageQuality: 100,
     );
+    if (!mounted) return;
+
     Navigator.pop(context);
     if (pickedFile == null) return;
     final inputImage = InputImage.fromFilePath(pickedFile.path);

@@ -4,6 +4,7 @@ import 'package:badges/badges.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
@@ -23,10 +24,11 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'dart:math' as math;
 
 class NavigatorBar extends StatefulWidget {
-  const NavigatorBar({Key? key}) : super(key: key);
+  final bool tutorial;
+  const NavigatorBar({Key? key, this.tutorial = true}) : super(key: key);
 
   @override
-  _NavigatorBarState createState() => _NavigatorBarState();
+  State<NavigatorBar> createState() => _NavigatorBarState();
 }
 
 class _NavigatorBarState extends State<NavigatorBar> {
@@ -48,15 +50,32 @@ class _NavigatorBarState extends State<NavigatorBar> {
   GlobalKey keyMenu = GlobalKey();
   GlobalKey keyRefresh = GlobalKey();
 
+  List<Widget> pageList = [];
+
   @override
   void initState() {
-    Future.delayed(Duration.zero, showTutorial);
+    setState(() {
+      pageList = [
+        ScreenProcedures(
+            current: true,
+            scroll: _scrollController,
+            keyProcedure: keyCreateProcedure,
+            keyMenu: keyMenu,
+            keyRefresh: keyRefresh),
+        ScreenProcedures(current: false, scroll: _scrollController),
+      ];
+    });
+    if (widget.tutorial) {
+      Future.delayed(Duration.zero, showTutorial);
+    } else {
+      getEconomicComplement(true);
+      getEconomicComplement(false);
+    }
     super.initState();
     checkVersion(context);
     getProcessingPermit();
     getObservations();
-    getEconomicComplement(true);
-    getEconomicComplement(false);
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -73,7 +92,9 @@ class _NavigatorBarState extends State<NavigatorBar> {
   getEconomicComplement(bool current) async {
     final procedureBloc =
         BlocProvider.of<ProcedureBloc>(context, listen: false);
+
     var response = await serviceMethod(
+        mounted,
         context,
         'get',
         null,
@@ -104,7 +125,8 @@ class _NavigatorBarState extends State<NavigatorBar> {
   getObservations() async {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(context, 'get', null,
+    if (!mounted) return;
+    var response = await serviceMethod(mounted, context, 'get', null,
         serviceGetObservation(userBloc.state.user!.id!), true, true);
     if (response != null) {
       appState.updateObservation(response.body);
@@ -117,7 +139,8 @@ class _NavigatorBarState extends State<NavigatorBar> {
   getProcessingPermit() async {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(context, 'get', null,
+    if (!mounted) return;
+    var response = await serviceMethod(mounted, context, 'get', null,
         serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
     if (response != null) {
       userBloc.add(UpdateCtrlLive(
@@ -153,15 +176,6 @@ class _NavigatorBarState extends State<NavigatorBar> {
     //   DeviceOrientation.portraitUp,
     //   DeviceOrientation.portraitDown,
     // ]);
-    List<Widget> pageList = [
-      ScreenProcedures(
-          current: true,
-          scroll: _scrollController,
-          keyProcedure: keyCreateProcedure,
-          keyMenu: keyMenu,
-          keyRefresh: keyRefresh),
-      ScreenProcedures(current: false, scroll: _scrollController),
-    ];
     final notificationBloc =
         BlocProvider.of<NotificationBloc>(context, listen: true).state;
     return WillPopScope(
@@ -188,7 +202,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
                         .where((e) => e.read == false)
                         .length
                         .toString(),
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   )
                 : Container(),
             child: IconBtnComponent(
@@ -196,9 +210,10 @@ class _NavigatorBarState extends State<NavigatorBar> {
                 onPressed: () => dialogInbox(context)),
           ),
           body: pageList.elementAt(_currentIndex),
+          // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
           bottomNavigationBar: Stack(
             children: [
-              Container(
+              SizedBox(
                 height: 50,
                 child: Row(
                   children: [
@@ -222,30 +237,31 @@ class _NavigatorBarState extends State<NavigatorBar> {
                 ),
               ),
               ConvexAppBar(
+                  height: 65,
                   elevation: 0,
-                  backgroundColor: Color(0xff419388),
+                  backgroundColor: const Color(0xff419388),
                   // color: Color(0xff419388),
                   style: TabStyle.react,
                   items: [
                     TabItem(
+                        isIconBlend: true,
                         icon: SvgPicture.asset(
                           'assets/icons/newProcedure.svg',
-                          height: 30.0,
-                          width: 30.0,
+                          height: 30.sp,
                           color: Colors.white,
                         ),
                         title: "Trámites Vigentes"),
                     TabItem(
+                        isIconBlend: true,
                         icon: SvgPicture.asset(
                           'assets/icons/historyProcedure.svg',
-                          height: 30.0,
-                          width: 30.0,
+                          height: 30.sp,
                           color: Colors.white,
                         ),
                         title: "Trámites Históricos"),
                   ],
                   initialActiveIndex: 0,
-                  onTap: (int i) => setState(() => _currentIndex = i)),
+                  onTap: (int i) => {setState(() => _currentIndex = i)}),
             ],
           ),
         ));
@@ -255,7 +271,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
     showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (BuildContext context) => ScreenInbox());
+        builder: (BuildContext context) => const ScreenInbox());
   }
 
   Future<bool> _onBackPressed() async {
@@ -270,26 +286,30 @@ class _NavigatorBarState extends State<NavigatorBar> {
     tutorialCoachMark = TutorialCoachMark(
       context,
       targets: targets,
-      colorShadow: Color(0xff419388),
+      colorShadow: const Color(0xff419388),
       textSkip: "OMITIR",
       paddingFocus: 10,
       opacityShadow: 0.8,
       onFinish: () {
-        print("finish");
+        debugPrint("finish");
+        getEconomicComplement(true);
+        getEconomicComplement(false);
       },
       onClickTarget: (target) {
-        print('onClickTarget: $target');
+        debugPrint('onClickTarget: $target');
       },
       onClickTargetWithTapPosition: (target, tapDetails) {
-        print("target: $target");
-        print(
+        debugPrint("target: $target");
+        debugPrint(
             "clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
       },
       onClickOverlay: (target) {
-        print('onClickOverlay: $target');
+        debugPrint('onClickOverlay: $target');
       },
       onSkip: () {
-        print("skip");
+        debugPrint("skip");
+        getEconomicComplement(true);
+        getEconomicComplement(false);
       },
     )..show();
   }
@@ -307,8 +327,8 @@ class _NavigatorBarState extends State<NavigatorBar> {
             builder: (context, controller) {
               return Column(
                 children: <Widget>[
-                  Padding(
-                      padding: const EdgeInsets.only(bottom: 30.0),
+                  const Padding(
+                      padding: EdgeInsets.only(bottom: 30.0),
                       child: Text(
                         "Aquí podrás ver tus Tramites disponibles ",
                         style: TextStyle(color: Colors.white),
@@ -317,7 +337,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
                       alignment: Alignment.center,
                       transform: Matrix4.rotationY(180),
                       child: RotationTransition(
-                          turns: new AlwaysStoppedAnimation(15 / 180),
+                          turns: const AlwaysStoppedAnimation(15 / 180),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Image.asset(
@@ -346,8 +366,8 @@ class _NavigatorBarState extends State<NavigatorBar> {
               return Column(
                 // crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Padding(
-                      padding: const EdgeInsets.only(bottom: 30.0),
+                  const Padding(
+                      padding: EdgeInsets.only(bottom: 30.0),
                       child: Text(
                         "Aquí podrás ver el historial de tus tramites ",
                         style: TextStyle(color: Colors.white),
@@ -374,27 +394,26 @@ class _NavigatorBarState extends State<NavigatorBar> {
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "CREACIÓN DE TRÁMITE",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // ignore: prefer_const_literals_to_create_immutables
+              children: <Widget>[
+                const Text(
+                  "CREACIÓN DE TRÁMITE",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 20.0),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    "Si ves el botón de color verde, puedes crear tu trámite correspondiente al semestre",
+                    style: TextStyle(color: Colors.white),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      "Si ves el botón de color verde, puedes crear tu trámite correspondiente al semestre",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
         ],
@@ -411,27 +430,25 @@ class _NavigatorBarState extends State<NavigatorBar> {
           TargetContent(
             align: ContentAlign.top,
             builder: (context, controller) {
-              return Container(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "BUZÓN DE MENSAJES",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 20.0),
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const <Widget>[
+                  Text(
+                    "BUZÓN DE MENSAJES",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 20.0),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      "Acá podrás observar todos los mensajes que la MUSERPOL tiene para ti ",
+                      style: TextStyle(color: Colors.white),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Text(
-                        "Acá podrás observar todos los mensajes que la MUSERPOL tiene para ti ",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               );
             },
           ),
@@ -446,27 +463,26 @@ class _NavigatorBarState extends State<NavigatorBar> {
           TargetContent(
             align: ContentAlign.bottom,
             builder: (context, controller) {
-              return Container(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "MENÚ",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 20.0),
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                // ignore: prefer_const_literals_to_create_immutables
+                children: <Widget>[
+                  const Text(
+                    "MENÚ",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 20.0),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      "Aquí podras observar un menú donde encontraras tus datos y diferentes opciones",
+                      style: TextStyle(color: Colors.white),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Text(
-                        "Aquí podras observar un menú donde encontraras tus datos y diferentes opciones",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),
@@ -479,29 +495,27 @@ class _NavigatorBarState extends State<NavigatorBar> {
         keyTarget: keyRefresh,
         contents: [
           TargetContent(
-            align: ContentAlign.bottom,
+            align: ContentAlign.top,
             builder: (context, controller) {
-              return Container(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "ACTUALIZAR",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 20.0),
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const <Widget>[
+                  Text(
+                    "ACTUALIZAR",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 20.0),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      "con este botón podrás refrescar la pantalla",
+                      style: TextStyle(color: Colors.white),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Text(
-                        "con este botón podrás refrescar la pantalla",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),

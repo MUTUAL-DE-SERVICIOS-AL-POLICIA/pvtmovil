@@ -22,7 +22,7 @@ class TabInfo extends StatelessWidget {
                   textAlign: TextAlign.justify,
                   style: TextStyle(fontSize: 20.sp),
                 )),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 ButtonComponent(

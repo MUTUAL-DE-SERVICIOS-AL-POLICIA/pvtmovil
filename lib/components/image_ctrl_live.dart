@@ -73,20 +73,20 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
       controllerCam!.addListener(() {
         if (mounted) setState(() {});
         if (controllerCam!.value.hasError) {
-          print('Camera error ${controllerCam!.value.errorDescription}');
+          debugPrint('Camera error ${controllerCam!.value.errorDescription}');
         }
       });
       stateCam.add(UpdateStateBtntoggleCameraLens(true));
       setState(() {});
     }).catchError((Object e) {
-      print('error $e');
+      debugPrint('error $e');
       if (e is CameraException) {
         switch (e.code) {
           case 'CameraAccessDenied':
-            print('User denied camera access.');
+            debugPrint('User denied camera access.');
             break;
           default:
-            print('Handle other errors.');
+            debugPrint('Handle other errors.');
             break;
         }
       }
@@ -108,10 +108,10 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
                 left: 0,
                 child: Transform(
                     alignment: Alignment.center,
+                    transform: Matrix4.rotationY(mirror),
                     child: CameraPreview(
                       controllerCam!,
-                    ),
-                    transform: Matrix4.rotationY(mirror))),
+                    ))),
             stateCam.stateBtntoggleCameraLens
                 ? Positioned(
                     bottom: 20,
@@ -123,7 +123,7 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
                           iconText: 'assets/icons/camera-switch.svg',
                           onPressed: () => switchCam(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         Expanded(
@@ -173,7 +173,7 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
         widget.sendImage(base64);
       }
     } catch (_) {
-      print('paso paso algo');
+      debugPrint('paso paso algo');
     }
   }
 

@@ -1,6 +1,5 @@
 part of 'notification_bloc.dart';
 
-@immutable
 abstract class NotificationEvent {}
 
 class AddNotifications extends NotificationEvent {
@@ -10,7 +9,7 @@ class AddNotifications extends NotificationEvent {
 }
 
 class UpdateNotifications extends NotificationEvent {
-  final List<NotificationModel> ListNotification;
+  final List<NotificationModel> listNotification;
 
-  UpdateNotifications(this.ListNotification);
+  UpdateNotifications(this.listNotification);
 }

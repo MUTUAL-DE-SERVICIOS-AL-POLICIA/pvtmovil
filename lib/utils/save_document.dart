@@ -11,12 +11,12 @@ Future<String> saveFile(
   if (!Directory(path).existsSync()) {
     Directory(path).createSync();
   }
-  File file = new File(path + fileName);
+  File file = File(path + fileName);
   file.writeAsBytesSync(data);
   return path + fileName;
 }
 
 Future<String> getDir(String path) async {
   final externalDirectory = await getTemporaryDirectory();
-  return externalDirectory.path + '/' + path + '/';
+  return '${externalDirectory.path}/$path/';
 }

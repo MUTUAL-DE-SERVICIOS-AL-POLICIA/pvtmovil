@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:new_version/new_version.dart';
 
 Future<dynamic> serviceMethod(
+    bool mounted,
     BuildContext context,
     String method,
     Map<String, dynamic>? body,
@@ -37,8 +38,9 @@ Future<dynamic> serviceMethod(
     }
   }
   if (await InternetConnectionChecker().connectionStatus ==
-      await InternetConnectionStatus.disconnected) {
-    return callDialogAction(context, 'Verifique su conexión a Internet');
+      InternetConnectionStatus.disconnected) {
+    if (!mounted) return;
+    callDialogAction(context, 'Verifique su conexión a Internet');
   }
   try {
     var url = Uri.parse(urlAPI);
@@ -46,29 +48,30 @@ Future<dynamic> serviceMethod(
     ioc.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     final http = IOClient(ioc);
-    print('url $url');
-    print('body $body');
+    debugPrint('url $url');
+    debugPrint('body $body');
     switch (method) {
       case 'get':
         return await http
             .get(url, headers: headers)
             .timeout(const Duration(seconds: 40))
             .then((value) {
-          print('statusCode ${value.statusCode}');
-          print('value ${value.body}');
+          debugPrint('statusCode ${value.statusCode}');
+          debugPrint('value ${value.body}');
           switch (value.statusCode) {
             case 200:
               return value;
             default:
               if (errorState) {
-                return confirmDeleteSession(context);
-                // callDialogAction(
-                //     context, json.decode(value.body)['message']);
+                return confirmDeleteSession(mounted, context);
               }
+              // else {
+              //   callDialogAction(context, json.decode(value.body)['message']);
+              // }
               return null;
           }
         }).catchError((err) {
-          print('errA $err');
+          debugPrint('errA $err');
           if ('$err'.contains('html')) {
             callDialogAction(context,
                 'Tenemos un problema con nuestro servidor, intente luego');
@@ -85,8 +88,8 @@ Future<dynamic> serviceMethod(
             .post(url, headers: headers, body: json.encode(body))
             .timeout(const Duration(seconds: 40))
             .then((value) {
-          print('statusCode ${value.statusCode}');
-          print('value ${value.body}');
+          debugPrint('statusCode ${value.statusCode}');
+          debugPrint('value ${value.body}');
           switch (value.statusCode) {
             case 200:
               return value;
@@ -95,7 +98,7 @@ Future<dynamic> serviceMethod(
               return null;
           }
         }).catchError((err) {
-          print('errA $err');
+          debugPrint('errA $err');
           if ('$err'.contains('html')) {
             callDialogAction(context,
                 'Tenemos un problema con nuestro servidor, intente luego');
@@ -109,31 +112,42 @@ Future<dynamic> serviceMethod(
         });
     }
   } on TimeoutException catch (e) {
-    print('errB $e');
+    debugPrint('errB $e');
+
+    if (!mounted) return;
     return callDialogAction(
         context, 'Tenemos un problema con nuestro servidor, intente luego');
   } on SocketException catch (e) {
-    print('errC $e');
+    debugPrint('errC $e');
+    if (!mounted) return;
     return callDialogAction(context, 'Verifique su conexión a Internet');
   } on ClientException catch (e) {
-    print('errD $e');
+    debugPrint('errD $e');
+    if (!mounted) return;
     return callDialogAction(context, 'Verifique su conexión a Internet');
   } on MissingPluginException catch (e) {
-    print('errF $e');
+    debugPrint('errF $e');
+    if (!mounted) return;
     return callDialogAction(context, 'Verifique su conexión a Internet');
   } catch (e) {
-    print('errG $e');
-    return callDialogAction(context, '$e');
+    debugPrint('errG $e');
+    if (!mounted) return;
+    callDialogAction(context, '$e');
   }
 }
 
-confirmDeleteSession(BuildContext context) async {
+void callDialogAction(BuildContext context, String message) {
+  showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) => DialogAction(message: message));
+}
+
+confirmDeleteSession(bool mounted, BuildContext context) async {
   final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: false);
   final authService = Provider.of<AuthService>(context, listen: false);
   final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
   final appState = Provider.of<AppState>(context, listen: false);
-  // var response = await serviceMethod( context, 'delete', null, serviceAuthSession(), true);
-  // if ( response != null ) {
   prefs!.getKeys();
   for (String key in prefs!.getKeys()) {
     prefs!.remove(key);
@@ -143,18 +157,19 @@ confirmDeleteSession(BuildContext context) async {
   }
   userBloc.add(UpdateCtrlLive(false));
   var appDir = (await getTemporaryDirectory()).path;
-  new Directory(appDir).delete(recursive: true);
+  Directory(appDir).delete(recursive: true);
   authService.logout();
   procedureBloc.add(ClearProcedures());
   appState.updateTabProcedure(0);
   appState.updateStateProcessing(false);
-  Navigator.pushReplacementNamed(context, 'login');
-  // }
+  if (!mounted) return;
+
+  Navigator.pushReplacementNamed(context, 'switch');
 }
 
 checkVersion(BuildContext context) async {
   if (await InternetConnectionChecker().connectionStatus ==
-      await InternetConnectionStatus.disconnected) {
+      InternetConnectionStatus.disconnected) {
     return callDialogAction(context, 'Verifique su conexión a Internet');
   }
   final newVersion = NewVersion(
@@ -162,7 +177,7 @@ checkVersion(BuildContext context) async {
     androidId: "com.muserpol.pvt",
   );
   final status = await newVersion.getVersionStatus();
-  print('status $status' );
+  debugPrint('status $status');
   if (status != null) {
     if (status.localVersion == status.storeVersion) return;
     return newVersion.showUpdateDialog(

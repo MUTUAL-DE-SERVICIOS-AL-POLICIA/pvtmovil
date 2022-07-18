@@ -113,6 +113,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
                   onTap: () => closeSession(context)),
               Center(
                 child: Text('Versión ${dotenv.env['version']}'),
+              ),
+              const SizedBox(
+                height: 30,
               )
             ],
           ))),
@@ -122,7 +125,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   privacyPolicy(BuildContext context) async {
     setState(() => stateLoading = true);
     var response = await serviceMethod(
-        context, 'get', null, serviceGetPrivacyPolicy(), false, true);
+        mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, true);
     setState(() => stateLoading = false);
     if (response != null) {
       String pathFile = await saveFile(
@@ -146,7 +149,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
           return ComponentAnimate(
               child: DialogTwoAction(
                   message: '¿Estás seguro que quieres cerrar sesión?',
-                  actionCorrect: () => confirmDeleteSession(context),
+                  actionCorrect: () => confirmDeleteSession(mounted, context),
                   messageCorrect: 'Salir'));
         });
   }

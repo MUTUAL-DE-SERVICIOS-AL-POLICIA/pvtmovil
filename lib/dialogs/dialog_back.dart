@@ -7,6 +7,7 @@ class DialogBack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      actionsAlignment: MainAxisAlignment.spaceAround,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       title: Column(
         children: const [
@@ -16,20 +17,13 @@ class DialogBack extends StatelessWidget {
         ],
       ),
       actions: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(
-                child: ButtonWhiteComponent(
-                    text: 'Salir',
-                    onPressed: () => SystemChannels.platform
-                        .invokeMethod('SystemNavigator.pop'))),
-            Expanded(
-                child: ButtonWhiteComponent(
-              text: 'Cancelar',
-              onPressed: () => Navigator.of(context).pop(),
-            ))
-          ],
+        ButtonWhiteComponent(
+            text: 'Salir',
+            onPressed: () =>
+                SystemChannels.platform.invokeMethod('SystemNavigator.pop')),
+        ButtonWhiteComponent(
+          text: 'Cancelar',
+          onPressed: () => Navigator.of(context).pop(),
         )
       ],
     );

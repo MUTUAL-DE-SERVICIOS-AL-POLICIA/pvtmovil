@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 
 part 'user_event.dart';

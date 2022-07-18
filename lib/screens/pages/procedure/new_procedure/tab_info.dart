@@ -30,7 +30,7 @@ class _TabInfoEconomicComplementState extends State<TabInfoEconomicComplement> {
             key: formKey,
             child: Column(
               children: [
-                Text('Número telefónico:'),
+                const Text('Número telefónico:'),
                 InputComponent(
                   stateAutofocus: true,
                   textInputAction: TextInputAction.next,
@@ -44,7 +44,7 @@ class _TabInfoEconomicComplementState extends State<TabInfoEconomicComplement> {
                     }
                   },
                   inputFormatters: [
-                    new LengthLimitingTextInputFormatter(10),
+                    LengthLimitingTextInputFormatter(10),
                     FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                   ],
                   keyboardType: TextInputType.number,
@@ -53,13 +53,13 @@ class _TabInfoEconomicComplementState extends State<TabInfoEconomicComplement> {
                   labelText: "Número de contacto",
                 ),
                 Table(
-                    columnWidths: {
+                    columnWidths: const {
                       0: FlexColumnWidth(6),
                       1: FlexColumnWidth(0.3),
                       2: FlexColumnWidth(6),
                     },
                     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                    border: TableBorder(
+                    border: const TableBorder(
                       horizontalInside: BorderSide(
                         width: 0.5,
                         color: Colors.grey,
@@ -73,9 +73,9 @@ class _TabInfoEconomicComplementState extends State<TabInfoEconomicComplement> {
                           Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 3, horizontal: 10),
-                              child: Text('${item.key!}',
-                                  textAlign: TextAlign.right)),
-                          Text(':'),
+                              child:
+                                  Text(item.key!, textAlign: TextAlign.right)),
+                          const Text(':'),
                           Text('${item.value}')
                         ])
                     ]),

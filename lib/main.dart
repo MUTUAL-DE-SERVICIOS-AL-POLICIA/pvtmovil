@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -8,11 +9,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/screens/inbox/notification.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
+import 'package:muserpol_pvt/utils/style.dart';
+import 'package:path_provider/path_provider.dart';
 import 'bloc/notification/notification_bloc.dart';
 import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/check_auth_screen.dart';
-import 'package:muserpol_pvt/screens/login.dart';
 import 'package:muserpol_pvt/screens/navigator_bar.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +29,16 @@ import 'screens/contacts/screen_contact.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 SharedPreferences? prefs;
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +47,7 @@ void main() async {
   );
   prefs = await SharedPreferences.getInstance();
   await PushNotificationService.initializeapp();
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
 
@@ -67,13 +80,13 @@ class _MyAppState extends State<MyApp> {
               designSize: const Size(360, 690),
               minTextAdapt: true,
               splitScreenMode: true,
-              builder: (context, child) => ProjectMuserpol()),
+              builder: (context, child) => const ProjectMuserpol()),
         ));
   }
 }
 
 class ProjectMuserpol extends StatefulWidget {
-  ProjectMuserpol({Key? key}) : super(key: key);
+  const ProjectMuserpol({Key? key}) : super(key: key);
 
   @override
   State<ProjectMuserpol> createState() => _ProjectMuserpolState();
@@ -88,9 +101,11 @@ class _ProjectMuserpolState extends State<ProjectMuserpol>
   @override
   void initState() {
     super.initState();
+    _deleteCacheDir();
+    _deleteAppDir();
     WidgetsBinding.instance.addObserver(this);
     PushNotificationService.messagesStream.listen((message) {
-      print('NO TI FI CA CION $message');
+      debugPrint('NO TI FI CA CION $message');
       final msg = json.decode(message);
       if (msg['origin'] == '_onMessageHandler') {
         notification(json.encode(msg));
@@ -98,6 +113,22 @@ class _ProjectMuserpolState extends State<ProjectMuserpol>
         navigatorKey.currentState!.pushNamed('message', arguments: msg);
       }
     });
+  }
+
+  Future<void> _deleteCacheDir() async {
+    final cacheDir = await getTemporaryDirectory();
+
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+    }
+  }
+
+  Future<void> _deleteAppDir() async {
+    final appDir = await getApplicationSupportDirectory();
+
+    if (appDir.existsSync()) {
+      appDir.deleteSync(recursive: true);
+    }
   }
 
   @override
@@ -150,157 +181,8 @@ class _ProjectMuserpolState extends State<ProjectMuserpol>
         }
       },
       themes: [
-        AppTheme.light().copyWith(
-            id: 'light',
-            data: ThemeData.light().copyWith(
-                drawerTheme: DrawerThemeData(
-                    elevation: 0,
-                    backgroundColor: const Color(0xffF2F2F2),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.horizontal(
-                            right: Radius.circular(8)))),
-                inputDecorationTheme: ThemeData.light()
-                    .inputDecorationTheme
-                    .copyWith(
-                        focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide:
-                                const BorderSide(color: Color(0xff419388))),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0)),
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide:
-                                const BorderSide(color: Color(0xffE8EAED))),
-                        // fillColor: const Color(0xfff2f2f2),
-                        filled: true,
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(
-                            color: Color(0xff419388),
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 2.0,
-                          ),
-                        ),
-                        iconColor: const Color(0xffBCBCBC),
-                        suffixStyle: TextStyle(fontSize: 17.sp),
-                        helperStyle: TextStyle(fontSize: 17.sp),
-                        prefixStyle: TextStyle(fontSize: 17.sp),
-                        counterStyle: TextStyle(fontSize: 17.sp),
-                        errorStyle:
-                            TextStyle(fontSize: 15.sp, color: Colors.red),
-                        hintStyle: TextStyle(fontSize: 17.sp),
-                        floatingLabelAlignment: FloatingLabelAlignment.center,
-                        floatingLabelStyle: TextStyle(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xff419388)),
-                        labelStyle: TextStyle(
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xff419388),
-                        )),
-                colorScheme: ColorScheme.fromSwatch().copyWith(
-                    primary: const Color(0xff419388),
-                    secondary: const Color(0xff419388)),
-                primaryColor: const Color(0xff419388),
-                cardColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                textTheme: ThemeData.light().textTheme.copyWith(
-                    bodyText2: TextStyle(
-                        color: const Color(0xff21232A), fontSize: 15.sp)),
-                primaryTextTheme: ThemeData.light()
-                    .textTheme
-                    .copyWith(
-                      bodyText1: TextStyle(fontSize: 20.sp),
-                      bodyText2: TextStyle(fontSize: 20.sp),
-                    )
-                    .apply(fontFamily: 'Ubuntu'),
-                dialogBackgroundColor: const Color(0xfff2f2f2),
-                scaffoldBackgroundColor: const Color(0xfff2f2f2),
-                primaryColorDark: const Color(0xff21232A),
-                iconTheme: const IconThemeData(color: Color(0xff419388)))),
-        AppTheme.dark().copyWith(
-            id: 'dark',
-            data: ThemeData.dark().copyWith(
-                drawerTheme: DrawerThemeData(
-                    elevation: 0,
-                    backgroundColor: const Color(0xff060d09),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.horizontal(
-                            right: Radius.circular(8)))),
-                inputDecorationTheme: ThemeData.dark()
-                    .inputDecorationTheme
-                    .copyWith(
-                        iconColor: const Color(0xffBCBCBC),
-                        focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide:
-                                const BorderSide(color: Color(0xff419388))),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0)),
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide:
-                                const BorderSide(color: Color(0xffE8EAED))),
-                        // fillColor: const Color(0xfff2f2f2),
-                        filled: true,
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(
-                            color: Color(0xff419388),
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 2.0,
-                          ),
-                        ),
-                        suffixStyle: TextStyle(fontSize: 17.sp),
-                        helperStyle: TextStyle(fontSize: 17.sp),
-                        prefixStyle: TextStyle(fontSize: 17.sp),
-                        counterStyle: TextStyle(fontSize: 17.sp),
-                        errorStyle:
-                            TextStyle(fontSize: 15.sp, color: Colors.red),
-                        hintStyle: TextStyle(fontSize: 17.sp),
-                        floatingLabelAlignment: FloatingLabelAlignment.center,
-                        floatingLabelStyle: TextStyle(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xff419388)),
-                        labelStyle: TextStyle(
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xff419388))),
-                colorScheme: ColorScheme.fromSwatch().copyWith(
-                    primary: const Color(0xff419388),
-                    secondary: const Color(0xff419388)),
-                primaryColor: const Color(0xff419388),
-                cardColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                textTheme: ThemeData.dark().textTheme.copyWith(
-                    bodyText2: TextStyle(
-                        color: const Color(0xfff2f2f2), fontSize: 15.sp)),
-                primaryTextTheme: ThemeData.dark()
-                    .textTheme
-                    .copyWith(
-                      bodyText1: TextStyle(fontSize: 20.sp),
-                      bodyText2: TextStyle(fontSize: 20.sp),
-                    )
-                    .apply(fontFamily: 'Ubuntu'),
-                dialogBackgroundColor: const Color(0xff060d09),
-                scaffoldBackgroundColor: const Color(0xff060d09),
-                primaryColorDark: const Color(0xfff2f2f2),
-                iconTheme: const IconThemeData(color: Color(0xff419388)))),
+        styleLigth2(),
+        styleDark2(),
       ],
       child: ThemeConsumer(
         child: Builder(
@@ -320,8 +202,8 @@ class _ProjectMuserpolState extends State<ProjectMuserpol>
                 title: 'MUSERPOL PVT',
                 initialRoute: 'check_auth',
                 routes: {
+                  'switch': (_) => const CheckAuthScreen(),
                   'check_auth': (_) => const CheckAuthScreen(),
-                  'login': (_) => const ScreenLogin(),
                   'navigator': (_) => const NavigatorBar(),
                   'contacts': (_) => const ScreenContact(),
                   'message': (_) => const ScreenNotification()

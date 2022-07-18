@@ -1,8 +1,10 @@
 import 'dart:io';
-
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as p;
+import 'package:flutter/material.dart';
 import 'package:muserpol_pvt/database/notification_model.dart';
 export 'package:muserpol_pvt/database/notification_model.dart';
-import 'package:path/path.dart';
+
 import 'package:path_provider/path_provider.dart';
 
 import 'package:sqflite/sqflite.dart';
@@ -22,7 +24,7 @@ class DBProvider {
 
   Future<Database> initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = join(documentsDirectory.path, 'muserpolpvt.db');
+    final path = p.join(documentsDirectory.path, 'muserpolpvt.db');
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute('''
@@ -87,8 +89,8 @@ class DBProvider {
     final noti = await db
         .query('notification', where: 'content = ?', whereArgs: [content]);
     if (noti.isNotEmpty) {
-      print('noti ${noti[0]}');
-      final newNoti = await Map.of(noti[0]);
+      debugPrint('noti ${noti[0]}');
+      final newNoti = Map.of(noti[0]);
       newNoti['read'] = 'true';
       final res = await db.update('notification', newNoti,
           where: 'id = ?', whereArgs: [newNoti['id']]);

@@ -10,12 +10,13 @@ class CardObservation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: true);
+    debugPrint('app ${appState.messageObservation}');
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: Container(
-          decoration: new BoxDecoration(
+          decoration: const BoxDecoration(
             boxShadow: <BoxShadow>[
-              new BoxShadow(
+              BoxShadow(
                 color: Color(0xffffdead),
                 blurRadius: 4.0,
               ),
@@ -30,23 +31,24 @@ class CardObservation extends StatelessWidget {
                   children: [
                     Flexible(
                         child: Text(
-                      json.decode(appState.messageObservation!)['message'],
+                      json.decode(appState.messageObservation)['message'],
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.black),
+                      style: const TextStyle(
+                          color: Colors.black, fontFamily: 'Manrope'),
                     ))
                   ],
                 ),
                 if (json
-                        .decode(appState.messageObservation!)['data']['display']
+                        .decode(appState.messageObservation)['data']['display']
                         .length >
                     0)
                   Table(
-                      columnWidths: {
+                      columnWidths: const {
                         0: FlexColumnWidth(5),
                         1: FlexColumnWidth(0.3),
                         2: FlexColumnWidth(5),
                       },
-                      border: TableBorder(
+                      border: const TableBorder(
                         horizontalInside: BorderSide(
                           width: 0.5,
                           color: Colors.grey,
@@ -57,7 +59,7 @@ class CardObservation extends StatelessWidget {
                           TableCellVerticalAlignment.middle,
                       children: [
                         for (var itemx
-                            in json.decode(appState.messageObservation!)['data']
+                            in json.decode(appState.messageObservation)['data']
                                 ['display'])
                           TableRow(children: [
                             Padding(
@@ -66,19 +68,29 @@ class CardObservation extends StatelessWidget {
                               child: Text(
                                 '${itemx['key']!}',
                                 textAlign: TextAlign.right,
+                                style: const TextStyle(fontFamily: 'Manrope'),
                               ),
                             ),
-                            Text(':'),
+                            const Text(':'),
                             itemx['value'] is List
                                 ? Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       for (var itemy in itemx['value'])
-                                        Text('• $itemy')
+                                        Text(
+                                          '• $itemy',
+                                          style: const TextStyle(
+                                              fontFamily: 'Manrope'),
+                                        )
                                     ],
                                   )
-                                : Text('${itemx['value']}'),
+                                : Text(
+                                    '${itemx['value']}',
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'Manrope'),
+                                  ),
                           ]),
                       ]),
               ],

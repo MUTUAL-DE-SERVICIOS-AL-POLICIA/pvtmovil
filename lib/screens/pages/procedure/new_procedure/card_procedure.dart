@@ -52,7 +52,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
   Future<void> observationAffiliate() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state;
     final procedureBloc = Provider.of<ProcedureBloc>(context, listen: false);
-    var response = await serviceMethod(context, 'get', null,
+    var response = await serviceMethod(mounted, context, 'get', null,
         serviceEcoComProcedure(userBloc.procedureId!), true, true);
     if (response != null) {
       procedureBloc.add(UpdateEconomicComplement(
@@ -77,12 +77,12 @@ class _StepperProcedureState extends State<StepperProcedure> {
               key: formKey,
               child: Column(
                 children: [
-                  HedersComponent(title: 'Nuevo trámite'),
+                  const HedersComponent(title: 'Nuevo trámite'),
                   Expanded(
                     child: Stepper(
                       onStepTapped: (step) => tapped(step),
                       type: stepperType,
-                      physics: ScrollPhysics(),
+                      physics: const ScrollPhysics(),
                       currentStep: appState.indexTabProcedure,
                       onStepContinue: nextPage,
                       controlsBuilder:
@@ -93,7 +93,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
                       },
                       steps: <Step>[
                         Step(
-                          title: new Text('Control de vivencia',
+                          title: Text('Control de vivencia',
                               style: TextStyle(
                                   color: ThemeProvider.themeOf(context)
                                       .data
@@ -127,17 +127,17 @@ class _StepperProcedureState extends State<StepperProcedure> {
                         if (!userBloc!.verified!)
                           for (var item in appState.files)
                             Step(
-                              title: new Text('Documento:',
+                              title: Text('Documento:',
                                   style: TextStyle(
                                       color: ThemeProvider.themeOf(context)
                                           .data
                                           .primaryColorDark)),
-                              subtitle: new Text(item.title!,
+                              subtitle: Text(item.title!,
                                   style: TextStyle(
                                       color: ThemeProvider.themeOf(context)
                                           .data
                                           .primaryColorDark)),
-                              content: ImageInputComponent(
+                              content: ImageInput(
                                 sizeImage: 250,
                                 onPressed: (img, file) =>
                                     detectorText(img, file, item),
@@ -151,7 +151,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
                                       : StepState.disabled,
                             ),
                         Step(
-                          title: new Text('Mis datos',
+                          title: Text('Mis datos',
                               style: TextStyle(
                                   color: ThemeProvider.themeOf(context)
                                       .data
@@ -236,6 +236,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
                   await appState
                       .updateTabProcedure(appState.indexTabProcedure + 1);
                 }
+                if (!mounted) return;
                 Navigator.pop(context);
               });
             }));
@@ -331,10 +332,11 @@ class _StepperProcedureState extends State<StepperProcedure> {
       'cell_phone_number': phoneCtrl.text.trim(),
       'attachments': info,
     };
-    var response = await serviceMethod(
-        context, 'post', data, serviceSendImagesProcedure(), true, true);
+    var response = await serviceMethod(mounted, context, 'post', data,
+        serviceSendImagesProcedure(), true, true);
     if (response != null) {
       appState.updateStateProcessing(false);
+      if (!mounted) return;
       Navigator.of(context).pop();
       widget.endProcedure(response);
     } else {

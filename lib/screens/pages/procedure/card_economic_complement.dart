@@ -21,17 +21,18 @@ class _CardEcState extends State<CardEc> {
   bool btnAccess = true;
   @override
   Widget build(BuildContext context) {
-    return ContainerComponent(
-        color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
-        child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-            child: Row(children: [
-              Expanded(
-                  child: Column(
-                children: [
-                  // Text(widget.item!.title!),
-                  Container(
-                    child: Row(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: ContainerComponent(
+          color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+          child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+              child: Row(children: [
+                Expanded(
+                    child: Column(
+                  children: [
+                    // Text(widget.item!.title!),
+                    Row(
                       mainAxisAlignment: (widget.item!.subtitle! != '')
                           ? MainAxisAlignment.spaceBetween
                           : MainAxisAlignment.center,
@@ -39,7 +40,7 @@ class _CardEcState extends State<CardEc> {
                         Flexible(
                           child: Text(
                             widget.item!.title!,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
                             textAlign: widget.item!.subtitle! != ''
@@ -51,7 +52,7 @@ class _CardEcState extends State<CardEc> {
                           Flexible(
                             child: Text(
                               widget.item!.subtitle!,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w300,
                               ),
                               textAlign: TextAlign.right,
@@ -59,94 +60,107 @@ class _CardEcState extends State<CardEc> {
                           ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Table(
-                      columnWidths: {
-                        0: FlexColumnWidth(5),
-                        1: FlexColumnWidth(0.3),
-                        2: FlexColumnWidth(5),
-                      },
-                      border: TableBorder(
-                        horizontalInside: BorderSide(
-                          width: 0.5,
-                          color: Colors.grey,
-                          style: BorderStyle.solid,
+                    const SizedBox(height: 20),
+                    Table(
+                        columnWidths: const {
+                          0: FlexColumnWidth(5),
+                          1: FlexColumnWidth(0.3),
+                          2: FlexColumnWidth(5),
+                        },
+                        border: const TableBorder(
+                          horizontalInside: BorderSide(
+                            width: 0.5,
+                            color: Colors.grey,
+                            style: BorderStyle.solid,
+                          ),
                         ),
-                      ),
-                      defaultVerticalAlignment:
-                          TableCellVerticalAlignment.middle,
-                      children: [
-                        for (var itemx in widget.item!.display!)
-                          TableRow(children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 3, horizontal: 10),
-                              child: Text(
-                                '${itemx.key!}',
-                                textAlign: TextAlign.right,
+                        defaultVerticalAlignment:
+                            TableCellVerticalAlignment.middle,
+                        children: [
+                          for (var itemx in widget.item!.display!)
+                            TableRow(children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 3, horizontal: 10),
+                                child: Text(
+                                  itemx.key!,
+                                  textAlign: TextAlign.right,
+                                  style: const TextStyle(fontFamily: 'Manrope'),
+                                ),
                               ),
-                            ),
-                            Text(':'),
-                            itemx.value is List
-                                ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      for (var itemy in itemx.value)
-                                        Text('• $itemy')
-                                    ],
-                                  )
-                                : Text('${itemx.value}'),
-                          ]),
-                        if (widget.item!.printable!)
-                          TableRow(children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 3, horizontal: 10),
-                              child: Text(
-                                'Comprovante del trámite',
-                                textAlign: TextAlign.right,
+                              const Text(':'),
+                              itemx.value is List
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        for (var itemy in itemx.value)
+                                          Text(
+                                            '• $itemy',
+                                            style: const TextStyle(
+                                                fontFamily: 'Manrope'),
+                                          )
+                                      ],
+                                    )
+                                  : Text(
+                                      '${itemx.value}',
+                                      style: const TextStyle(
+                                          fontFamily: 'Manrope'),
+                                    ),
+                            ]),
+                          if (widget.item!.printable!)
+                            TableRow(children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 3, horizontal: 10),
+                                child: Text(
+                                  'Comprovante del trámite',
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(fontFamily: 'Manrope'),
+                                ),
                               ),
-                            ),
-                            Text(':'),
-                            btnAccess
-                                ? Row(
-                                    children: [
-                                      Center(
-                                          child: SvgPicture.asset(
-                                        'assets/icons/printer.svg',
-                                        height: 30.0,
-                                        color: ThemeProvider.themeOf(context)
-                                            .data
-                                            .hintColor,
-                                      )),
-                                      SizedBox(
-                                        width: 8,
-                                      ),
-                                      ButtonWhiteComponent(
-                                        text: 'Documento PDF',
-                                        onPressed: () => printDocument(context),
-                                      ),
-                                    ],
-                                  )
-                                : Center(
-                                    child: Image.asset(
-                                    'assets/images/load.gif',
-                                    fit: BoxFit.cover,
-                                    height: 20,
-                                  ))
-                          ]),
-                      ]),
-                ],
-              ))
-            ])));
+                              const Text(':'),
+                              btnAccess
+                                  ? Row(
+                                      children: [
+                                        Center(
+                                            child: SvgPicture.asset(
+                                          'assets/icons/printer.svg',
+                                          height: 30.0,
+                                          color: ThemeProvider.themeOf(context)
+                                              .data
+                                              .hintColor,
+                                        )),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        Flexible(
+                                          child: ButtonWhiteComponent(
+                                            text: 'Documento PDF',
+                                            onPressed: () =>
+                                                printDocument(context),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Center(
+                                      child: Image.asset(
+                                      'assets/images/load.gif',
+                                      fit: BoxFit.cover,
+                                      height: 20,
+                                    ))
+                            ]),
+                        ]),
+                  ],
+                ))
+              ]))),
+    );
   }
 
   printDocument(BuildContext context) async {
     setState(() => btnAccess = false);
-    var response = await serviceMethod(
-        context, 'get', null, serviceGetPDFEC(widget.item!.id!), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null,
+        serviceGetPDFEC(widget.item!.id!), true, true);
     setState(() => btnAccess = true);
     if (response != null) {
       String pathFile = await saveFile(

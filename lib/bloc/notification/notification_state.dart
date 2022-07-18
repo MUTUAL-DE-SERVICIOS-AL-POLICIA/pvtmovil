@@ -1,6 +1,5 @@
 part of 'notification_bloc.dart';
 
-@immutable
 class NotificationState {
   final bool existNotifications;
   final List<NotificationModel>? listNotifications;

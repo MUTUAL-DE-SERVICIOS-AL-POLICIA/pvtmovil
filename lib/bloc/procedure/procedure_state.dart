@@ -1,6 +1,5 @@
 part of 'procedure_bloc.dart';
 
-@immutable
 class ProcedureState {
   final bool existCurrentProcedures;
   final List<Datum>? currentProcedures;

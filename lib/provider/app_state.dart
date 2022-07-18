@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:muserpol_pvt/model/files_model.dart';
 
 class AppState with ChangeNotifier {
-  String? messageObservation = null;
+  String messageObservation = '';
   updateObservation(String message) {
     messageObservation = message;
     notifyListeners();

@@ -1,6 +1,5 @@
 part of 'procedure_bloc.dart';
 
-@immutable
 abstract class ProcedureEvent {}
 
 class AddCurrentProcedures extends ProcedureEvent {

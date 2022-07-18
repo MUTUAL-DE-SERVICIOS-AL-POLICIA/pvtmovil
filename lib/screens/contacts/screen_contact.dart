@@ -22,7 +22,7 @@ class _ScreenContactState extends State<ScreenContact> {
 
   getContacts() async {
     var response = await serviceMethod(
-        context, 'get', null, serviceGetContacts(), false, false);
+        mounted, context, 'get', null, serviceGetContacts(), false, false);
     if (response != null) {
       setState(() => contact = contactsModelFromJson(response.body));
     }

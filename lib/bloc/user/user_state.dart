@@ -1,6 +1,5 @@
 part of 'user_bloc.dart';
 
-@immutable
 class UserState {
   final bool existUser;
   final User? user;

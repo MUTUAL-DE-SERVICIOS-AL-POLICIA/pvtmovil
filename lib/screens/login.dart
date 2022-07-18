@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,74 +7,61 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
-import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
-import 'package:muserpol_pvt/dialogs/dialog_back.dart';
 import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class ScreenLogin extends StatefulWidget {
-  const ScreenLogin({Key? key}) : super(key: key);
+  final String title;
+  final bool stateOfficeVirtual;
+  final String deviceId;
+  const ScreenLogin(
+      {Key? key,
+      required this.title,
+      this.stateOfficeVirtual = true,
+      required this.deviceId})
+      : super(key: key);
 
   @override
-  _ScreenLoginState createState() => _ScreenLoginState();
+  State<ScreenLogin> createState() => _ScreenLoginState();
 }
 
 class _ScreenLoginState extends State<ScreenLogin> {
   TextEditingController dniCtrl = TextEditingController();
   TextEditingController dniComCtrl = TextEditingController();
+  TextEditingController passwordCtrl = TextEditingController();
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool hidePassword = true;
   bool btnAccess = true;
   String dateCtrl = '';
   DateTime? dateTime;
-  String? deviceId;
   String? dateCtrlText;
   bool dateState = false;
   bool dniComplement = false;
   DateTime currentDate = DateTime(1950, 1, 1);
   FocusNode textSecondFocusNode = FocusNode();
   final tooltipController = JustTheController();
-  final deviceInfo = DeviceInfoPlugin();
   bool stateCom = false;
-  @override
-  void initState() {
-    super.initState();
-    checkVersion(context);
-    initializeDateFormatting();
-    getId();
-  }
-
-  Future<void> getId() async {
-    if (Platform.isIOS) {
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      print('iosDeviceInfo $iosDeviceInfo');
-      return setState(() => deviceId = iosDeviceInfo.identifierForVendor);
-    } else if (Platform.isAndroid) {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      print('androidDeviceInfo ${androidDeviceInfo.androidId}');
-      return setState(() => deviceId = androidDeviceInfo.androidId);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,14 +70,14 @@ class _ScreenLoginState extends State<ScreenLogin> {
     //   DeviceOrientation.portraitDown,
     // ]);
     final node = FocusScope.of(context);
-    return WillPopScope(
-        onWillPop: _onBackPressed,
-        child: Scaffold(
-            body: Padding(
-                padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
-                child: Center(
-                    child: SingleChildScrollView(
-                        child: Column(children: [
+    return Scaffold(
+        body: Column(children: [
+      Expanded(
+          child: Stack(children: [
+        Center(
+            child: SingleChildScrollView(
+                padding: const EdgeInsets.all(30),
+                child: Column(children: [
                   Image(
                     image: AssetImage(
                       ThemeProvider.themeOf(context).id.contains('dark')
@@ -99,9 +85,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
                           : 'assets/images/muserpol-logo2.png',
                     ),
                   ),
-                  const Text('Plataforma Virtual de trámites',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 50),
+                  Text(widget.title,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 20),
                   if (btnAccess)
                     Stack(children: [
                       Form(
@@ -109,15 +95,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Cédula de identidad:'),
+                              const Text('Cédula de identidad:'),
                               Row(
                                 children: <Widget>[
                                   Flexible(
                                     child: InputComponent(
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20.sp,
-                                          color: const Color(0xff419388)),
                                       textInputAction: TextInputAction.next,
                                       controllerText: dniCtrl,
                                       onEditingComplete: () => dniComplement
@@ -131,8 +113,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                         }
                                       },
                                       inputFormatters: [
-                                        new LengthLimitingTextInputFormatter(
-                                            10),
+                                        LengthLimitingTextInputFormatter(10),
                                         FilteringTextInputFormatter.allow(
                                             RegExp("[0-9]"))
                                       ],
@@ -155,16 +136,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                       width: MediaQuery.of(context).size.width /
                                           3.4,
                                       child: InputComponent(
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 15.sp,
-                                            color: const Color(0xff419388)),
                                         focusNode: textSecondFocusNode,
                                         textInputAction: TextInputAction.next,
                                         controllerText: dniComCtrl,
                                         inputFormatters: [
-                                          new LengthLimitingTextInputFormatter(
-                                              2),
+                                          LengthLimitingTextInputFormatter(2),
                                           FilteringTextInputFormatter.allow(
                                               RegExp("[0-9a-zA-Z]"))
                                         ],
@@ -187,9 +163,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                 ], //widget
                               ),
                               SizedBox(
-                                height: 20.h,
+                                height: 10.h,
                               ),
-                              Text('Fecha de nacimiento:'),
+                              const Text('Fecha de nacimiento:'),
                               ButtonDate(
                                   text: dateCtrl,
                                   onPressed: () => selectDate(context)),
@@ -204,23 +180,61 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                   ),
                                 ),
                               SizedBox(
-                                height: 20.h,
+                                height: 10.h,
                               ),
+                              if (widget.stateOfficeVirtual)
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('Contraseña:'),
+                                    InputComponent(
+                                        textInputAction: TextInputAction.done,
+                                        controllerText: passwordCtrl,
+                                        onEditingComplete: () => initSession(),
+                                        validator: (value) {
+                                          if (value.isNotEmpty) {
+                                            if (value.length >= 6) {
+                                              return null;
+                                            } else {
+                                              return 'Debe tener un mínimo de 6 caracteres.';
+                                            }
+                                          } else {
+                                            return 'Ingrese su contraseña';
+                                          }
+                                        },
+                                        keyboardType: TextInputType.text,
+                                        icon: Icons.lock,
+                                        labelText: "Contraseña",
+                                        obscureText: hidePassword,
+                                        onTap: () => setState(
+                                            () => hidePassword = !hidePassword),
+                                        iconOnTap: hidePassword
+                                            ? Icons.lock_outline
+                                            : Icons.lock_open_sharp),
+                                    SizedBox(
+                                      height: 20.h,
+                                    ),
+                                  ],
+                                ),
                               ButtonComponent(
                                   text: 'INGRESAR',
                                   onPressed: () => initSession()),
                               SizedBox(
-                                height: 30.h,
-                              ),
-                              ButtonWhiteComponent(
-                                  text: 'Contactos a nivel nacional',
-                                  onPressed: () =>
-                                      Navigator.pushNamed(context, 'contacts')),
-                              ButtonWhiteComponent(
-                                  text: 'Política de privacidad',
-                                  onPressed: () => privacyPolicy(context)),
-                              SizedBox(
                                 height: 20.h,
+                              ),
+                              Center(
+                                child: ButtonWhiteComponent(
+                                    text: 'Contactos a nivel nacional',
+                                    onPressed: () => Navigator.pushNamed(
+                                        context, 'contacts')),
+                              ),
+                              Center(
+                                child: ButtonWhiteComponent(
+                                    text: 'Política de privacidad',
+                                    onPressed: () => privacyPolicy(context)),
+                              ),
+                              SizedBox(
+                                height: 10.h,
                               ),
                               Center(
                                 child: Text('Versión ${dotenv.env['version']}'),
@@ -242,7 +256,21 @@ class _ScreenLoginState extends State<ScreenLogin> {
                       fit: BoxFit.cover,
                       height: 20,
                     )),
-                ]))))));
+                ]))),
+        Positioned(
+            top: 40,
+            left: 0,
+            child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: SvgPicture.asset(
+                      'assets/icons/back.svg',
+                      height: 17.sp,
+                      color: ThemeProvider.themeOf(context).data.hintColor,
+                    ))))
+      ]))
+    ]));
   }
 
   functionToltip(bool state) async {
@@ -255,8 +283,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   privacyPolicy(BuildContext context) async {
     setState(() => btnAccess = false);
+
     var response = await serviceMethod(
-        context, 'get', null, serviceGetPrivacyPolicy(), false, false);
+        mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, false);
     setState(() => btnAccess = true);
     if (response != null) {
       String pathFile = await saveFile(
@@ -266,13 +295,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
   }
 
   Widget _buildDateTimePicker() {
-    return Container(
+    return SizedBox(
         height: 200,
         child: CupertinoDatePicker(
             mode: CupertinoDatePickerMode.date,
             initialDateTime: currentDate,
             onDateTimeChanged: (DateTime newDataTime) {
-              print('date ${newDataTime}');
+              debugPrint('date $newDataTime');
               setState(() {
                 currentDate = newDataTime;
                 dateCtrl =
@@ -314,20 +343,26 @@ class _ScreenLoginState extends State<ScreenLogin> {
       if (dateCtrlText != null) {
         setState(() => btnAccess = false);
         if (await InternetConnectionChecker().connectionStatus ==
-            await InternetConnectionStatus.disconnected) {
+            InternetConnectionStatus.disconnected) {
           setState(() => btnAccess = true);
-          return callDialogAction(context, 'Verifique su conexión a Internet');
+          // return callDialogAction(context, 'Verifique su conexión a Internet');
+          return showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context) => const DialogAction(
+                  message: 'Verifique su conexión a Internet'));
         }
         await checkVersion(context);
         final Map<String, dynamic> data = {
           "identity_card":
-              '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-' + dniComCtrl.text.trim()}',
+              '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}',
           "birth_date": dateCtrlText,
-          "device_id": deviceId,
+          "device_id": widget.deviceId,
           "is_new_app": true
         };
+        if (!mounted) return;
         var response = await serviceMethod(
-            context, 'post', data, serviceAuthSession(), false, true);
+            mounted, context, 'post', data, serviceAuthSession(), false, true);
         setState(() => btnAccess = true);
         if (response != null) {
           DBProvider.db.database;
@@ -350,8 +385,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
           if (!json.decode(response.body)['data']['user']['enrolled']) {
             _showModalInside(user.apiToken!, data);
           } else {
+            if (!mounted) return;
             await authService.login(context, user.apiToken!, data);
             appState.updateStateAuxToken(false);
+            if (!mounted) return;
             return Navigator.pushReplacementNamed(context, 'navigator');
           }
         }
@@ -372,6 +409,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
         return showSuccessful(context, message, () async {
           await authService.login(context, token, data);
           appState.updateStateAuxToken(false);
+          if (!mounted) return;
           Navigator.pushReplacementNamed(context, 'navigator');
         });
       }),
@@ -384,12 +422,5 @@ class _ScreenLoginState extends State<ScreenLogin> {
     } else {
       setState(() => dateState = true);
     }
-  }
-
-  Future<bool> _onBackPressed() async {
-    return await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) => const ComponentAnimate(child: DialogBack()));
   }
 }
