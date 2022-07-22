@@ -40,6 +40,7 @@ class CheckAuthScreen extends StatelessWidget {
             } else {
               //en el caso de encontrar el token solicitado
               //redireccionamos al usuario al ScreenLoading
+              // authService.logout();
               final notificationBloc =
                   BlocProvider.of<NotificationBloc>(context);
               UserModel user = userModelFromJson(prefs!.getString('user')!);

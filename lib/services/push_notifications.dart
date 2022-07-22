@@ -17,6 +17,7 @@ class PushNotificationService {
   static Future _backgroundHandle(RemoteMessage message) async {
     debugPrint('_backgroundHandle');
     //cuando el telefono esta bloqueado
+    debugPrint('message ${json.encode(message.data)}');
     final notification = NotificationModel(
         title: message.data['title'],
         content: json.encode(message.data),
@@ -45,6 +46,7 @@ class PushNotificationService {
   static Future initializeapp() async {
     //push notifications
     await Firebase.initializeApp();
+    await requestPermission();
     token = await FirebaseMessaging.instance.getToken();
     debugPrint('tokenNotification $token');
     prefs!.setString('tokenNotification', token!);
@@ -55,6 +57,20 @@ class PushNotificationService {
     FirebaseMessaging.onBackgroundMessage(_backgroundHandle);
     FirebaseMessaging.onMessage.listen(_onMessageHandler);
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenApp);
+  }
+
+  //apple web
+  static requestPermission() async {
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    debugPrint('User push notification status ${settings.authorizationStatus}');
   }
 
   static closeStreas() {

@@ -101,12 +101,14 @@ class _ProjectMuserpolState extends State<ProjectMuserpol>
   @override
   void initState() {
     super.initState();
-    _deleteCacheDir();
+    // _deleteCacheDir();
     _deleteAppDir();
     WidgetsBinding.instance.addObserver(this);
     PushNotificationService.messagesStream.listen((message) {
       debugPrint('NO TI FI CA CION $message');
       final msg = json.decode(message);
+      debugPrint('HOLA ${msg['origin']}');
+      // if (msg['origin'] == null) return;
       if (msg['origin'] == '_onMessageHandler') {
         notification(json.encode(msg));
       } else {

@@ -25,6 +25,7 @@ class DBProvider {
   Future<Database> initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     final path = p.join(documentsDirectory.path, 'muserpolpvt.db');
+    debugPrint('path $path');
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute('''

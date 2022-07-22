@@ -92,6 +92,8 @@ class ScreenSwitchState extends State<ScreenSwitch> {
       setState(() => scanResult = result);
       if (scanResult!.rawContent != '') {
         final Uri url = Uri.parse(scanResult!.rawContent);
+
+        debugPrint('scanResult!.rawContent ${scanResult!.rawContent}');
         await launchUrl(mode: LaunchMode.externalApplication, url);
       }
     } on PlatformException catch (e) {
