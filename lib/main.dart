@@ -1,17 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:muserpol_pvt/database/db_provider.dart';
-import 'package:muserpol_pvt/screens/inbox/notification.dart';
-import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/utils/style.dart';
-import 'bloc/notification/notification_bloc.dart';
-import 'firebase_options.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/check_auth_screen.dart';
 import 'package:muserpol_pvt/screens/navigator_bar.dart';
@@ -32,18 +27,16 @@ SharedPreferences? prefs;
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
 
 void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   prefs = await SharedPreferences.getInstance();
-  await PushNotificationService.initializeapp();
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
@@ -55,50 +48,38 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  final GlobalKey<ScaffoldMessengerState> messengerKey = GlobalKey<ScaffoldMessengerState>();
-
+class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    PushNotificationService.messagesStream.listen((message) {
-      debugPrint('NO TI FI CA CION $message');
-      final msg = json.decode(message);
-      debugPrint('HOLA ${msg['origin']}');
-      // if (msg['origin'] == null) return;
-      if (msg['origin'] == '_onMessageHandler') {
-        notification(json.encode(msg));
-      } else {
-        navigatorKey.currentState!.pushNamed('message', arguments: msg);
-      }
-    });
+    // _deleteCacheDir();
+    _deleteAppDir();
   }
-  notification(String message) {
-    Future.delayed(Duration.zero, () async {
-      final notificationBloc = BlocProvider.of<NotificationBloc>(context);
-      final notification = NotificationModel(
-          title: json.decode(message)['title'],
-          content: message,
-          read: false,
-          date: DateTime.now(),
-          selected: false);
-      notificationBloc.add(AddNotifications(notification));
-      await DBProvider.db.newNotificationModel(notification);
-    });
+
+  Future<void> _deleteCacheDir() async {
+    final cacheDir = await getTemporaryDirectory();
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+    }
   }
+
+  Future<void> _deleteAppDir() async {
+    final appDir = await getApplicationSupportDirectory();
+    if (appDir.existsSync()) {
+      appDir.deleteSync(recursive: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    //   DeviceOrientation.portraitDown,
-    // ]);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MultiBlocProvider(
         providers: [
           BlocProvider(create: (_) => UserBloc()),
           BlocProvider(create: (_) => ProcedureBloc()),
-          BlocProvider(create: (_) => NotificationBloc()),
         ],
         child: MultiProvider(
           providers: [
@@ -110,9 +91,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               minTextAdapt: true,
               splitScreenMode: true,
               builder: (context, child) => ThemeProvider(
-                    saveThemesOnChange: true, // Auto save any theme change we do
-                    loadThemeOnInit: false, // Do not load the saved theme(use onInitCallback callback)
-                    onInitCallback: (controller, previouslySavedThemeFuture) async {
+                    saveThemesOnChange:
+                        true, // Auto save any theme change we do
+                    loadThemeOnInit:
+                        false, // Do not load the saved theme(use onInitCallback callback)
+                    onInitCallback:
+                        (controller, previouslySavedThemeFuture) async {
                       String? savedTheme = await previouslySavedThemeFuture;
 
                       if (savedTheme != null) {
@@ -120,7 +104,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                         controller.setTheme(savedTheme);
                       } else {
                         // If previous theme not found, use platform default
-                        Brightness platformBrightness = SchedulerBinding.instance.window.platformBrightness;
+                        Brightness platformBrightness =
+                            SchedulerBinding.instance.window.platformBrightness;
                         if (platformBrightness == Brightness.dark) {
                           controller.setTheme('dark');
                         } else {
@@ -147,7 +132,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                                 Locale('en', 'US'), // English
                               ],
                               debugShowCheckedModeBanner: false,
-                              navigatorKey: navigatorKey,
                               theme: ThemeProvider.themeOf(themeContext).data,
                               title: 'MUSERPOL PVT',
                               initialRoute: 'check_auth',
@@ -156,7 +140,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                                 'check_auth': (_) => const CheckAuthScreen(),
                                 'navigator': (_) => const NavigatorBar(),
                                 'contacts': (_) => const ScreenContact(),
-                                'message': (_) => const ScreenNotification()
                               })),
                     ),
                   )),
