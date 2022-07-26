@@ -73,7 +73,7 @@ class PushNotificationService {
     debugPrint('User push notification status ${settings.authorizationStatus}');
   }
 
-  static closeStreas() {
+  static closeStreams() {
     _messageStream.close();
   }
 }

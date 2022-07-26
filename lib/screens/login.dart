@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -409,6 +410,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
         return showSuccessful(context, message, () async {
           await authService.login(context, token, data);
           appState.updateStateAuxToken(false);
+          await FirebaseMessaging.instance.subscribeToTopic('GATOS');
           if (!mounted) return;
           Navigator.pushReplacementNamed(context, 'navigator');
         });

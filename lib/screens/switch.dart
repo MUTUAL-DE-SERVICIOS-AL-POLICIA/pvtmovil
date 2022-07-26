@@ -10,11 +10,11 @@ import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/cupertino.dart';
 import 'package:muserpol_pvt/components/heders.dart';
 import 'package:muserpol_pvt/dialogs/dialog_back.dart';
+import 'package:muserpol_pvt/screens/flowQR/flow.dart';
 import 'package:muserpol_pvt/screens/login.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ScreenSwitch extends StatefulWidget {
   const ScreenSwitch({Key? key}) : super(key: key);
@@ -91,10 +91,12 @@ class ScreenSwitchState extends State<ScreenSwitch> {
       var result = await BarcodeScanner.scan(options: options);
       setState(() => scanResult = result);
       if (scanResult!.rawContent != '') {
-        final Uri url = Uri.parse(scanResult!.rawContent);
-
+        // ScreenWorkFlow
         debugPrint('scanResult!.rawContent ${scanResult!.rawContent}');
-        await launchUrl(mode: LaunchMode.externalApplication, url);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ScreenWorkFlow()),
+        );
       }
     } on PlatformException catch (e) {
       debugPrint('error $e ');
