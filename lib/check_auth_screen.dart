@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
-import 'package:muserpol_pvt/screens/login.dart';
 import 'package:muserpol_pvt/screens/navigator_bar.dart';
+import 'package:muserpol_pvt/screens/switch.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
+import 'database/db_provider.dart';
 
 //WIDGET: verifica la autenticación del usuario
 class CheckAuthScreen extends StatelessWidget {
@@ -32,14 +34,19 @@ class CheckAuthScreen extends StatelessWidget {
                 Navigator.pushReplacement(
                     context,
                     PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => const ScreenLogin(),
+                        pageBuilder: (_, __, ___) => const ScreenSwitch(),
                         transitionDuration: const Duration(seconds: 0)));
               });
             } else {
               //en el caso de encontrar el token solicitado
               //redireccionamos al usuario al ScreenLoading
+              // authService.logout();
+              final notificationBloc =
+                  BlocProvider.of<NotificationBloc>(context);
               UserModel user = userModelFromJson(prefs!.getString('user')!);
               userBloc.add(UpdateUser(user.user!));
+              DBProvider.db.getAllNotificationModel().then(
+                  (res) => notificationBloc.add(UpdateNotifications(res)));
               // appState.addKey(
               //     'cianverso', prefs!.getString('ci')!); //num carnet
               // appState.addKey(

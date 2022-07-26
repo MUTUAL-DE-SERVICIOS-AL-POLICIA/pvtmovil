@@ -1,17 +1,20 @@
 import 'dart:convert';
 
+import 'package:badges/badges.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
+import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/dialogs/dialog_back.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
+import 'package:muserpol_pvt/screens/inbox/screen_inbox.dart';
 import 'package:muserpol_pvt/screens/pages/procedure/procedure.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
@@ -169,13 +172,43 @@ class _NavigatorBarState extends State<NavigatorBar> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    //   DeviceOrientation.portraitDown,
+    // ]);
+    final notificationBloc =
+        BlocProvider.of<NotificationBloc>(context, listen: true).state;
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
+          floatingActionButton: Badge(
+            key: keyNotification,
+            animationDuration: const Duration(milliseconds: 300),
+            animationType: BadgeAnimationType.slide,
+            badgeColor: notificationBloc.existNotifications
+                ? notificationBloc.listNotifications!
+                        .where((e) => e.read == false)
+                        .isNotEmpty
+                    ? Colors.red
+                    : Colors.transparent
+                : Colors.transparent,
+            elevation: 0,
+            badgeContent: notificationBloc.existNotifications &&
+                    notificationBloc.listNotifications!
+                        .where((e) => e.read == false)
+                        .isNotEmpty
+                ? Text(
+                    notificationBloc.listNotifications!
+                        .where((e) => e.read == false)
+                        .length
+                        .toString(),
+                    style: const TextStyle(color: Colors.white),
+                  )
+                : Container(),
+            child: IconBtnComponent(
+                iconText: 'assets/icons/email.svg',
+                onPressed: () => dialogInbox(context)),
+          ),
           body: pageList.elementAt(_currentIndex),
           // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
           bottomNavigationBar: Stack(
@@ -232,6 +265,13 @@ class _NavigatorBarState extends State<NavigatorBar> {
             ],
           ),
         ));
+  }
+
+  dialogInbox(BuildContext context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) => const ScreenInbox());
   }
 
   Future<bool> _onBackPressed() async {
