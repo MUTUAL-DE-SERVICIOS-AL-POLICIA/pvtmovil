@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
@@ -43,7 +45,6 @@ class _NavigatorBarState extends State<NavigatorBar> {
   GlobalKey keyBottomNavigation1 = GlobalKey();
   GlobalKey keyBottomNavigation2 = GlobalKey();
   GlobalKey keyCreateProcedure = GlobalKey();
-  GlobalKey keyNotification = GlobalKey();
   GlobalKey keyMenu = GlobalKey();
   GlobalKey keyRefresh = GlobalKey();
 
@@ -59,11 +60,18 @@ class _NavigatorBarState extends State<NavigatorBar> {
             keyProcedure: keyCreateProcedure,
             keyMenu: keyMenu,
             keyRefresh: keyRefresh),
-        ScreenProcedures(current: false, scroll: _scrollController),
+        ScreenProcedures(
+            current: false,
+            scroll: _scrollController,
+            keyMenu: keyMenu,
+            keyRefresh: keyRefresh),
       ];
     });
     if (widget.tutorial) {
+    Timer(const Duration(milliseconds: 500), () {
       Future.delayed(Duration.zero, showTutorial);
+    });
+
     } else {
       getEconomicComplement(true);
       getEconomicComplement(false);
@@ -181,30 +189,33 @@ class _NavigatorBarState extends State<NavigatorBar> {
           bottomNavigationBar: Stack(
             children: [
               SizedBox(
-                height: 50,
+                height: 65,
+                width: MediaQuery.of(context).size.width,
                 child: Row(
                   children: [
                     Expanded(
-                        child: Center(
-                      child: SizedBox(
-                        key: keyBottomNavigation1,
-                        height: 40,
-                        width: MediaQuery.of(context).size.width / 4,
+                      child: Center(
+                        child: SizedBox(
+                          key: keyBottomNavigation1,
+                          height: 40,
+                          width: MediaQuery.of(context).size.width / 4,
+                        ),
                       ),
-                    )),
+                    ),
                     Expanded(
-                        child: Center(
-                      child: SizedBox(
-                        key: keyBottomNavigation2,
-                        height: 40,
-                        width: MediaQuery.of(context).size.width / 4,
+                      child: Center(
+                        child: SizedBox(
+                          key: keyBottomNavigation2,
+                          height: 40,
+                          width: MediaQuery.of(context).size.width / 4,
+                        ),
                       ),
-                    )),
+                    ),
                   ],
                 ),
               ),
               ConvexAppBar(
-                  height: 65,
+                  height: 63.h,
                   elevation: 0,
                   backgroundColor: const Color(0xff419388),
                   // color: Color(0xff419388),
@@ -214,7 +225,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
                         isIconBlend: true,
                         icon: SvgPicture.asset(
                           'assets/icons/newProcedure.svg',
-                          height: 30.sp,
+                          height: 25.sp,
                           color: Colors.white,
                         ),
                         title: "Trámites Vigentes"),
@@ -222,7 +233,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
                         isIconBlend: true,
                         icon: SvgPicture.asset(
                           'assets/icons/historyProcedure.svg',
-                          height: 30.sp,
+                          height: 25.sp,
                           color: Colors.white,
                         ),
                         title: "Trámites Históricos"),
@@ -244,7 +255,6 @@ class _NavigatorBarState extends State<NavigatorBar> {
   void showTutorial() {
     initTargets();
     tutorialCoachMark = TutorialCoachMark(
-      context,
       targets: targets,
       colorShadow: const Color(0xff419388),
       textSkip: "OMITIR",
@@ -271,11 +281,79 @@ class _NavigatorBarState extends State<NavigatorBar> {
         getEconomicComplement(true);
         getEconomicComplement(false);
       },
-    )..show();
+    )..show(context:context);
   }
 
   void initTargets() {
     targets.clear();
+    targets.add(
+      TargetFocus(
+        identify: "keyMenu",
+        keyTarget: keyMenu,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                // ignore: prefer_const_literals_to_create_immutables
+                children: <Widget>[
+                  const Text(
+                    "MENÚ",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 20.0),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      "Aquí podras observar un menú donde encontraras tus datos y diferentes opciones",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+    targets.add(
+      TargetFocus(
+        identify: "keyCreateProcedure",
+        keyTarget: keyCreateProcedure,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // ignore: prefer_const_literals_to_create_immutables
+              children: <Widget>[
+                const Text(
+                  "CREACIÓN DE TRÁMITE",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 20.0),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    "Si ves el botón de color verde, puedes crear tu trámite correspondiente al semestre",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+        shape: ShapeLightFocus.RRect,
+        radius: 20,
+      ),
+    );
     targets.add(
       TargetFocus(
         identify: "keyBottomNavigation1",
@@ -338,108 +416,6 @@ class _NavigatorBarState extends State<NavigatorBar> {
                       'assets/images/arrow.png',
                       color: Colors.white,
                       height: 100,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "keyCreateProcedure",
-        keyTarget: keyCreateProcedure,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              // ignore: prefer_const_literals_to_create_immutables
-              children: <Widget>[
-                const Text(
-                  "CREACIÓN DE TRÁMITE",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Si ves el botón de color verde, puedes crear tu trámite correspondiente al semestre",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-        shape: ShapeLightFocus.RRect,
-        radius: 20,
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "keyNotification",
-        keyTarget: keyNotification,
-        alignSkip: Alignment.topRight,
-        contents: [
-          TargetContent(
-            align: ContentAlign.top,
-            builder: (context, controller) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const <Widget>[
-                  Text(
-                    "BUZÓN DE MENSAJES",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20.0),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      "Acá podrás observar todos los mensajes que la MUSERPOL tiene para ti ",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  )
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "keyMenu",
-        keyTarget: keyMenu,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            builder: (context, controller) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                // ignore: prefer_const_literals_to_create_immutables
-                children: <Widget>[
-                  const Text(
-                    "MENÚ",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20.0),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      "Aquí podras observar un menú donde encontraras tus datos y diferentes opciones",
-                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ],

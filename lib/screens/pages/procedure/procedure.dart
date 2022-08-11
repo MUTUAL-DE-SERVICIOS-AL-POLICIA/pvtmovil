@@ -25,14 +25,14 @@ class ScreenProcedures extends StatefulWidget {
   final ScrollController scroll;
   final GlobalKey? keyProcedure;
   final GlobalKey? keyMenu;
-  final GlobalKey? keyRefresh;
+  final GlobalKey keyRefresh;
   const ScreenProcedures(
       {Key? key,
       required this.current,
       required this.scroll,
       this.keyProcedure,
       this.keyMenu,
-      this.keyRefresh})
+      required this.keyRefresh})
       : super(key: key);
 
   @override

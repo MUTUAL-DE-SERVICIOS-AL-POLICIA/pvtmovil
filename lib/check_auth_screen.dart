@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
-import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/screens/login.dart';
 import 'package:muserpol_pvt/screens/navigator_bar.dart';
@@ -16,7 +15,7 @@ class CheckAuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     //llamamos a los proveedores de estados
     final authService = Provider.of<AuthService>(context, listen: false);
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    // final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     // final appState = Provider.of<AppState>(context, listen: false);
     return Scaffold(
       body: Center(
@@ -38,14 +37,15 @@ class CheckAuthScreen extends StatelessWidget {
             } else {
               //en el caso de encontrar el token solicitado
               //redireccionamos al usuario al ScreenLoading
-              UserModel user = userModelFromJson(prefs!.getString('user')!);
-              userBloc.add(UpdateUser(user.user!));
+              // authService.logout();
+              // UserModel user = userModelFromJson(prefs!.getString('user')!);
+
               // appState.addKey(
               //     'cianverso', prefs!.getString('ci')!); //num carnet
               // appState.addKey(
               //     'cireverso', prefs!.getString('ci')!); //num carnet
               // appState.addKey('cireverso', user.user!.fullName!); //nombre
-
+              getInfo(context);
               Future.microtask(() {
                 Navigator.pushReplacement(
                     context,
@@ -60,5 +60,11 @@ class CheckAuthScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+  getInfo(BuildContext context)async{
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+              UserModel user =  userModelFromJson( await authService.readUser());
+              userBloc.add(UpdateUser(user.user!));
   }
 }

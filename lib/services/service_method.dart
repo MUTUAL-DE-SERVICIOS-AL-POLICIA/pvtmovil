@@ -67,6 +67,7 @@ Future<dynamic> serviceMethod(
               }
               // else {
               //   callDialogAction(context, json.decode(value.body)['message']);
+              //   return null;
               // }
               return null;
           }

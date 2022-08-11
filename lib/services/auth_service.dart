@@ -6,6 +6,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class AuthService extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
 
+  Future user( BuildContext context, String value )async{
+    await storage.write(key: 'user', value: value);
+    return;
+  }
   Future login(
       BuildContext context, String token, Map<String, dynamic> data) async {
     await storage.write(key: 'token', value: token);
@@ -19,10 +23,14 @@ class AuthService extends ChangeNotifier {
   }
 
   Future logout() async {
+    await storage.delete(key:'user');
     await storage.delete(key: 'token');
     await storage.delete(key: 'data');
     await storage.delete(key: 'auxToken');
     return;
+  }
+  Future<String>readUser() async{
+    return await storage.read(key: 'user') ?? '';
   }
 
   Future<String> readToken() async {

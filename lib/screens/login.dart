@@ -16,7 +16,6 @@ import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
-import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
@@ -79,10 +78,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    //   DeviceOrientation.portraitDown,
-    // ]);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     final node = FocusScope.of(context);
     return Scaffold(
         body: Column(children: [
@@ -98,7 +97,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                           : 'assets/images/muserpol-logo2.png',
                     ),
                   ),
-                  const Text('COMPLEMENTO ECONÓMICO',
+                  const Text('Plataforma Virtual de trámites',
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 20),
                   if (btnAccess)
@@ -325,7 +324,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
               '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}',
           "birth_date": dateCtrlText,
           "device_id": deviceId,
-          "is_new_app": true
+          // "firebase_token":"123firebase",
+          "is_new_app": true,
         };
         if (!mounted) return;
         var response = await serviceMethod(
@@ -337,9 +337,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
           await authService.auxtoken(user.apiToken!);
           appState.updateStateAuxToken(true);
           userBloc.add(UpdateUser(user.user!));
-          prefs!.setString(
-              'user', json.encode(json.decode(response.body)['data']));
-          prefs!.setString('ci', dniCtrl.text.trim());
+          // prefs!.setString('user', json.encode(json.decode(response.body)['data']));
+          if (!mounted) return;
+          await authService.user(context, json.encode(json.decode(response.body)['data']));
+          // prefs!.setString('ci', dniCtrl.text.trim());
           //add words validations for files
           // files.addKey('cianverso', dniCtrl.text.trim()); //num carnet
           // files.addKey('cireverso', dniCtrl.text.trim()); //num carnet
