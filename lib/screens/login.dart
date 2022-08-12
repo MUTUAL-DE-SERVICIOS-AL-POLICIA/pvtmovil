@@ -324,7 +324,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
               '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}',
           "birth_date": dateCtrlText,
           "device_id": deviceId,
-          // "firebase_token":"123firebase",
           "is_new_app": true,
         };
         if (!mounted) return;

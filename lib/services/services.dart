@@ -8,8 +8,7 @@ serviceGetContacts() => '$url/city';
 //PRIVACY POLICY
 serviceGetPrivacyPolicy() => '$url/policy';
 //HISTORY
-serviceGetEconomicComplements(int page, bool current) =>
-    '$url/economic_complement/?page=$page&current=$current';
+serviceGetEconomicComplements(int page, bool current) => '$url/economic_complement/?page=$page&current=$current';
 //GET VERIFIED DOCUMENT
 serviceGetMessageFace() => '$url/message/verified';
 //GET PROCESS ENROLLED
@@ -19,9 +18,8 @@ serviceGetProcessingPermit(int affiliateId) => '$url/liveness/$affiliateId';
 //SEND IMAGES FOR PROCEDURE
 serviceSendImagesProcedure() => '$url/economic_complement';
 //PRINT ECONOMIC COMPLEMENT
-serviceGetPDFEC(int economicComplementId) =>
-    '$url/economic_complement/print/$economicComplementId';
+serviceGetPDFEC(int economicComplementId) => '$url/economic_complement/print/$economicComplementId';
 //GET OBSERVATIONS
-serviceGetObservation(int affiliateId) =>
-    '$url/affiliate/$affiliateId/observation';
+serviceGetObservation(int affiliateId) => '$url/affiliate/$affiliateId/observation';
+
 serviceEcoComProcedure(int ecoComId) => '$url/eco_com_procedure/$ecoComId';
