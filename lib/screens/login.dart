@@ -15,11 +15,13 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
+import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
+import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:intl/intl.dart';
@@ -59,7 +61,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   @override
   void initState() {
     super.initState();
-    checkVersion(context);
+    checkVersion(mounted,context);
     initializeDateFormatting();
     getId();
   }
@@ -318,19 +320,22 @@ class _ScreenLoginState extends State<ScreenLogin> {
               builder: (BuildContext context) => const DialogAction(
                   message: 'Verifique su conexión a Internet'));
         }
-        await checkVersion(context);
+        await checkVersion(mounted,context);
+        String token = await PushNotificationService.initializeapp();
         final Map<String, dynamic> data = {
           "identity_card":
               '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}',
           "birth_date": dateCtrlText,
           "device_id": deviceId,
+          "firebase_token":token,
           "is_new_app": true,
         };
         if (!mounted) return;
         var response = await serviceMethod(
-            mounted, context, 'post', data, serviceAuthSession(), false, true);
+            mounted, context, 'post', data, serviceAuthSession(null), false, true);
         setState(() => btnAccess = true);
         if (response != null) {
+          await DBProvider.db.database;
           UserModel user = userModelFromJson(
               json.encode(json.decode(response.body)['data']));
           await authService.auxtoken(user.apiToken!);

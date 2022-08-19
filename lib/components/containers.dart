@@ -16,7 +16,7 @@ class ContainerComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 5),
         child: Container(
             width: width,
             height: height,
@@ -25,7 +25,7 @@ class ContainerComponent extends StatelessWidget {
               color: color,
               boxShadow: const [
                 BoxShadow(
-                  color: Colors.grey,
+                  color: Colors.black,
                   blurRadius: 1.0,
                   offset: Offset(0, 0.5),
                 )

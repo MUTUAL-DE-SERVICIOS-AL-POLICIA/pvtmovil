@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
+import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/screens/login.dart';
 import 'package:muserpol_pvt/screens/navigator_bar.dart';
@@ -35,6 +37,12 @@ class CheckAuthScreen extends StatelessWidget {
                         transitionDuration: const Duration(seconds: 0)));
               });
             } else {
+              final notificationBloc =
+                  BlocProvider.of<NotificationBloc>(context);
+              // UserModel user = userModelFromJson(prefs!.getString('user')!);
+              // userBloc.add(UpdateUser(user.user!));
+              DBProvider.db.getAllNotificationModel().then(
+                  (res) => notificationBloc.add(UpdateNotifications(res)));
               //en el caso de encontrar el token solicitado
               //redireccionamos al usuario al ScreenLoading
               // authService.logout();

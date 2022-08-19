@@ -220,10 +220,6 @@ class _StepperProcedureState extends State<StepperProcedure> {
   initCtrlLive() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state;
     final appState = Provider.of<AppState>(context, listen: false);
-    //consut
-        var response = await serviceMethod(
-        mounted, context, 'get', null, serviceProcessEnrolled(), true, false);
-    if (response != null) {
     return showBarModalBottomSheet(
         enableDrag: false,
         isDismissible: false,
@@ -244,7 +240,6 @@ class _StepperProcedureState extends State<StepperProcedure> {
                 Navigator.pop(context);
               });
             }));
-            }
   }
 
   nextPage() async {
