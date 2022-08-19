@@ -149,7 +149,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
           return ComponentAnimate(
               child: DialogTwoAction(
                   message: '¿Estás seguro que quieres cerrar sesión?',
-                  actionCorrect: () => confirmDeleteSession(mounted, context),
+                  actionCorrect: () => confirmDeleteSession(mounted, context,true),
                   messageCorrect: 'Salir'));
         });
   }

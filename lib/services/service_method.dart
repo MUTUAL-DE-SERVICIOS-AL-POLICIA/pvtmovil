@@ -4,18 +4,21 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
+import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
+import 'package:muserpol_pvt/services/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:new_version/new_version.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<dynamic> serviceMethod(
     bool mounted,
@@ -63,7 +66,7 @@ Future<dynamic> serviceMethod(
               return value;
             default:
               if (errorState) {
-                return confirmDeleteSession(mounted, context);
+                return confirmDeleteSession(mounted, context, false);
               }
               // else {
               //   callDialogAction(context, json.decode(value.body)['message']);
@@ -143,11 +146,15 @@ void callDialogAction(BuildContext context, String message) {
       builder: (BuildContext context) => DialogAction(message: message));
 }
 
-confirmDeleteSession(bool mounted, BuildContext context) async {
+confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: false);
   final authService = Provider.of<AuthService>(context, listen: false);
   final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
   final appState = Provider.of<AppState>(context, listen: false);
+  if (voluntary) {
+    await serviceMethod(mounted, context, 'delete', null,
+        serviceAuthSession(userBloc.state.user!.id!), true, false);
+  }
   prefs!.getKeys();
   for (String key in prefs!.getKeys()) {
     prefs!.remove(key);
@@ -162,32 +169,56 @@ confirmDeleteSession(bool mounted, BuildContext context) async {
   procedureBloc.add(ClearProcedures());
   appState.updateTabProcedure(0);
   appState.updateStateProcessing(false);
-  if (!mounted) return;
 
+  if (!mounted) return;
   Navigator.pushReplacementNamed(context, 'switch');
 }
 
-checkVersion(BuildContext context) async {
+checkVersion(bool mounted, BuildContext context) async {
   if (await InternetConnectionChecker().connectionStatus ==
       InternetConnectionStatus.disconnected) {
     return callDialogAction(context, 'Verifique su conexión a Internet');
   }
-  final newVersion = NewVersion(
-    iOSId: 'com.muserpol.pvt',
-    androidId: "com.muserpol.pvt",
-  );
-  final status = await newVersion.getVersionStatus();
-  debugPrint('status $status');
-  if (status != null) {
-    if (status.localVersion == status.storeVersion) return;
-    return newVersion.showUpdateDialog(
-      context: context,
-      allowDismissal: false,
-      versionStatus: status,
-      dialogTitle: "Actualiza la nueva versión",
-      dialogText:
-          "Para mejorar la experiencia, Porfavor actualiza la nueva versión",
-      updateButtonText: "Actualizar",
-    );
+  var response = await serviceMethod(
+      mounted, context, 'get', null, serviceGetVersion(), false, false);
+  if (response != null) {
+    if (Platform.isIOS) {
+      if (dotenv.env['versions'] !=
+          json.decode(response.body)['data']['applestore']) {
+        return await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => ComponentAnimate(
+                child: DialogOneFunction(
+                    title: 'Actualiza la nueva versión',
+                    message:
+                        'Para mejorar la experiencia, Porfavor actualiza la nueva versión',
+                    textButton: 'Actualizar',
+                    onPressed: () async {
+                      launchUrl(Uri.parse(serviceGetAppStore()),
+                          mode: LaunchMode.externalApplication);
+                    })));
+      }
+      return;
+    }
+    if (Platform.isAndroid) {
+      if (dotenv.env['versions'] !=
+          json.decode(response.body)['data']['googleplay']) {
+        return await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => ComponentAnimate(
+                child: DialogOneFunction(
+                    title: 'Actualiza la nueva versión',
+                    message:
+                        'Para mejorar la experiencia, Porfavor actualiza la nueva versión',
+                    textButton: 'Actualizar',
+                    onPressed: () {
+                      launchUrl(Uri.parse(serviceGetPlayStore()),
+                          mode: LaunchMode.externalApplication);
+                    })));
+      }
+      return;
+    }
   }
 }

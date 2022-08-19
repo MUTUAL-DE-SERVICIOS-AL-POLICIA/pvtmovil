@@ -72,7 +72,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
       getEconomicComplement(false);
     }
     super.initState();
-    checkVersion(context);
+    checkVersion(mounted,context);
     getProcessingPermit();
     getObservations();
 
@@ -284,7 +284,6 @@ class _NavigatorBarState extends State<NavigatorBar> {
   void showTutorial() {
     initTargets();
     tutorialCoachMark = TutorialCoachMark(
-      context,
       targets: targets,
       colorShadow: const Color(0xff419388),
       textSkip: "OMITIR",
@@ -311,7 +310,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
         getEconomicComplement(true);
         getEconomicComplement(false);
       },
-    )..show();
+    )..show(context:context);
   }
 
   void initTargets() {

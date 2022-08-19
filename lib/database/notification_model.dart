@@ -17,7 +17,6 @@ class NotificationModel {
     required this.content,
     required this.read,
     required this.date,
-    required this.selected,
   });
 
   int? id;
@@ -25,7 +24,6 @@ class NotificationModel {
   String content;
   bool read;
   DateTime date;
-  bool selected;
 
   NotificationModel copyWith({
     int? id,
@@ -33,7 +31,6 @@ class NotificationModel {
     String? content,
     bool? read,
     DateTime? date,
-    bool? selected,
   }) =>
       NotificationModel(
         id: id ?? this.id,
@@ -41,7 +38,6 @@ class NotificationModel {
         content: content ?? this.content,
         read: read ?? this.read,
         date: date ?? this.date,
-        selected: selected ?? this.selected,
       );
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) =>
@@ -49,9 +45,8 @@ class NotificationModel {
         id: json["id"],
         title: json["title"],
         content: json["content"],
-        read: json["read"] == 'true',
+        read: json["read"] == 'true'?true:false,
         date: DateTime.parse(json["date"]),
-        selected: json["selected"] == 'true',
       );
 
   Map<String, dynamic> toJson() => {
@@ -60,6 +55,5 @@ class NotificationModel {
         "content": content,
         "read": read,
         "date": date.toIso8601String(),
-        "selected": selected,
       };
 }

@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -18,11 +17,11 @@ import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
-import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
+import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:intl/intl.dart';
@@ -30,17 +29,11 @@ import 'package:muserpol_pvt/utils/save_document.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class ScreenLogin extends StatefulWidget {
-  final String title;
-  final bool stateOfficeVirtual;
-  final String deviceId;
-  const ScreenLogin(
-      {Key? key,
-      required this.title,
-      this.stateOfficeVirtual = true,
-      required this.deviceId})
-      : super(key: key);
+  const ScreenLogin({Key? key}) : super(key: key);
 
   @override
   State<ScreenLogin> createState() => _ScreenLoginState();
@@ -52,6 +45,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
   TextEditingController passwordCtrl = TextEditingController();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final deviceInfo = DeviceInfoPlugin();
+  String? deviceId;
   bool hidePassword = true;
   bool btnAccess = true;
   String dateCtrl = '';
@@ -63,19 +58,37 @@ class _ScreenLoginState extends State<ScreenLogin> {
   FocusNode textSecondFocusNode = FocusNode();
   final tooltipController = JustTheController();
   bool stateCom = false;
+  @override
+  void initState() {
+    super.initState();
+    checkVersion(mounted,context);
+    initializeDateFormatting();
+    getId();
+  }
+
+  Future<void> getId() async {
+    if (Platform.isIOS) {
+      var iosDeviceInfo = await deviceInfo.iosInfo;
+      debugPrint('iosDeviceInfo $iosDeviceInfo');
+      return setState(() => deviceId = iosDeviceInfo.identifierForVendor);
+    } else if (Platform.isAndroid) {
+      var androidDeviceInfo = await deviceInfo.androidInfo;
+      debugPrint('androidDeviceInfo ${androidDeviceInfo.androidId}');
+      return setState(() => deviceId = androidDeviceInfo.androidId);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    //   DeviceOrientation.portraitDown,
-    // ]);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     final node = FocusScope.of(context);
     return Scaffold(
         body: Column(children: [
       Expanded(
-          child: Stack(children: [
-        Center(
+          child: Center(
             child: SingleChildScrollView(
                 padding: const EdgeInsets.all(30),
                 child: Column(children: [
@@ -86,8 +99,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                           : 'assets/images/muserpol-logo2.png',
                     ),
                   ),
-                  Text(widget.title,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Plataforma Virtual de trámites',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 20),
                   if (btnAccess)
                     Stack(children: [
@@ -134,8 +147,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                     ),
                                   if (dniComplement)
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width /
-                                          3.4,
+                                      width:
+                                          MediaQuery.of(context).size.width / 3.4,
                                       child: InputComponent(
                                         focusNode: textSecondFocusNode,
                                         textInputAction: TextInputAction.next,
@@ -172,8 +185,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                   onPressed: () => selectDate(context)),
                               if (dateState)
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 15),
                                   child: Text(
                                     'Ingrese su fecha de nacimiento',
                                     style: TextStyle(
@@ -183,40 +196,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
                               SizedBox(
                                 height: 10.h,
                               ),
-                              if (widget.stateOfficeVirtual)
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('Contraseña:'),
-                                    InputComponent(
-                                        textInputAction: TextInputAction.done,
-                                        controllerText: passwordCtrl,
-                                        onEditingComplete: () => initSession(),
-                                        validator: (value) {
-                                          if (value.isNotEmpty) {
-                                            if (value.length >= 6) {
-                                              return null;
-                                            } else {
-                                              return 'Debe tener un mínimo de 6 caracteres.';
-                                            }
-                                          } else {
-                                            return 'Ingrese su contraseña';
-                                          }
-                                        },
-                                        keyboardType: TextInputType.text,
-                                        icon: Icons.lock,
-                                        labelText: "Contraseña",
-                                        obscureText: hidePassword,
-                                        onTap: () => setState(
-                                            () => hidePassword = !hidePassword),
-                                        iconOnTap: hidePassword
-                                            ? Icons.lock_outline
-                                            : Icons.lock_open_sharp),
-                                    SizedBox(
-                                      height: 20.h,
-                                    ),
-                                  ],
-                                ),
                               ButtonComponent(
                                   text: 'INGRESAR',
                                   onPressed: () => initSession()),
@@ -226,8 +205,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                               Center(
                                 child: ButtonWhiteComponent(
                                     text: 'Contactos a nivel nacional',
-                                    onPressed: () => Navigator.pushNamed(
-                                        context, 'contacts')),
+                                    onPressed: () =>
+                                        Navigator.pushNamed(context, 'contacts')),
                               ),
                               Center(
                                 child: ButtonWhiteComponent(
@@ -257,20 +236,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                       fit: BoxFit.cover,
                       height: 20,
                     )),
-                ]))),
-        Positioned(
-            top: 40,
-            left: 0,
-            child: GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/back.svg',
-                      height: 17.sp,
-                      color: ThemeProvider.themeOf(context).data.hintColor,
-                    ))))
-      ]))
+                ])),
+          ))
     ]));
   }
 
@@ -353,28 +320,31 @@ class _ScreenLoginState extends State<ScreenLogin> {
               builder: (BuildContext context) => const DialogAction(
                   message: 'Verifique su conexión a Internet'));
         }
-        await checkVersion(context);
+        await checkVersion(mounted,context);
+        String token = await PushNotificationService.initializeapp();
         final Map<String, dynamic> data = {
           "identity_card":
               '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}',
           "birth_date": dateCtrlText,
-          "device_id": widget.deviceId,
-          "is_new_app": true
+          "device_id": deviceId,
+          "firebase_token":token,
+          "is_new_app": true,
         };
         if (!mounted) return;
         var response = await serviceMethod(
-            mounted, context, 'post', data, serviceAuthSession(), false, true);
+            mounted, context, 'post', data, serviceAuthSession(null), false, true);
         setState(() => btnAccess = true);
         if (response != null) {
-          DBProvider.db.database;
+          await DBProvider.db.database;
           UserModel user = userModelFromJson(
               json.encode(json.decode(response.body)['data']));
           await authService.auxtoken(user.apiToken!);
           appState.updateStateAuxToken(true);
           userBloc.add(UpdateUser(user.user!));
-          prefs!.setString(
-              'user', json.encode(json.decode(response.body)['data']));
-          prefs!.setString('ci', dniCtrl.text.trim());
+          // prefs!.setString('user', json.encode(json.decode(response.body)['data']));
+          if (!mounted) return;
+          await authService.user(context, json.encode(json.decode(response.body)['data']));
+          // prefs!.setString('ci', dniCtrl.text.trim());
           //add words validations for files
           // files.addKey('cianverso', dniCtrl.text.trim()); //num carnet
           // files.addKey('cireverso', dniCtrl.text.trim()); //num carnet
@@ -410,7 +380,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
         return showSuccessful(context, message, () async {
           await authService.login(context, token, data);
           appState.updateStateAuxToken(false);
-          await FirebaseMessaging.instance.subscribeToTopic('GATOS');
           if (!mounted) return;
           Navigator.pushReplacementNamed(context, 'navigator');
         });

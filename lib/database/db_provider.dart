@@ -34,8 +34,7 @@ class DBProvider {
               title TEXT,
               content TEXT,
               read TEXT,
-              date DATETIME,
-              selected TEXT
+              date DATETIME
             )
           ''');
     });
@@ -46,7 +45,6 @@ class DBProvider {
     final db = await database;
     var noti = data.toJson();
     noti['read'] = noti['read'].toString();
-    noti['selected'] = noti['selected'].toString();
     final res = await db.insert('notification', noti);
     return res;
   }
