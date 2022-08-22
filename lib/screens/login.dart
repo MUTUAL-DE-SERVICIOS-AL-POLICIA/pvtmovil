@@ -69,7 +69,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   Future<void> getId() async {
     if (Platform.isIOS) {
       var iosDeviceInfo = await deviceInfo.iosInfo;
-      debugPrint('iosDeviceInfo $iosDeviceInfo');
+      debugPrint('iosDeviceInfo ${iosDeviceInfo.identifierForVendor}');
       return setState(() => deviceId = iosDeviceInfo.identifierForVendor);
     } else if (Platform.isAndroid) {
       var androidDeviceInfo = await deviceInfo.androidInfo;
@@ -327,7 +327,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
               '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}',
           "birth_date": dateCtrlText,
           "device_id": deviceId,
-          "firebase_token":token,
+          // "firebase_token":token,
           "is_new_app": true,
         };
         if (!mounted) return;

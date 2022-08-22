@@ -3,7 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 String? url = dotenv.env['HOST_URL'];
 String? urleo = dotenv.env['HOST_URLLEO'];
 //AUTH
-serviceAuthSession(int? affiliateId) => '$url/auth/$affiliateId';
+serviceAuthSession(int? affiliateId) => '$url/auth/${affiliateId??''}';
 
 //CONTACTS
 serviceGetContacts() => '$url/city';

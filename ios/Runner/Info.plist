@@ -2,14 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- permisospara camara -->
-	<key>NSCameraUsageDescription</key>
-	<string>Para una capturar imagenes es necesario permitir la cámara</string>
-	<!-- fin -->
-	<!-- permisospara para galeria -->
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Para acceder a imagenes es necesario permitir la galeria</string>
-	<!-- fin -->
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -34,6 +26,20 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Para una capturar imagenes es necesario permitir la cámara</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Para acceder a imagenes es necesario permitir la galeria</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
