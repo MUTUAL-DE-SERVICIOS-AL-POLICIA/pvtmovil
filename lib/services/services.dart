@@ -1,6 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 String? url = dotenv.env['HOST_URL'];
+String? urleo = dotenv.env['HOST_URLLEO'];
 //AUTH
 serviceAuthSession(int? affiliateId) => '$url/auth/$affiliateId';
 
@@ -27,7 +28,7 @@ serviceGetObservation(int affiliateId) =>
     '$url/affiliate/$affiliateId/observation';
 serviceEcoComProcedure(int ecoComId) => '$url/eco_com_procedure/$ecoComId';
 //GET VERSION
-serviceGetVersion()=>'$url/version';
+serviceGetVersion()=>'$urleo/version';
 //GET APP PLAY STORE
 serviceGetPlayStore()=>'https://play.google.com/store/apps/details?id=com.muserpol.pvt';// Android app bundle package name
 //GET APP APP STORE
