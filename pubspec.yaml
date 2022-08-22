@@ -29,6 +29,7 @@ environment:
 dependencies:
   animate_do: ^2.1.0
   badges: ^2.0.3
+  barcode_scan2: ^4.2.1
   bloc: ^8.1.0
   camera: ^0.10.0+1
   convex_bottom_bar: ^3.0.0
@@ -54,6 +55,7 @@ dependencies:
   internet_connection_checker: ^0.0.1+4
   intl: ^0.17.0
   just_the_tooltip: ^0.0.12
+  liquid_progress_indicator: ^0.4.0
   map_launcher: ^2.3.0+1
   modal_bottom_sheet: ^2.1.0
   open_file: ^3.2.1

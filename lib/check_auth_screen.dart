@@ -6,6 +6,7 @@ import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/screens/login.dart';
 import 'package:muserpol_pvt/screens/navigator_bar.dart';
+import 'package:muserpol_pvt/screens/switch.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +34,7 @@ class CheckAuthScreen extends StatelessWidget {
                 Navigator.pushReplacement(
                     context,
                     PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => const ScreenLogin(),
+                        pageBuilder: (_, __, ___) => const ScreenSwitch(),
                         transitionDuration: const Duration(seconds: 0)));
               });
             } else {

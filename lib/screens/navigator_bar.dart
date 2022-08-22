@@ -15,7 +15,7 @@ import 'package:muserpol_pvt/dialogs/dialog_back.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/inbox/screen_inbox.dart';
-import 'package:muserpol_pvt/screens/pages/procedure/procedure.dart';
+import 'package:muserpol_pvt/screens/pages/complent_economic/procedure/procedure.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +24,9 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'dart:math' as math;
 
 class NavigatorBar extends StatefulWidget {
+  final bool stateOfficeVirtual; 
   final bool tutorial;
-  const NavigatorBar({Key? key, this.tutorial = true}) : super(key: key);
+  const NavigatorBar({Key? key, this.stateOfficeVirtual = true,this.tutorial = true}) : super(key: key);
 
   @override
   State<NavigatorBar> createState() => _NavigatorBarState();

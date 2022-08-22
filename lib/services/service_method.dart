@@ -113,6 +113,33 @@ Future<dynamic> serviceMethod(
           }
           return null;
         });
+      case 'patch':
+        return await http
+            .patch(url, headers: headers, body: json.encode(body))
+            .timeout(const Duration(seconds: 40))
+            .then((value) {
+          debugPrint('statusCode ${value.statusCode}');
+          debugPrint('value ${value.body}');
+          switch (value.statusCode) {
+            case 200:
+              return value;
+            default:
+              callDialogAction(context, json.decode(value.body)['message']);
+              return null;
+          }
+        }).catchError((err) {
+          debugPrint('errA $err');
+          if ('$err'.contains('html')) {
+            callDialogAction(context,
+                'Tenemos un problema con nuestro servidor, intente luego');
+          } else if ('$err' == 'Software caused connection abort') {
+            callDialogAction(context, 'Verifique su conexión a Internet');
+          } else {
+            callDialogAction(
+                context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+          }
+          return null;
+        });
     }
   } on TimeoutException catch (e) {
     debugPrint('errB $e');

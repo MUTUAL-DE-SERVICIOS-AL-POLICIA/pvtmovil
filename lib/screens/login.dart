@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +11,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
+import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
@@ -19,7 +19,9 @@ import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
+import 'package:muserpol_pvt/screens/dialog_update_pwd.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
+import 'package:muserpol_pvt/screens/pages/virtual_officine/page_home.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
@@ -33,7 +35,15 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 class ScreenLogin extends StatefulWidget {
-  const ScreenLogin({Key? key}) : super(key: key);
+  final String title;
+  final bool stateOfficeVirtual;
+  final String deviceId;
+  const ScreenLogin(
+      {Key? key,
+      required this.title,
+      this.stateOfficeVirtual = true,
+      required this.deviceId})
+      : super(key: key);
 
   @override
   State<ScreenLogin> createState() => _ScreenLoginState();
@@ -46,7 +56,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final deviceInfo = DeviceInfoPlugin();
-  String? deviceId;
   bool hidePassword = true;
   bool btnAccess = true;
   String dateCtrl = '';
@@ -58,24 +67,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
   FocusNode textSecondFocusNode = FocusNode();
   final tooltipController = JustTheController();
   bool stateCom = false;
+  Map<String, dynamic> data = {};
   @override
   void initState() {
     super.initState();
-    checkVersion(mounted,context);
     initializeDateFormatting();
-    getId();
-  }
-
-  Future<void> getId() async {
-    if (Platform.isIOS) {
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      debugPrint('iosDeviceInfo $iosDeviceInfo');
-      return setState(() => deviceId = iosDeviceInfo.identifierForVendor);
-    } else if (Platform.isAndroid) {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      debugPrint('androidDeviceInfo ${androidDeviceInfo.androidId}');
-      return setState(() => deviceId = androidDeviceInfo.androidId);
-    }
   }
 
   @override
@@ -89,155 +85,196 @@ class _ScreenLoginState extends State<ScreenLogin> {
         body: Column(children: [
       Expanded(
           child: Center(
-            child: SingleChildScrollView(
-                padding: const EdgeInsets.all(30),
-                child: Column(children: [
-                  Image(
-                    image: AssetImage(
-                      ThemeProvider.themeOf(context).id.contains('dark')
-                          ? 'assets/images/muserpol-logo.png'
-                          : 'assets/images/muserpol-logo2.png',
-                    ),
-                  ),
-                  const Text('Plataforma Virtual de trámites',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 20),
-                  if (btnAccess)
-                    Stack(children: [
-                      Form(
-                          key: formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Cédula de identidad:'),
-                              Row(
-                                children: <Widget>[
-                                  Flexible(
-                                    child: InputComponent(
-                                      textInputAction: TextInputAction.next,
-                                      controllerText: dniCtrl,
-                                      onEditingComplete: () => dniComplement
-                                          ? node.nextFocus()
-                                          : selectDate(context),
-                                      validator: (value) {
-                                        if (value.length > 3) {
+        child: SingleChildScrollView(
+            padding: const EdgeInsets.all(30),
+            child: Column(children: [
+              Image(
+                image: AssetImage(
+                  ThemeProvider.themeOf(context).id.contains('dark')
+                      ? 'assets/images/muserpol-logo.png'
+                      : 'assets/images/muserpol-logo2.png',
+                ),
+              ),
+              Text(widget.title,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(
+                height: 20.h,
+              ),
+              if (btnAccess)
+                Stack(children: [
+                  Form(
+                      key: formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Cédula de identidad:'),
+                          Row(
+                            children: <Widget>[
+                              Flexible(
+                                child: InputComponent(
+                                  textInputAction: TextInputAction.next,
+                                  controllerText: dniCtrl,
+                                  onEditingComplete: () => dniComplement
+                                      ? node.nextFocus()
+                                      : selectDate(context),
+                                  validator: (value) {
+                                    if (value.length > 3) {
+                                      return null;
+                                    } else {
+                                      return 'Ingrese su cédula de indentidad';
+                                    }
+                                  },
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(10),
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp("[0-9]"))
+                                  ],
+                                  keyboardType: TextInputType.number,
+                                  textCapitalization:
+                                      TextCapitalization.characters,
+                                  icon: Icons.person,
+                                  labelText: "Cédula de indentidad",
+                                ),
+                              ),
+                              if (dniComplement)
+                                Text(
+                                  '  _  ',
+                                  style: TextStyle(
+                                      fontSize: 15.sp,
+                                      color: const Color(0xff419388)),
+                                ),
+                              if (dniComplement)
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width / 3.4,
+                                  child: InputComponent(
+                                    focusNode: textSecondFocusNode,
+                                    textInputAction: TextInputAction.next,
+                                    controllerText: dniComCtrl,
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(2),
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp("[0-9a-zA-Z]"))
+                                    ],
+                                    onEditingComplete: () =>
+                                        selectDate(context),
+                                    validator: (value) {
+                                      if (value.isNotEmpty) {
+                                        return null;
+                                      } else {
+                                        return 'complemento';
+                                      }
+                                    },
+                                    keyboardType: TextInputType.text,
+                                    textCapitalization:
+                                        TextCapitalization.characters,
+                                    icon: Icons.person,
+                                    labelText: "Complemento",
+                                  ),
+                                ), //container
+                            ], //widget
+                          ),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          if (!widget.stateOfficeVirtual)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Fecha de nacimiento:'),
+                                ButtonDate(
+                                    text: dateCtrl,
+                                    onPressed: () => selectDate(context)),
+                                if (dateState)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15),
+                                    child: Text(
+                                      'Ingrese su fecha de nacimiento',
+                                      style: TextStyle(
+                                          color: Colors.red, fontSize: 15.sp),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          if (widget.stateOfficeVirtual)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Contraseña:'),
+                                InputComponent(
+                                    textInputAction: TextInputAction.done,
+                                    controllerText: passwordCtrl,
+                                    onEditingComplete: () => initSession(),
+                                    validator: (value) {
+                                      if (value.isNotEmpty) {
+                                        if (value.length >= 4) {
                                           return null;
                                         } else {
-                                          return 'Ingrese su cédula de indentidad';
+                                          return 'Debe tener un mínimo de 6 caracteres.';
                                         }
-                                      },
-                                      inputFormatters: [
-                                        LengthLimitingTextInputFormatter(10),
-                                        FilteringTextInputFormatter.allow(
-                                            RegExp("[0-9]"))
-                                      ],
-                                      keyboardType: TextInputType.number,
-                                      textCapitalization:
-                                          TextCapitalization.characters,
-                                      icon: Icons.person,
-                                      labelText: "Cédula de indentidad",
-                                    ),
-                                  ),
-                                  if (dniComplement)
-                                    Text(
-                                      '  _  ',
-                                      style: TextStyle(
-                                          fontSize: 15.sp,
-                                          color: const Color(0xff419388)),
-                                    ),
-                                  if (dniComplement)
-                                    SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width / 3.4,
-                                      child: InputComponent(
-                                        focusNode: textSecondFocusNode,
-                                        textInputAction: TextInputAction.next,
-                                        controllerText: dniComCtrl,
-                                        inputFormatters: [
-                                          LengthLimitingTextInputFormatter(2),
-                                          FilteringTextInputFormatter.allow(
-                                              RegExp("[0-9a-zA-Z]"))
-                                        ],
-                                        onEditingComplete: () =>
-                                            selectDate(context),
-                                        validator: (value) {
-                                          if (value.isNotEmpty) {
-                                            return null;
-                                          } else {
-                                            return 'complemento';
-                                          }
-                                        },
-                                        keyboardType: TextInputType.text,
-                                        textCapitalization:
-                                            TextCapitalization.characters,
-                                        icon: Icons.person,
-                                        labelText: "Complemento",
-                                      ),
-                                    ), //container
-                                ], //widget
-                              ),
-                              SizedBox(
-                                height: 10.h,
-                              ),
-                              const Text('Fecha de nacimiento:'),
-                              ButtonDate(
-                                  text: dateCtrl,
-                                  onPressed: () => selectDate(context)),
-                              if (dateState)
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 15),
-                                  child: Text(
-                                    'Ingrese su fecha de nacimiento',
-                                    style: TextStyle(
-                                        color: Colors.red, fontSize: 15.sp),
-                                  ),
+                                      } else {
+                                        return 'Ingrese su contraseña';
+                                      }
+                                    },
+                                    keyboardType: TextInputType.text,
+                                    icon: Icons.lock,
+                                    labelText: "Contraseña",
+                                    obscureText: hidePassword,
+                                    onTap: () => setState(
+                                        () => hidePassword = !hidePassword),
+                                    iconOnTap: hidePassword
+                                        ? Icons.lock_outline
+                                        : Icons.lock_open_sharp),
+                                SizedBox(
+                                  height: 20.h,
                                 ),
-                              SizedBox(
-                                height: 10.h,
-                              ),
-                              ButtonComponent(
-                                  text: 'INGRESAR',
-                                  onPressed: () => initSession()),
-                              SizedBox(
-                                height: 20.h,
-                              ),
-                              Center(
-                                child: ButtonWhiteComponent(
-                                    text: 'Contactos a nivel nacional',
-                                    onPressed: () =>
-                                        Navigator.pushNamed(context, 'contacts')),
-                              ),
-                              Center(
-                                child: ButtonWhiteComponent(
-                                    text: 'Política de privacidad',
-                                    onPressed: () => privacyPolicy(context)),
-                              ),
-                              SizedBox(
-                                height: 10.h,
-                              ),
-                              Center(
-                                child: Text('Versión ${dotenv.env['version']}'),
-                              )
-                            ],
-                          )),
-                      Positioned(
-                          top: 0,
-                          right: 0,
-                          child: Buttontoltip(
-                            tooltipController: tooltipController,
-                            onPressed: (bool state) => functionToltip(state),
-                          ))
-                    ]),
-                  if (!btnAccess)
-                    Center(
-                        child: Image.asset(
-                      'assets/images/load.gif',
-                      fit: BoxFit.cover,
-                      height: 20,
-                    )),
-                ])),
-          ))
+                              ],
+                            ),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          ButtonComponent(
+                              text: 'INGRESAR', onPressed: () => initSession()),
+                          SizedBox(
+                            height: 20.h,
+                          ),
+                          Center(
+                            child: ButtonWhiteComponent(
+                                text: 'Contactos a nivel nacional',
+                                onPressed: () =>
+                                    Navigator.pushNamed(context, 'contacts')),
+                          ),
+                          Center(
+                            child: ButtonWhiteComponent(
+                                text: 'Política de privacidad',
+                                onPressed: () => privacyPolicy(context)),
+                          ),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          Center(
+                            child: Text('Versión ${dotenv.env['version']}'),
+                          )
+                        ],
+                      )),
+                  Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Buttontoltip(
+                        tooltipController: tooltipController,
+                        onPressed: (bool state) => functionToltip(state),
+                      ))
+                ]),
+              if (!btnAccess)
+                Center(
+                    child: Image.asset(
+                  'assets/images/load.gif',
+                  fit: BoxFit.cover,
+                  height: 20,
+                )),
+            ])),
+      ))
     ]));
   }
 
@@ -303,39 +340,53 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   initSession() async {
     FocusScope.of(context).unfocus();
-    validateDate();
+    if (!widget.stateOfficeVirtual) validateDate();
     if (formKey.currentState!.validate()) {
       final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
       final authService = Provider.of<AuthService>(context, listen: false);
       final appState = Provider.of<AppState>(context, listen: false);
-      if (dateCtrlText != null) {
-        setState(() => btnAccess = false);
-        if (await InternetConnectionChecker().connectionStatus ==
-            InternetConnectionStatus.disconnected) {
-          setState(() => btnAccess = true);
-          // return callDialogAction(context, 'Verifique su conexión a Internet');
-          return showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (BuildContext context) => const DialogAction(
-                  message: 'Verifique su conexión a Internet'));
-        }
-        await checkVersion(mounted,context);
-        String token = await PushNotificationService.initializeapp();
-        final Map<String, dynamic> data = {
-          "identity_card":
-              '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}',
-          "birth_date": dateCtrlText,
-          "device_id": deviceId,
-          "firebase_token":token,
-          "is_new_app": true,
-        };
-        if (!mounted) return;
-        var response = await serviceMethod(
-            mounted, context, 'post', data, serviceAuthSession(null), false, true);
+      if (dateCtrlText == null && !widget.stateOfficeVirtual) return;
+      setState(() => btnAccess = false);
+      if (await InternetConnectionChecker().connectionStatus ==
+          InternetConnectionStatus.disconnected) {
         setState(() => btnAccess = true);
-        if (response != null) {
-          await DBProvider.db.database;
+        // return callDialogAction(context, 'Verifique su conexión a Internet');
+        return showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) => const DialogAction(
+                message: 'Verifique su conexión a Internet'));
+      }
+      await checkVersion(mounted, context);
+      String token = await PushNotificationService.initializeapp();
+
+      data['device_id'] = widget.deviceId;
+      data['firebase_token'] = token;
+      if (!widget.stateOfficeVirtual) {
+        data['identity_card'] =
+            '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
+        data['birth_date'] = dateCtrlText;
+        data['is_new_app'] = true;
+      } else {
+        data['username'] =
+            '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
+        data['password'] = passwordCtrl.text.trim();
+      }
+      if (!mounted) return;
+      var response = await serviceMethod(
+          mounted,
+          context,
+          'post',
+          data,
+          widget.stateOfficeVirtual
+              ? serviceAuthSessionOF()
+              : serviceAuthSession(null),
+          false,
+          true);
+      setState(() => btnAccess = true);
+      if (response != null) {
+        await DBProvider.db.database;
+        if (!widget.stateOfficeVirtual) {
           UserModel user = userModelFromJson(
               json.encode(json.decode(response.body)['data']));
           await authService.auxtoken(user.apiToken!);
@@ -343,7 +394,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
           userBloc.add(UpdateUser(user.user!));
           // prefs!.setString('user', json.encode(json.decode(response.body)['data']));
           if (!mounted) return;
-          await authService.user(context, json.encode(json.decode(response.body)['data']));
+          await authService.user(
+              context, json.encode(json.decode(response.body)['data']));
           // prefs!.setString('ci', dniCtrl.text.trim());
           //add words validations for files
           // files.addKey('cianverso', dniCtrl.text.trim()); //num carnet
@@ -362,8 +414,33 @@ class _ScreenLoginState extends State<ScreenLogin> {
             if (!mounted) return;
             return Navigator.pushReplacementNamed(context, 'navigator');
           }
+        } else {
+          switch (json.decode(response.body)['data']['status']) {
+            case 'Pendiente':
+              return await showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) => ComponentAnimate(
+                      child: DialogUpdatePwd(
+                          message: json.decode(response.body)['message'],
+                          onPressed: (pwd) => updatePassword(pwd))));
+            case 'Activo':
+              return Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PageHome()),
+              );
+          }
         }
       }
+    }
+  }
+
+  updatePassword(String password) async {
+    data['new_password'] = password;
+    var response = await serviceMethod(mounted, context, 'patch', data,
+        serviceChangePasswordOF(), false, true);
+    if (response != null) {
+      debugPrint('res ${response.body}');
     }
   }
 
@@ -388,10 +465,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   }
 
   validateDate() {
-    if (dateCtrlText != null) {
-      setState(() => dateState = false);
-    } else {
-      setState(() => dateState = true);
-    }
+    if (dateCtrlText == null) return setState(() => dateState = true);
+    return setState(() => dateState = false);
   }
 }
