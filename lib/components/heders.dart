@@ -6,6 +6,7 @@ import 'package:theme_provider/theme_provider.dart';
 //  widget que se ajusta en la parte superior
 class HedersComponent extends StatelessWidget {
   final String title;
+  final String? titleExtra;
   final bool stateBack;
   final bool menu;
   final Function()? onPressMenu;
@@ -14,6 +15,7 @@ class HedersComponent extends StatelessWidget {
   const HedersComponent(
       {Key? key,
       required this.title,
+      this.titleExtra,
       this.stateBack = false,
       this.menu = false,
       this.onPressMenu,
@@ -60,6 +62,9 @@ class HedersComponent extends StatelessWidget {
                         textAlign: center ? TextAlign.center : TextAlign.start,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20.sp)),
+                    if (titleExtra != null)
+                      Text(titleExtra!,
+                          style: const TextStyle(fontWeight: FontWeight.w500))
                   ],
                 ),
               ),
