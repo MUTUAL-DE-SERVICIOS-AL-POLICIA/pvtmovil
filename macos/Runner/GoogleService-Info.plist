@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>187989256881-5npl5h1orh1gkkasc63psiog1bkiakai.apps.googleusercontent.com</string>
+	<string>187989256881-qkg1ep5ie8rarc3pc5jcmpj79v362fm5.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.187989256881-5npl5h1orh1gkkasc63psiog1bkiakai</string>
+	<string>com.googleusercontent.apps.187989256881-qkg1ep5ie8rarc3pc5jcmpj79v362fm5</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>187989256881-dkukight1kccbb3mh4uchrib1tqvnqsm.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.muserpol.pvtmovil</string>
+	<string>com.example.muserpolPvt</string>
 	<key>PROJECT_ID</key>
 	<string>muserpol-pvt-9d002</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:187989256881:ios:78d987f4ac6fe31bbc1090</string>
+	<string>1:187989256881:ios:97d7442b1f3eddf7bc1090</string>
 </dict>
 </plist>

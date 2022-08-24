@@ -87,6 +87,8 @@ Future<dynamic> serviceMethod(
           return null;
         });
       case 'post':
+        debugPrint('headers $headers');
+        debugPrint('url $url');
         return await http
             .post(url, headers: headers, body: json.encode(body))
             .timeout(const Duration(seconds: 40))
@@ -179,46 +181,33 @@ checkVersion(bool mounted, BuildContext context) async {
       InternetConnectionStatus.disconnected) {
     return callDialogAction(context, 'Verifique su conexión a Internet');
   }
+  final Map<String, dynamic> data = {'version': dotenv.env['versions']};
+  if (Platform.isIOS) {
+    data['store'] = 'appstore';
+  }
+  if (Platform.isAndroid) {
+    data['store'] = 'playstore';
+  }
   var response = await serviceMethod(
-      mounted, context, 'get', null, serviceGetVersion(), false, false);
+      mounted, context, 'post', data, servicePostVersion(), false, false);
   if (response != null) {
-    if (Platform.isIOS) {
-      if (dotenv.env['versions'] !=
-          json.decode(response.body)['data']['applestore']) {
-        return await showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) => ComponentAnimate(
-                child: DialogOneFunction(
-                    title: 'Actualiza la nueva versión',
-                    message:
-                        'Para mejorar la experiencia, Porfavor actualiza la nueva versión',
-                    textButton: 'Actualizar',
-                    onPressed: () async {
-                      launchUrl(Uri.parse(serviceGetAppStore()),
-                          mode: LaunchMode.externalApplication);
-                    })));
-      }
-      return;
+    if (!json.decode(response.body)['error']) {
+      return await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => ComponentAnimate(
+              child: DialogOneFunction(
+                  title: json.decode(response.body)['message'],
+                  message:
+                      'Para mejorar la experiencia, Porfavor actualiza la nueva versión',
+                  textButton: 'Actualizar',
+                  onPressed: () async {
+                    launchUrl(
+                        Uri.parse(
+                            json.decode(response.body)['data']['url_store']),
+                        mode: LaunchMode.externalApplication);
+                  })));
     }
-    if (Platform.isAndroid) {
-      if (dotenv.env['versions'] !=
-          json.decode(response.body)['data']['googleplay']) {
-        return await showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) => ComponentAnimate(
-                child: DialogOneFunction(
-                    title: 'Actualiza la nueva versión',
-                    message:
-                        'Para mejorar la experiencia, Porfavor actualiza la nueva versión',
-                    textButton: 'Actualizar',
-                    onPressed: () {
-                      launchUrl(Uri.parse(serviceGetPlayStore()),
-                          mode: LaunchMode.externalApplication);
-                    })));
-      }
-      return;
-    }
+    return;
   }
 }

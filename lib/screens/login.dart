@@ -274,6 +274,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 currentDate = newDataTime;
                 dateCtrl =
                     DateFormat(' dd, MMMM yyyy ', "es_ES").format(newDataTime);
+                dateCtrlText = DateFormat('dd-MM-yyyy').format(currentDate);
                 dateState = false;
               });
             }));
