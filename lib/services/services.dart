@@ -28,4 +28,4 @@ serviceGetObservation(int affiliateId) =>
     '$url/affiliate/$affiliateId/observation';
 serviceEcoComProcedure(int ecoComId) => '$url/eco_com_procedure/$ecoComId';
 //GET VERSION
-servicePostVersion()=>'$urleo/version';
+servicePostVersion()=>'$url/version';

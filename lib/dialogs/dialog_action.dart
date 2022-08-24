@@ -56,7 +56,7 @@ class DialogOneFunction extends StatelessWidget {
               ),
               Text(
                 message,
-                textAlign: TextAlign.justify,
+                textAlign: TextAlign.center,
               ),
             ],
           ),
