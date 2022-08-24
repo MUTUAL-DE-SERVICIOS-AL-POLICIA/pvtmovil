@@ -63,13 +63,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCXJR6tDPrhJMz7ASR3OXt3aishuZfL8qA',
-    appId: '1:187989256881:ios:fcdefa3e612cb1a7bc1090',
+    appId: '1:187989256881:ios:78d987f4ac6fe31bbc1090',
     messagingSenderId: '187989256881',
     projectId: 'muserpol-pvt-9d002',
     storageBucket: 'muserpol-pvt-9d002.appspot.com',
     androidClientId: '187989256881-dkukight1kccbb3mh4uchrib1tqvnqsm.apps.googleusercontent.com',
-    iosClientId: '187989256881-4ucpd7jfukcevei8jcrpljinv1kti58c.apps.googleusercontent.com',
-    iosBundleId: 'com.muserpol.pvt',
+    iosClientId: '187989256881-5npl5h1orh1gkkasc63psiog1bkiakai.apps.googleusercontent.com',
+    iosBundleId: 'com.muserpol.pvtmovil',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

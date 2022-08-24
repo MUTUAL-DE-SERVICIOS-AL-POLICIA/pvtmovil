@@ -1,40 +1,36 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// String? url = dotenv.env['HOST_URL'];
-String? urleo = dotenv.env['HOST_URLLEO'];
-String? urlea = dotenv.env['HOST_URLLEA'];
+String? url = dotenv.env['HOST_URL'];
+String? urleo = dotenv.env['HOST_URLEO'];
 String? urlbla = dotenv.env['HOST_URLBLA'];
+String? urlea = dotenv.env['HOST_URLEA'];
 //AUTH
-serviceAuthSession(int? affiliateId) => '$urleo/auth/${affiliateId??''}';
+serviceAuthSession(int? affiliateId) => '$url/auth/${affiliateId??''}';
 
 //CONTACTS
-serviceGetContacts() => '$urleo/city';
+serviceGetContacts() => '$url/city';
 //PRIVACY POLICY
-serviceGetPrivacyPolicy() => '$urleo/policy';
+serviceGetPrivacyPolicy() => '$url/policy';
 //HISTORY
 serviceGetEconomicComplements(int page, bool current) =>
-    '$urleo/economic_complement/?page=$page&current=$current';
+    '$url/economic_complement/?page=$page&current=$current';
 //GET VERIFIED DOCUMENT
-serviceGetMessageFace() => '$urleo/message/verified';
+serviceGetMessageFace() => '$url/message/verified';
 //GET PROCESS ENROLLED
-serviceProcessEnrolled() => '$urleo/liveness';
+serviceProcessEnrolled() => '$url/liveness';
 //GET PERMISION PROCEDURE
-serviceGetProcessingPermit(int affiliateId) => '$urleo/liveness/$affiliateId';
+serviceGetProcessingPermit(int affiliateId) => '$url/liveness/$affiliateId';
 //SEND IMAGES FOR PROCEDURE
-serviceSendImagesProcedure() => '$urleo/economic_complement';
+serviceSendImagesProcedure() => '$url/economic_complement';
 //PRINT ECONOMIC COMPLEMENT
 serviceGetPDFEC(int economicComplementId) =>
-    '$urleo/economic_complement/print/$economicComplementId';
+    '$url/economic_complement/print/$economicComplementId';
 //GET OBSERVATIONS
 serviceGetObservation(int affiliateId) =>
-    '$urleo/affiliate/$affiliateId/observation';
-serviceEcoComProcedure(int ecoComId) => '$urleo/eco_com_procedure/$ecoComId';
+    '$url/affiliate/$affiliateId/observation';
+serviceEcoComProcedure(int ecoComId) => '$url/eco_com_procedure/$ecoComId';
 //GET VERSION
-serviceGetVersion()=>'$urleo/version';
-//GET APP PLAY STORE
-serviceGetPlayStore()=>'https://play.google.com/store/apps/details?id=com.muserpol.pvt';// Android app bundle package name
-//GET APP APP STORE
-serviceGetAppStore()=>'https://apps.apple.com/app/id284815942'; // AppStore id of your app
+servicePostVersion()=>'$url/version';
 //////////////////////////////////////////////////
 /////////////OFICINA VIRTUAL/////////////////////
 ////////////////////////////////////////////////

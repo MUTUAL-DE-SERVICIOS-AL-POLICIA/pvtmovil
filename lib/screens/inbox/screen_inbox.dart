@@ -88,7 +88,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
       child: ContainerComponent(
           color: item.read
               ? ThemeProvider.themeOf(context).data.scaffoldBackgroundColor
-              : Color.fromARGB(255, 235, 218, 192),
+              : const Color.fromARGB(255, 235, 218, 192),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
             child: Row(

@@ -6,10 +6,13 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/section_title.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
+import 'package:muserpol_pvt/provider/app_state.dart';
+import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
 import 'package:open_file/open_file.dart';
+import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class MenuDrawer extends StatefulWidget {
@@ -23,6 +26,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   bool colorValue = false;
   bool autentificaction = false;
   String? fullPaths;
+  String stateApp='';
   @override
   void initState() {
     super.initState();
@@ -32,11 +36,13 @@ class _MenuDrawerState extends State<MenuDrawer> {
       }
     });
   }
-
+  services()async{
+    final authService = Provider.of<AuthService>(context, listen: false);
+    setState(() async => stateApp = await authService.readStateApp());
+    }
   bool status = true;
   bool sendNotifications = true;
   bool darkTheme = false;
-
   bool stateLoading = false;
   @override
   Widget build(BuildContext context) {
@@ -61,27 +67,32 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 'Mis datos',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
+              if(stateApp == 'complement' )
               IconName(
                 icon: Icons.person_outline,
                 text: userBloc!.fullName!,
               ),
-              if (userBloc.degree != null)
+              if(stateApp == 'complement')
+              if (userBloc!.degree != null)
                 IconName(
                   icon: Icons.local_police_outlined,
                   text: 'GRADO: ${userBloc.degree!}',
                 ),
+              if(stateApp == 'complement')
               IconName(
                 icon: Icons.contact_page_outlined,
-                text: 'C.I.: ${userBloc.identityCard!}',
+                text: 'C.I.: ${userBloc!.identityCard!}',
               ),
-              if (userBloc.category != null)
+              if(stateApp == 'complement')
+              if (userBloc!.category != null)
                 IconName(
                   icon: Icons.av_timer,
                   text: 'CATEGORÍA: ${userBloc.category!}',
                 ),
+              if(stateApp == 'complement')
               IconName(
                 icon: Icons.account_balance,
-                text: 'GESTORA: ${userBloc.pensionEntity!}',
+                text: 'GESTORA: ${userBloc!.pensionEntity!}',
               ),
               Divider(height: 0.03.sh),
               const Text(
@@ -149,7 +160,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
           return ComponentAnimate(
               child: DialogTwoAction(
                   message: '¿Estás seguro que quieres cerrar sesión?',
-                  actionCorrect: () => confirmDeleteSession(mounted, context,true),
+                  actionCorrect: () => confirmDeleteSession(mounted, context,false),
                   messageCorrect: 'Salir'));
         });
   }

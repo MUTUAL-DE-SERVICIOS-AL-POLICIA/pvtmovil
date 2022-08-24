@@ -6,6 +6,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class AuthService extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
 
+  Future stateApp( BuildContext context, String value) async{
+    await storage.write(key: 'stateApp', value: value);
+    return;
+  }
+
   Future user( BuildContext context, String value )async{
     await storage.write(key: 'user', value: value);
     return;
@@ -28,6 +33,9 @@ class AuthService extends ChangeNotifier {
     await storage.delete(key: 'data');
     await storage.delete(key: 'auxToken');
     return;
+  }
+  Future<String>readStateApp() async{
+    return await storage.read(key: 'stateApp') ?? '';
   }
   Future<String>readUser() async{
     return await storage.read(key: 'user') ?? '';

@@ -1,7 +1,6 @@
-// import 'dart:convert';
+
 import 'dart:convert';
 import 'dart:io';
-// import 'dart:js';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -9,11 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
-// import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/screens/inbox/notification.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/utils/style.dart';
-import 'package:path_provider/path_provider.dart';
 import 'bloc/notification/notification_bloc.dart';
 import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

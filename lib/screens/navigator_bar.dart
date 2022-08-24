@@ -15,7 +15,9 @@ import 'package:muserpol_pvt/dialogs/dialog_back.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/inbox/screen_inbox.dart';
-import 'package:muserpol_pvt/screens/pages/complent_economic/procedure/procedure.dart';
+import 'package:muserpol_pvt/screens/pages/complement/procedure.dart';
+import 'package:muserpol_pvt/screens/pages/virtual_officine/home_page.dart';
+import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
@@ -24,9 +26,8 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'dart:math' as math;
 
 class NavigatorBar extends StatefulWidget {
-  final bool stateOfficeVirtual; 
   final bool tutorial;
-  const NavigatorBar({Key? key, this.stateOfficeVirtual = true,this.tutorial = true}) : super(key: key);
+  const NavigatorBar({Key? key, this.tutorial = true}) : super(key: key);
 
   @override
   State<NavigatorBar> createState() => _NavigatorBarState();
@@ -53,43 +54,64 @@ class _NavigatorBarState extends State<NavigatorBar> {
 
   List<Widget> pageList = [];
 
+  String stateApp = 'complement';
   @override
   void initState() {
+    super.initState();
+    checkVersion(mounted, context);
+    
+    services();
+  }
+  services()async{
+    final authService = Provider.of<AuthService>(context, listen: false);
+    debugPrint('hcfcghghvgvgvgvgh');
     setState(() {
-      pageList = [
-        ScreenProcedures(
-            current: true,
-            scroll: _scrollController,
-            keyProcedure: keyCreateProcedure,
-            keyMenu: keyMenu,
-            keyRefresh: keyRefresh),
-        ScreenProcedures(current: false, scroll: _scrollController),
-      ];
+      
     });
+    stateApp = await authService.readStateApp();
+    debugPrint('stateApp 1 $stateApp');
+    debugPrint('stateApp 2 ${await authService.readStateApp()}');
+    if (stateApp == 'virtualofficine') {
+      setState(() {
+        pageList = const [PageHome(), PageHome(), PageHome()];
+      });
+    } else {
+      setState(() {
+        pageList = [
+          ScreenProcedures(
+              current: true,
+              scroll: _scrollController,
+              keyProcedure: keyCreateProcedure,
+              keyMenu: keyMenu,
+              keyRefresh: keyRefresh),
+          ScreenProcedures(current: false, scroll: _scrollController),
+        ];
+      });
+      getProcessingPermit();
+      getObservations();
+      _scrollController.addListener(() {
+        if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent) {
+          if (_currentIndex == 0 &&
+              procedureCurrent!.data!.nextPageUrl != null) {
+            getEconomicComplement(true);
+          }
+          if (_currentIndex == 1 &&
+              procedureHistory!.data!.nextPageUrl != null) {
+            getEconomicComplement(false);
+          }
+        }
+      });
+    }
     if (widget.tutorial) {
       Future.delayed(Duration.zero, showTutorial);
     } else {
-      getEconomicComplement(true);
-      getEconomicComplement(false);
-    }
-    super.initState();
-    checkVersion(mounted,context);
-    getProcessingPermit();
-    getObservations();
-
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        if (_currentIndex == 0 && procedureCurrent!.data!.nextPageUrl != null) {
-          getEconomicComplement(true);
-        }
-        if (_currentIndex == 1 && procedureHistory!.data!.nextPageUrl != null) {
-          getEconomicComplement(false);
-        }
+      if (stateApp == 'complement') {
+        getEconomicComplement(true);
+        getEconomicComplement(false);
       }
-    });
+    }
   }
-
   getEconomicComplement(bool current) async {
     final procedureBloc =
         BlocProvider.of<ProcedureBloc>(context, listen: false);
@@ -173,12 +195,9 @@ class _NavigatorBarState extends State<NavigatorBar> {
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    //   DeviceOrientation.portraitDown,
-    // ]);
     final notificationBloc =
         BlocProvider.of<NotificationBloc>(context, listen: true).state;
+    final appState = Provider.of<AppState>(context, listen: true);
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
@@ -211,58 +230,94 @@ class _NavigatorBarState extends State<NavigatorBar> {
                 onPressed: () => dialogInbox(context)),
           ),
           body: pageList.elementAt(_currentIndex),
-          // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
           bottomNavigationBar: Stack(
             children: [
-              SizedBox(
-                height: 50,
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: Center(
-                      child: SizedBox(
-                        key: keyBottomNavigation1,
-                        height: 40,
-                        width: MediaQuery.of(context).size.width / 4,
-                      ),
-                    )),
-                    Expanded(
-                        child: Center(
-                      child: SizedBox(
-                        key: keyBottomNavigation2,
-                        height: 40,
-                        width: MediaQuery.of(context).size.width / 4,
-                      ),
-                    )),
-                  ],
+              if (stateApp == 'complement')
+                SizedBox(
+                  height: 50,
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Center(
+                        child: SizedBox(
+                          key: keyBottomNavigation1,
+                          height: 40,
+                          width: MediaQuery.of(context).size.width / 4,
+                        ),
+                      )),
+                      Expanded(
+                          child: Center(
+                        child: SizedBox(
+                          key: keyBottomNavigation2,
+                          height: 40,
+                          width: MediaQuery.of(context).size.width / 4,
+                        ),
+                      )),
+                    ],
+                  ),
                 ),
-              ),
-              ConvexAppBar(
-                  height: 65,
-                  elevation: 0,
-                  backgroundColor: const Color(0xff419388),
-                  // color: Color(0xff419388),
-                  style: TabStyle.react,
-                  items: [
-                    TabItem(
-                        isIconBlend: true,
-                        icon: SvgPicture.asset(
-                          'assets/icons/newProcedure.svg',
-                          height: 30.sp,
-                          color: Colors.white,
-                        ),
-                        title: "Trámites Vigentes"),
-                    TabItem(
-                        isIconBlend: true,
-                        icon: SvgPicture.asset(
-                          'assets/icons/historyProcedure.svg',
-                          height: 30.sp,
-                          color: Colors.white,
-                        ),
-                        title: "Trámites Históricos"),
-                  ],
-                  initialActiveIndex: 0,
-                  onTap: (int i) => {setState(() => _currentIndex = i)}),
+              if (stateApp == 'complement')
+                ConvexAppBar(
+                    height: 65,
+                    elevation: 0,
+                    backgroundColor: const Color(0xff419388),
+                    // color: Color(0xff419388),
+                    style: TabStyle.react,
+                    items: [
+                      TabItem(
+                          isIconBlend: true,
+                          icon: SvgPicture.asset(
+                            'assets/icons/newProcedure.svg',
+                            height: 30.sp,
+                            color: Colors.white,
+                          ),
+                          title: "Trámites Vigentes"),
+                      TabItem(
+                          isIconBlend: true,
+                          icon: SvgPicture.asset(
+                            'assets/icons/historyProcedure.svg',
+                            height: 30.sp,
+                            color: Colors.white,
+                          ),
+                          title: "Trámites Históricos"),
+                    ],
+                    initialActiveIndex: 0,
+                    onTap: (int i) => {setState(() => _currentIndex = i)}),
+              if (stateApp == 'virtualofficine')
+                ConvexAppBar(
+                    height: 65,
+                    elevation: 0,
+                    backgroundColor: const Color(0xff419388),
+                    // color: Color(0xff419388),
+                    style: TabStyle.react,
+                    items: [
+                      TabItem(
+                          isIconBlend: true,
+                          icon: SvgPicture.asset(
+                            'assets/icons/newProcedure.svg',
+                            height: 30.sp,
+                            color: Colors.white,
+                          ),
+                          title: "Aportes"),
+                      TabItem(
+                          isIconBlend: true,
+                          icon: SvgPicture.asset(
+                            'assets/icons/historyProcedure.svg',
+                            height: 30.sp,
+                            color: Colors.white,
+                          ),
+                          title: "Beneficios"),
+                      TabItem(
+                          isIconBlend: true,
+                          icon: SvgPicture.asset(
+                            'assets/icons/historyProcedure.svg',
+                            height: 30.sp,
+                            color: Colors.white,
+                          ),
+                          title: "Prestamos"),
+                    ],
+                    initialActiveIndex: 0,
+                    onTap: (int i) => {setState(() => _currentIndex = i)}),
             ],
           ),
         ));
@@ -283,6 +338,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
   }
 
   void showTutorial() {
+    final appState = Provider.of<AppState>(context, listen: false);
     initTargets();
     tutorialCoachMark = TutorialCoachMark(
       targets: targets,
@@ -308,10 +364,12 @@ class _NavigatorBarState extends State<NavigatorBar> {
       },
       onSkip: () {
         debugPrint("skip");
-        getEconomicComplement(true);
-        getEconomicComplement(false);
+        if (stateApp == 'comlement') {
+          getEconomicComplement(true);
+          getEconomicComplement(false);
+        }
       },
-    )..show(context:context);
+    )..show(context: context);
   }
 
   void initTargets() {

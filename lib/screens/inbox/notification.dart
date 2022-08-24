@@ -1,11 +1,7 @@
 import 'dart:convert';
-import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/components/heders.dart';
@@ -40,9 +36,8 @@ class _ScreenNotificationState extends State<ScreenNotification> {
     return Scaffold(
         body: Padding(
             padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-            // padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
             child: Column(children: [
-              HedersComponent(title: args!['title'], stateBack: true),
+              HedersComponent(title: args!['title'],titleExtra:args['PublicationDate'], stateBack: true),
               Expanded(
                   child: Stack(
                 children: [
@@ -50,19 +45,6 @@ class _ScreenNotificationState extends State<ScreenNotification> {
                   const Formtop(),
                   if (args['image'].length <= 0)
                   const FormButtom(),
-// Container(
-//   child: Center(
-//     child: Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         ImageFiltered(
-//             imageFilter: ImageFilter.blur( sigmaY: 1,sigmaX: 1),
-//             child: Image.asset("assets/icons/favicon.png",color: const Color(0xff419388),)
-//         ),
-//       ],
-//     ),
-//   ),
-// ),
                   Center(
                     child: SingleChildScrollView(
                         child: Column(
@@ -80,13 +62,6 @@ class _ScreenNotificationState extends State<ScreenNotification> {
                             minScale: 1,
                             maxScale: 4,
                             child: Image.network(args['image'])),
-                      // SizedBox(
-                      //   height: 30.h,
-                      // ),
-                      
-                      // SizedBox(
-                      //   height: 120.h,
-                      // ),
                     ])),
                   ),
                 ],

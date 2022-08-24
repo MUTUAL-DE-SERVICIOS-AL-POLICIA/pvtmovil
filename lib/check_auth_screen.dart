@@ -4,7 +4,6 @@ import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
-import 'package:muserpol_pvt/screens/login.dart';
 import 'package:muserpol_pvt/screens/navigator_bar.dart';
 import 'package:muserpol_pvt/screens/switch.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
@@ -73,7 +72,10 @@ class CheckAuthScreen extends StatelessWidget {
   getInfo(BuildContext context)async{
     final authService = Provider.of<AuthService>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    if(await authService.readStateApp()=='complement'){
               UserModel user =  userModelFromJson( await authService.readUser());
               userBloc.add(UpdateUser(user.user!));
+    }
+
   }
 }

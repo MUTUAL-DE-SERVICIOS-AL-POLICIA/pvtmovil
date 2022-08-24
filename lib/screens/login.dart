@@ -11,7 +11,6 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
-import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
@@ -19,9 +18,8 @@ import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
-import 'package:muserpol_pvt/screens/dialog_update_pwd.dart';
+import 'package:muserpol_pvt/screens/model_update_pwd.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
-import 'package:muserpol_pvt/screens/pages/virtual_officine/page_home.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
@@ -405,11 +403,15 @@ class _ScreenLoginState extends State<ScreenLogin> {
           // await Permission.storage.request();
           // await Permission.manageExternalStorage.request();
           // await Permission.accessMediaLocation.request();
+           if (!mounted) return;
+          await authService.stateApp(context, 'complement');
           if (!json.decode(response.body)['data']['user']['enrolled']) {
             _showModalInside(user.apiToken!, data);
           } else {
             if (!mounted) return;
             await authService.login(context, user.apiToken!, data);
+           
+            
             appState.updateStateAuxToken(false);
             if (!mounted) return;
             return Navigator.pushReplacementNamed(context, 'navigator');
@@ -417,31 +419,47 @@ class _ScreenLoginState extends State<ScreenLogin> {
         } else {
           switch (json.decode(response.body)['data']['status']) {
             case 'Pendiente':
-              return await showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) => ComponentAnimate(
-                      child: DialogUpdatePwd(
-                          message: json.decode(response.body)['message'],
-                          onPressed: (pwd) => updatePassword(pwd))));
+              return virtualOfficineUpdatePwd(
+                  json.decode(response.body)['message']);
             case 'Activo':
-              return Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const PageHome()),
-              );
+              if (!mounted) return;
+              await authService.login(
+                  context,
+                  json.decode(response.body)['data']['user']['api_token'],
+                  data);
+              if (!mounted) return;
+              await authService.stateApp(context, 'virtualofficine');
+              if (!mounted) return;
+              return Navigator.pushReplacementNamed(context, 'navigator');
           }
         }
       }
     }
   }
 
-  updatePassword(String password) async {
-    data['new_password'] = password;
-    var response = await serviceMethod(mounted, context, 'patch', data,
-        serviceChangePasswordOF(), false, true);
-    if (response != null) {
-      debugPrint('res ${response.body}');
-    }
+  virtualOfficineUpdatePwd(String message) {
+    return showBarModalBottomSheet(
+      expand: false,
+      enableDrag: false,
+      isDismissible: false,
+      context: context,
+      builder: (context) => ModalUpdatePwd(
+          message: message,
+          onPressed: (password) async {
+            data['new_password'] = password;
+            var response = await serviceMethod(mounted, context, 'patch', data,
+                serviceChangePasswordOF(), false, true);
+            if (response != null) {
+              if (!mounted) return;
+              return showSuccessful(
+                  context, json.decode(response.body)['message'], () {
+                debugPrint('res ${response.body}');
+                setState(() => passwordCtrl.text = '');
+                Navigator.of(context).pop();
+              });
+            }
+          }),
+    );
   }
 
   _showModalInside(String token, Map<String, dynamic> data) async {
