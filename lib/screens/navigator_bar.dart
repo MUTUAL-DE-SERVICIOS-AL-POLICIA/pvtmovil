@@ -198,9 +198,14 @@ class _NavigatorBarState extends State<NavigatorBar> {
     final notificationBloc =
         BlocProvider.of<NotificationBloc>(context, listen: true).state;
     final appState = Provider.of<AppState>(context, listen: true);
+    final authService = Provider.of<AuthService>(context, listen: false);
     return WillPopScope(
         onWillPop: _onBackPressed,
-        child: Scaffold(
+        child: FutureBuilder(
+          //verificamos si el usuario está autenticado
+          future: authService.readStateApp(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            return Scaffold(
           floatingActionButton: Badge(
             key: keyNotification,
             animationDuration: const Duration(milliseconds: 300),
@@ -320,7 +325,8 @@ class _NavigatorBarState extends State<NavigatorBar> {
                     onTap: (int i) => {setState(() => _currentIndex = i)}),
             ],
           ),
-        ));
+        );})
+        );
   }
 
   dialogInbox(BuildContext context) {
