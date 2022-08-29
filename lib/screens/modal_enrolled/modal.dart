@@ -124,13 +124,13 @@ class _ModalInsideModalState extends State<ModalInsideModal>
           userBloc.add(UpdateUser(user));
           return widget.nextScreen(json.decode(response.body)['message']);
         } else {
+          setState(() =>
+              title = json.decode(response.body)['data']['action']['message']);
           if (!mounted) return;
-          showSuccessful(context,
+          showSuccessful(
+              context,
               'Correcto, ${json.decode(response.body)['data']['action']['message']}',
-              () async {
-            setState(() => title =
-                json.decode(response.body)['data']['action']['message']);
-          });
+              () {});
         }
       }
     }

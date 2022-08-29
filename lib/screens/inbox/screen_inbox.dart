@@ -33,11 +33,11 @@ class _ScreenInboxState extends State<ScreenInbox> {
         height: MediaQuery.of(context).size.height / 2,
         child: Column(
           children: [
-            if(notificationBloc.existNotifications)
-            Text(
-                '${notificationBloc.listNotifications!.isEmpty ? 'Sin' : notificationBloc.listNotifications!.length} Notificaciones',
-                style: const TextStyle(
-                    fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+            if (notificationBloc.existNotifications)
+              Text(
+                  '${notificationBloc.listNotifications!.isEmpty ? 'Sin' : notificationBloc.listNotifications!.length} Notificaciones',
+                  style: const TextStyle(
+                      fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
             Expanded(
               child: Center(
                 child: SingleChildScrollView(
@@ -94,7 +94,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
             child: Row(
               children: [
                 Expanded(
-                    flex:7,
+                    flex: 7,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -106,7 +106,8 @@ class _ScreenInboxState extends State<ScreenInbox> {
                                   color: ThemeProvider.themeOf(context)
                                       .data
                                       .primaryColor,
-                                  fontWeight: FontWeight.bold,fontSize: 16.sp),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.sp),
                             ),
                             Flexible(
                                 child: Text(
@@ -114,7 +115,8 @@ class _ScreenInboxState extends State<ScreenInbox> {
                               style: TextStyle(
                                   color: ThemeProvider.themeOf(context)
                                       .data
-                                      .primaryColor,fontSize: 16.sp),
+                                      .primaryColor,
+                                  fontSize: 16.sp),
                             ))
                           ],
                         ),
@@ -126,7 +128,8 @@ class _ScreenInboxState extends State<ScreenInbox> {
                                   color: ThemeProvider.themeOf(context)
                                       .data
                                       .primaryColor,
-                                  fontWeight: FontWeight.bold,fontSize: 16.sp),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.sp),
                             ),
                             Flexible(
                                 child: Text(
@@ -135,7 +138,8 @@ class _ScreenInboxState extends State<ScreenInbox> {
                               style: TextStyle(
                                   color: ThemeProvider.themeOf(context)
                                       .data
-                                      .primaryColor,fontSize: 16.sp),
+                                      .primaryColor,
+                                  fontSize: 16.sp),
                             )),
                           ],
                         ),
@@ -147,7 +151,8 @@ class _ScreenInboxState extends State<ScreenInbox> {
                                   color: ThemeProvider.themeOf(context)
                                       .data
                                       .primaryColor,
-                                  fontWeight: FontWeight.bold,fontSize: 16.sp),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.sp),
                             ),
                             Flexible(
                                 child: Text(
@@ -155,7 +160,8 @@ class _ScreenInboxState extends State<ScreenInbox> {
                               style: TextStyle(
                                   color: ThemeProvider.themeOf(context)
                                       .data
-                                      .primaryColor,fontSize: 16.sp),
+                                      .primaryColor,
+                                  fontSize: 16.sp),
                             )),
                           ],
                         ),
@@ -194,6 +200,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
                   await DBProvider.db.deleteNotificationModelById(item.id!);
                   await DBProvider.db.getAllNotificationModel().then(
                       (res) => notificationBloc.add(UpdateNotifications(res)));
+                  if (!mounted) return;
                   Navigator.pop(context);
                 },
                 messageCorrect: 'Eliminar')));

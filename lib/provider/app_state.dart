@@ -51,13 +51,12 @@ class AppState with ChangeNotifier {
         title: 'Cédula de Identidad Anverso',
         imageName: 'ci_anverso.jpg',
         textValidate:
-            'Verifique que su carnet sea el Anverso y que este vigente',
+            'Porfavor verifique que su carnet sea el Anverso',
         imageFile: null,
         imagePathDefault: 'assets/images/anverso.png',
         wordsKey: [
           //'numCarnet',
-          //'CÉDULA DE IDENTIDAD',
-          //'ESTADO PLURINACIONAL DE BOLIVIA'
+          // 'IDENTIDAD',
         ],
         validateState: true),
     FileDocument(

@@ -328,7 +328,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
               '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}',
           "birth_date": dateCtrlText,
           "device_id": deviceId,
-          // "firebase_token":token,
+          "firebase_token":token,
           "is_new_app": true,
         };
         if (!mounted) return;
@@ -342,10 +342,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
           await authService.auxtoken(user.apiToken!);
           appState.updateStateAuxToken(true);
           userBloc.add(UpdateUser(user.user!));
-          // prefs!.setString('user', json.encode(json.decode(response.body)['data']));
           if (!mounted) return;
           await authService.user(context, json.encode(json.decode(response.body)['data']));
-          // prefs!.setString('ci', dniCtrl.text.trim());
           //add words validations for files
           // files.addKey('cianverso', dniCtrl.text.trim()); //num carnet
           // files.addKey('cireverso', dniCtrl.text.trim()); //num carnet

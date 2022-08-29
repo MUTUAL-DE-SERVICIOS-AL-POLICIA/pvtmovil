@@ -33,7 +33,7 @@ class HedersComponent extends StatelessWidget {
               if (stateBack)
                 GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: Padding(
+                    child: Container(
                       padding: const EdgeInsets.all(10.0),
                       child: SvgPicture.asset(
                         'assets/icons/back.svg',
@@ -45,7 +45,7 @@ class HedersComponent extends StatelessWidget {
                 GestureDetector(
                     key: keyMenu,
                     onTap: () => onPressMenu!(),
-                    child: Padding(
+                    child: Container(
                       padding: const EdgeInsets.all(10.0),
                       child: SvgPicture.asset(
                         'assets/icons/menu.svg',

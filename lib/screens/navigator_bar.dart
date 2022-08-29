@@ -66,13 +66,13 @@ class _NavigatorBarState extends State<NavigatorBar> {
       ];
     });
     if (widget.tutorial) {
-      Future.delayed(Duration.zero, showTutorial);
+      Future.delayed(const Duration(milliseconds: 500), showTutorial);
     } else {
       getEconomicComplement(true);
       getEconomicComplement(false);
     }
     super.initState();
-    checkVersion(mounted,context);
+    checkVersion(mounted, context);
     getProcessingPermit();
     getObservations();
 
@@ -310,7 +310,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
         getEconomicComplement(true);
         getEconomicComplement(false);
       },
-    )..show(context:context);
+    )..show(context: context);
   }
 
   void initTargets() {

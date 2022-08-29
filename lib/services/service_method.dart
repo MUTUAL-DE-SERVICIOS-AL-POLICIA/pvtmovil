@@ -12,11 +12,9 @@ import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
-import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -154,24 +152,18 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
   final appState = Provider.of<AppState>(context, listen: false);
   if (voluntary) {
-    await serviceMethod(mounted, context, 'delete', null,
-        serviceAuthSession(userBloc.state.user!.id!), true, false);
-  }
-  prefs!.getKeys();
-  for (String key in prefs!.getKeys()) {
-    prefs!.remove(key);
+    await serviceMethod(mounted, context, 'delete', null, serviceAuthSession(userBloc.state.user!.id!), true, false);
   }
   for (var element in appState.files) {
     appState.updateFile(element.id!, null);
   }
   userBloc.add(UpdateCtrlLive(false));
-  var appDir = (await getTemporaryDirectory()).path;
-  Directory(appDir).delete(recursive: true);
+  // var appDir = (await getTemporaryDirectory()).path;
+  // Directory(appDir).delete(recursive: true);
   authService.logout();
   procedureBloc.add(ClearProcedures());
   appState.updateTabProcedure(0);
   appState.updateStateProcessing(false);
-
   if (!mounted) return;
   Navigator.pushReplacementNamed(context, 'switch');
 }

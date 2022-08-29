@@ -19,7 +19,6 @@ import 'package:muserpol_pvt/screens/navigator_bar.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 import 'bloc/procedure/procedure_bloc.dart';
@@ -28,7 +27,6 @@ import 'provider/app_state.dart';
 import 'screens/contacts/screen_contact.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-SharedPreferences? prefs;
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -46,7 +44,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  prefs = await SharedPreferences.getInstance();
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
