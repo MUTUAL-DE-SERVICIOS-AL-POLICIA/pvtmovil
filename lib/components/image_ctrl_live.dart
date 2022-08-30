@@ -160,15 +160,13 @@ class _ImageCtrlLiveState extends State<ImageCtrlLive>
       if (userBloc.state.stateBtntoggleCameraLens) {
         userBloc.add(UpdateStateCam(false));
         final picture = await controllerCam!.takePicture();
-        ImageProperties properties =
-            await FlutterNativeImage.getImageProperties(picture.path);
+        ImageProperties properties = await FlutterNativeImage.getImageProperties(picture.path);
         File compressedFile = await FlutterNativeImage.compressImage(
           picture.path,
           quality: 70,
           targetWidth: properties.height! > properties.width! ? 240 : 320,
           targetHeight: properties.height! > properties.width! ? 320 : 240,
         );
-
         String base64 = base64Encode(compressedFile.readAsBytesSync());
         widget.sendImage(base64);
       }

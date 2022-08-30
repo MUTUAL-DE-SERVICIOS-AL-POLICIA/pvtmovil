@@ -16,7 +16,7 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> with SingleTickerProvid
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 10),
+      duration: const Duration(seconds: 10),
     );
     // _animationController.addListener(() => setState(() {}));
     // _animationController.repeat();

@@ -6,7 +6,6 @@ String? urlbla = dotenv.env['HOST_URLBLA'];
 String? urlea = dotenv.env['HOST_URLEA'];
 //AUTH
 serviceAuthSession(int? affiliateId) => '$url/auth/${affiliateId??''}';
-
 //CONTACTS
 serviceGetContacts() => '$url/city';
 //PRIVACY POLICY
@@ -37,6 +36,6 @@ servicePostVersion()=>'$url/version';
 // QR
 serviceGetQr(String info)=> '$urlbla/procedure_qr/$info';
 // AUTH
-serviceAuthSessionOF()=>'$urlea/auth';
+serviceAuthSessionOF()=>'$urlbla/auth';
 // CHANGE PASSWORD
-serviceChangePasswordOF()=>'$urlea/change_password';
+serviceChangePasswordOF()=>'$urlbla/change_password';

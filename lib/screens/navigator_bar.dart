@@ -104,7 +104,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
       });
     }
     if (widget.tutorial) {
-      Future.delayed(Duration.zero, showTutorial);
+      Future.delayed(const Duration(milliseconds: 500), showTutorial);
     } else {
       if (stateApp == 'complement') {
         getEconomicComplement(true);

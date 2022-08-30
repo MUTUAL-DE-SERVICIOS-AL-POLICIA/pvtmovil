@@ -39,19 +39,12 @@ class CheckAuthScreen extends StatelessWidget {
             } else {
               final notificationBloc =
                   BlocProvider.of<NotificationBloc>(context);
-              // UserModel user = userModelFromJson(prefs!.getString('user')!);
               // userBloc.add(UpdateUser(user.user!));
               DBProvider.db.getAllNotificationModel().then(
                   (res) => notificationBloc.add(UpdateNotifications(res)));
               //en el caso de encontrar el token solicitado
               //redireccionamos al usuario al ScreenLoading
               // authService.logout();
-              // UserModel user = userModelFromJson(prefs!.getString('user')!);
-
-              // appState.addKey(
-              //     'cianverso', prefs!.getString('ci')!); //num carnet
-              // appState.addKey(
-              //     'cireverso', prefs!.getString('ci')!); //num carnet
               // appState.addKey('cireverso', user.user!.fullName!); //nombre
               getInfo(context);
               Future.microtask(() {

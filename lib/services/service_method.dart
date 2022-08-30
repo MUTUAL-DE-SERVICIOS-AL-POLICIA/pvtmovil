@@ -181,24 +181,18 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
   final appState = Provider.of<AppState>(context, listen: false);
   if (voluntary) {
-    await serviceMethod(mounted, context, 'delete', null,
-        serviceAuthSession(userBloc.state.user!.id!), true, false);
-  }
-  prefs!.getKeys();
-  for (String key in prefs!.getKeys()) {
-    prefs!.remove(key);
+    await serviceMethod(mounted, context, 'delete', null, serviceAuthSession(userBloc.state.user!.id!), true, false);
   }
   for (var element in appState.files) {
     appState.updateFile(element.id!, null);
   }
   userBloc.add(UpdateCtrlLive(false));
-  var appDir = (await getTemporaryDirectory()).path;
-  Directory(appDir).delete(recursive: true);
+  // var appDir = (await getTemporaryDirectory()).path;
+  // Directory(appDir).delete(recursive: true);
   authService.logout();
   procedureBloc.add(ClearProcedures());
   appState.updateTabProcedure(0);
   appState.updateStateProcessing(false);
-
   if (!mounted) return;
   Navigator.pushReplacementNamed(context, 'switch');
 }

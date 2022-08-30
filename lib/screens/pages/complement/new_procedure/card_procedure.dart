@@ -275,27 +275,27 @@ class _StepperProcedureState extends State<StepperProcedure> {
     //VERIFICAMOS QUE LA IMAGEN COINCIDA CON LAS PALABRAS CLAVES
     final appState = Provider.of<AppState>(context, listen: false);
     appState.updateFile(item.id!, fileImage); //ACTUALIZAMOS LA IMAGEN CAPTURADA
-    final recognizedText = await _textRecognizer
-        .processImage(inputImage); //OBTENEMOS EL TEXTO DE LA IMAGEN
+    final recognizedText = await _textRecognizer.processImage(inputImage); //OBTENEMOS EL TEXTO DE LA IMAGEN
     if (item.wordsKey!.isNotEmpty) {
       //CONTIENE PALABRAS CLAVES
       for (var element in item.wordsKey!) {
         // LOOP POR CADA PALABRA CLAVE
-        if (!recognizedText.text.contains(element)) {
-          // VERIFICAMOS SI LA IMAGEN CONTIENE LA PALABRA CLAVE
-          await appState.updateStateFiles(
-              item.id!, false); // CAMBIAMOS DE ESTADO
-          await appState.updateStateLoadingProcedure(
-              false); //OCULTAMOS EL BTN DE CONTINUAR
+        if (recognizedText.text.contains(element)) { // VERIFICAMOS SI LA IMAGEN CONTIENE LAS PALABRAS CLAVES
+        await appState.updateStateFiles( item.id!, true ); // CAMBIAMOS DE ESTADO
+          await appState.updateStateLoadingProcedure( true ); 
+          setState(() => buttonLoading = false);
+        }else{
+          debugPrint('NO HAY LA PALABRA $element');
+          await appState.updateStateFiles( item.id!, false ); // CAMBIAMOS DE ESTADO
+          await appState.updateStateLoadingProcedure( false ); //OCULTAMOS EL BTN DE CONTINUAR
           setState(() => buttonLoading = false);
           return;
         }
       }
-      setState(() => buttonLoading = false);
+      
     } else {
       //NO CONTIENE PALABRAS CLAVES
-      await appState
-          .updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
+      await appState.updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
       setState(() => buttonLoading = false);
     }
   }
