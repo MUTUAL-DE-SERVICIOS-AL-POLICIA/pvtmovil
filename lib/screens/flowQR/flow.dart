@@ -3,26 +3,39 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:muserpol_pvt/components/heders.dart';
 import 'package:muserpol_pvt/model/qr_model.dart';
+
 class ScreenWorkFlow extends StatefulWidget {
   final QrModel qrModel;
   const ScreenWorkFlow({Key? key, required this.qrModel}) : super(key: key);
   @override
   State<ScreenWorkFlow> createState() => _ScreenWorkFlowState();
 }
+
 class _ScreenWorkFlowState extends State<ScreenWorkFlow> with SingleTickerProviderStateMixin {
   AnimationController? _animationController;
-    @override
+  @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
+      lowerBound: widget.qrModel.payload!.porcentage!/100,
+      upperBound: widget.qrModel.payload!.porcentage!/100,
       vsync: this,
       duration: const Duration(seconds: 10),
     );
-    // _animationController.addListener(() => setState(() {}));
-    // _animationController.repeat();
+
+    _animationController!.addListener(() => setState(() {}));
+    _animationController!.repeat();
   }
+
+  @override
+  void dispose() {
+    _animationController!.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final percentage = _animationController!.value * 100;
     return Scaffold(
         body: Padding(
             padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
@@ -69,49 +82,29 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> with SingleTickerProvid
                   height: 10.h,
                 ),
                 const Text('Ubicación del trámite:', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(widget.qrModel.payload!.location!),
-                // const Text('Estado del trámite:'),
-                // Text(widget.qrModel.payload!.stateName!)
+                Text(widget.qrModel.payload!.location!)
               ]))),
-          //     LiquidLinearProgressIndicator(
-          //       value: _animationController!.value,
-          //       valueColor: AlwaysStoppedAnimation(Colors.black), // Defaults to the current Theme's accentColor.
-          //       backgroundColor: Colors.white, // Defaults to the current Theme's backgroundColor.
-          //       borderColor: Colors.red,
-          //       borderWidth: 5.0,
-          //       borderRadius: 12.0,
-          //       direction: Axis
-          //           .vertical, // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.horizontal.
-          //       center: Text(
-          //   "25%",
-          //   style: TextStyle(
-          //     color: Colors.lightBlueAccent,
-          //     fontSize: 20.0,
-          //     fontWeight: FontWeight.bold,
-          //   ),
-          // ),
-          //     ),
-              // Container(
-              //       decoration: const BoxDecoration(
-              //         boxShadow: <BoxShadow>[
-              //           BoxShadow(
-              //             color: Color(0xffffdead),
-              //             blurRadius: 4.0,
-              //           ),
-              //         ],
-              //       ),
-              //       child: Padding(
-              //           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-              //           child: Row(
-              //             mainAxisAlignment: MainAxisAlignment.center,
-              //             children: [
-              //               Text(widget.qrModel.payload!.stateName!),
-              //               Icon(
-              //                 Icons.brightness_1,
-              //                 color: !widget.qrModel.payload!.validated! ? Colors.red : null,
-              //               )
-              //             ],
-              //           ))),
+              Container(
+                width: double.infinity,
+                height: 75.0,
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: LiquidLinearProgressIndicator(
+                  value: _animationController!.value,
+                  backgroundColor: const Color(0xfff2f2f2),
+                  valueColor: const AlwaysStoppedAnimation(Color(0xff419388)),
+                  borderRadius: 12.0,
+                  borderWidth:2.1,
+                  borderColor:Colors.black,
+                  center: Text(
+                    "${percentage.toStringAsFixed(0)}%",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              )
             ])));
   }
 }

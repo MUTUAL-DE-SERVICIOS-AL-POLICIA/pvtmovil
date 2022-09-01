@@ -283,7 +283,6 @@ class _NavigatorBarState extends State<NavigatorBar> {
   }
 
   void showTutorial() {
-    final appState = Provider.of<AppState>(context, listen: false);
     initTargets();
     tutorialCoachMark = TutorialCoachMark(
       targets: targets,
