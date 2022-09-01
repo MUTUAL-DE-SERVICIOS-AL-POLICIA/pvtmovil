@@ -73,24 +73,24 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> with SingleTickerProvid
                 // const Text('Estado del trámite:'),
                 // Text(widget.qrModel.payload!.stateName!)
               ]))),
-              LiquidLinearProgressIndicator(
-                value: _animationController!.value,
-                valueColor: AlwaysStoppedAnimation(Colors.black), // Defaults to the current Theme's accentColor.
-                backgroundColor: Colors.white, // Defaults to the current Theme's backgroundColor.
-                borderColor: Colors.red,
-                borderWidth: 5.0,
-                borderRadius: 12.0,
-                direction: Axis
-                    .vertical, // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.horizontal.
-                center: Text(
-            "25%",
-            style: TextStyle(
-              color: Colors.lightBlueAccent,
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-              ),
+          //     LiquidLinearProgressIndicator(
+          //       value: _animationController!.value,
+          //       valueColor: AlwaysStoppedAnimation(Colors.black), // Defaults to the current Theme's accentColor.
+          //       backgroundColor: Colors.white, // Defaults to the current Theme's backgroundColor.
+          //       borderColor: Colors.red,
+          //       borderWidth: 5.0,
+          //       borderRadius: 12.0,
+          //       direction: Axis
+          //           .vertical, // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.horizontal.
+          //       center: Text(
+          //   "25%",
+          //   style: TextStyle(
+          //     color: Colors.lightBlueAccent,
+          //     fontSize: 20.0,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // ),
+          //     ),
               // Container(
               //       decoration: const BoxDecoration(
               //         boxShadow: <BoxShadow>[

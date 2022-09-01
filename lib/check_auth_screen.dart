@@ -9,7 +9,6 @@ import 'package:muserpol_pvt/screens/switch.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
-
 //WIDGET: verifica la autenticación del usuario
 class CheckAuthScreen extends StatelessWidget {
   const CheckAuthScreen({Key? key}) : super(key: key);
@@ -17,8 +16,6 @@ class CheckAuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     //llamamos a los proveedores de estados
     final authService = Provider.of<AuthService>(context, listen: false);
-    // final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    // final appState = Provider.of<AppState>(context, listen: false);
     return Scaffold(
       body: Center(
         child: FutureBuilder(
@@ -31,44 +28,47 @@ class CheckAuthScreen extends StatelessWidget {
             if (snapshot.data == '') {
               Future.microtask(() {
                 Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => const ScreenSwitch(),
-                        transitionDuration: const Duration(seconds: 0)));
+                    context, PageRouteBuilder(pageBuilder: (_, __, ___) => const ScreenSwitch(), transitionDuration: const Duration(seconds: 0)));
               });
             } else {
-              final notificationBloc =
-                  BlocProvider.of<NotificationBloc>(context);
+              final notificationBloc = BlocProvider.of<NotificationBloc>(context);
+
               // userBloc.add(UpdateUser(user.user!));
-              DBProvider.db.getAllNotificationModel().then(
-                  (res) => notificationBloc.add(UpdateNotifications(res)));
+              DBProvider.db.getAllNotificationModel().then((res) => notificationBloc.add(UpdateNotifications(res)));
               //en el caso de encontrar el token solicitado
               //redireccionamos al usuario al ScreenLoading
               // authService.logout();
               // appState.addKey('cireverso', user.user!.fullName!); //nombre
-              getInfo(context);
               Future.microtask(() {
-                Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) =>
-                            const NavigatorBar(tutorial: false),
-                        transitionDuration: const Duration(seconds: 0)));
+                return getInfo(context);
+                //                 return Navigator.pushReplacementNamed(
+                //   context,
+                //   'navigator',
+                //   arguments: NavigatorArguments(
+                //     'virtualofficine',
+                //   ),
+                // );
               });
             }
-            return Container();
+            return const Scaffold();
           },
         ),
       ),
     );
   }
-  getInfo(BuildContext context)async{
+
+  getInfo(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    if(await authService.readStateApp()=='complement'){
-              UserModel user =  userModelFromJson( await authService.readUser());
-              userBloc.add(UpdateUser(user.user!));
+    if (await authService.readStateApp() == 'complement') {
+      UserModel user = userModelFromJson(await authService.readUser());
+      userBloc.add(UpdateUser(user.user!));
     }
-
+    final stateApp = await authService.readStateApp();
+     // ignore: use_build_context_synchronously
+     Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+            pageBuilder: (_, __, ___) => NavigatorBar(tutorial: false, stateApp: stateApp), transitionDuration: const Duration(seconds: 0)));
   }
 }

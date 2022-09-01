@@ -40,7 +40,7 @@ class _ModalUpdatePwdState extends State<ModalUpdatePwd>
           Expanded(
               child: Center(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Form(
                   key: formKey,
                   child: Column(
@@ -93,7 +93,7 @@ class _ModalUpdatePwdState extends State<ModalUpdatePwd>
                               keyboardType: TextInputType.text,
                               icon: Icons.lock,
                               labelText: "Contraseña",
-                              obscureText: hidePassword,
+                              obscureText: hidePasswordConfirm,
                               onTap: () => setState(() =>
                                   hidePasswordConfirm = !hidePasswordConfirm),
                               iconOnTap: hidePasswordConfirm

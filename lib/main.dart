@@ -15,7 +15,6 @@ import 'bloc/notification/notification_bloc.dart';
 import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/check_auth_screen.dart';
-import 'package:muserpol_pvt/screens/navigator_bar.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -197,7 +196,7 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver{
                       routes: {
                         'switch': (_) => const CheckAuthScreen(),
                         'check_auth': (_) => const CheckAuthScreen(),
-                        'navigator': (_) => const NavigatorBar(),
+                        // 'navigator': (_) => const NavigatorBar(),
                         'contacts': (_) => const ScreenContact(),
                         'message': (_) => const ScreenNotification()
                       })),

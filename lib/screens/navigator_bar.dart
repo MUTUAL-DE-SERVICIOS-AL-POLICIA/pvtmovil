@@ -16,8 +16,8 @@ import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/inbox/screen_inbox.dart';
 import 'package:muserpol_pvt/screens/pages/complement/procedure.dart';
-import 'package:muserpol_pvt/screens/pages/virtual_officine/home_page.dart';
-import 'package:muserpol_pvt/services/auth_service.dart';
+import 'package:muserpol_pvt/screens/pages/virtual_officine/contribution.dart';
+import 'package:muserpol_pvt/screens/pages/virtual_officine/loan.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +27,8 @@ import 'dart:math' as math;
 
 class NavigatorBar extends StatefulWidget {
   final bool tutorial;
-  const NavigatorBar({Key? key, this.tutorial = true}) : super(key: key);
+  final String stateApp;
+  const NavigatorBar({Key? key, this.tutorial = true, required this.stateApp}) : super(key: key);
 
   @override
   State<NavigatorBar> createState() => _NavigatorBarState();
@@ -54,50 +55,35 @@ class _NavigatorBarState extends State<NavigatorBar> {
 
   List<Widget> pageList = [];
 
-  String stateApp = 'complement';
   @override
   void initState() {
     super.initState();
+    generateMenu();
     checkVersion(mounted, context);
-    
     services();
   }
-  services()async{
-    final authService = Provider.of<AuthService>(context, listen: false);
-    debugPrint('hcfcghghvgvgvgvgh');
-    setState(() {
-      
-    });
-    stateApp = await authService.readStateApp();
-    debugPrint('stateApp 1 $stateApp');
-    debugPrint('stateApp 2 ${await authService.readStateApp()}');
-    if (stateApp == 'virtualofficine') {
-      setState(() {
-        pageList = const [PageHome(), PageHome(), PageHome()];
-      });
+
+  generateMenu() {
+    if (widget.stateApp == 'complement') {
+      setState(() => pageList = [
+            ScreenProcedures(current: true, scroll: _scrollController, keyProcedure: keyCreateProcedure, keyMenu: keyMenu, keyRefresh: keyRefresh),
+            ScreenProcedures(current: false, scroll: _scrollController),
+          ]);
     } else {
-      setState(() {
-        pageList = [
-          ScreenProcedures(
-              current: true,
-              scroll: _scrollController,
-              keyProcedure: keyCreateProcedure,
-              keyMenu: keyMenu,
-              keyRefresh: keyRefresh),
-          ScreenProcedures(current: false, scroll: _scrollController),
-        ];
-      });
+      setState(() => pageList = const [ScreenContributions(), ScreenLoans()]);
+    }
+  }
+
+  services() async {
+    if (widget.stateApp == 'complement') {
       getProcessingPermit();
       getObservations();
       _scrollController.addListener(() {
-        if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent) {
-          if (_currentIndex == 0 &&
-              procedureCurrent!.data!.nextPageUrl != null) {
+        if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+          if (_currentIndex == 0 && procedureCurrent!.data!.nextPageUrl != null) {
             getEconomicComplement(true);
           }
-          if (_currentIndex == 1 &&
-              procedureHistory!.data!.nextPageUrl != null) {
+          if (_currentIndex == 1 && procedureHistory!.data!.nextPageUrl != null) {
             getEconomicComplement(false);
           }
         }
@@ -106,35 +92,26 @@ class _NavigatorBarState extends State<NavigatorBar> {
     if (widget.tutorial) {
       Future.delayed(const Duration(milliseconds: 500), showTutorial);
     } else {
-      if (stateApp == 'complement') {
+      if (widget.stateApp == 'complement') {
         getEconomicComplement(true);
         getEconomicComplement(false);
       }
     }
   }
-  getEconomicComplement(bool current) async {
-    final procedureBloc =
-        BlocProvider.of<ProcedureBloc>(context, listen: false);
 
-    var response = await serviceMethod(
-        mounted,
-        context,
-        'get',
-        null,
-        serviceGetEconomicComplements(
-            current ? pageCurrent : pageHistory, current),
-        true,
-        true);
+  getEconomicComplement(bool current) async {
+    final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: false);
+
+    var response =
+        await serviceMethod(mounted, context, 'get', null, serviceGetEconomicComplements(current ? pageCurrent : pageHistory, current), true, true);
     if (response != null) {
       setState(() {
         if (current) {
           procedureCurrent = procedureModelFromJson(response.body);
-          procedureBloc
-              .add(AddCurrentProcedures(procedureCurrent!.data!.data!));
+          procedureBloc.add(AddCurrentProcedures(procedureCurrent!.data!.data!));
         } else {
           procedureHistory = procedureModelFromJson(response.body);
-          procedureBloc
-              .add(AddHistoryProcedures(procedureHistory!.data!.data!));
+          procedureBloc.add(AddHistoryProcedures(procedureHistory!.data!.data!));
         }
         if (current) {
           pageCurrent++;
@@ -149,8 +126,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null,
-        serviceGetObservation(userBloc.state.user!.id!), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null, serviceGetObservation(userBloc.state.user!.id!), true, true);
     if (response != null) {
       appState.updateObservation(response.body);
       if (json.decode(response.body)['data']['enabled']) {
@@ -163,184 +139,147 @@ class _NavigatorBarState extends State<NavigatorBar> {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null,
-        serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
+    var response = await serviceMethod(mounted, context, 'get', null, serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
     if (response != null) {
-      userBloc.add(UpdateCtrlLive(
-          json.decode(response.body)['data']['liveness_success']));
+      userBloc.add(UpdateCtrlLive(json.decode(response.body)['data']['liveness_success']));
       if (json.decode(response.body)['data']['liveness_success']) {
         appState.updateTabProcedure(1);
         if (userBloc.state.user!.verified!) {
-          appState.updateStateLoadingProcedure(
-              true); //MOSTRAMOS EL BTN DE CONTINUAR
+          appState.updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
           setState(() {});
         } else {
-          appState.updateStateLoadingProcedure(
-              false); //OCULTAMOS EL BTN DE CONTINUAR
+          appState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
           setState(() {});
         }
       } else {
         appState.updateTabProcedure(0);
-        appState
-            .updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+        appState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
       }
-      userBloc.add(UpdateProcedureId(
-          json.decode(response.body)['data']['procedure_id']));
+      userBloc.add(UpdateProcedureId(json.decode(response.body)['data']['procedure_id']));
       if (json.decode(response.body)['data']['cell_phone_number'].length > 0) {
-        userBloc.add(UpdatePhone(
-            json.decode(response.body)['data']['cell_phone_number'][0]));
+        userBloc.add(UpdatePhone(json.decode(response.body)['data']['cell_phone_number'][0]));
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final notificationBloc =
-        BlocProvider.of<NotificationBloc>(context, listen: true).state;
-    final appState = Provider.of<AppState>(context, listen: true);
-    final authService = Provider.of<AuthService>(context, listen: false);
+    final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: true).state;
+
     return WillPopScope(
         onWillPop: _onBackPressed,
-        child: FutureBuilder(
-          //verificamos si el usuario está autenticado
-          future: authService.readStateApp(),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            return Scaffold(
-          floatingActionButton: Badge(
-            key: keyNotification,
-            animationDuration: const Duration(milliseconds: 300),
-            animationType: BadgeAnimationType.slide,
-            badgeColor: notificationBloc.existNotifications
-                ? notificationBloc.listNotifications!
-                        .where((e) => e.read == false)
-                        .isNotEmpty
-                    ? Colors.red
-                    : Colors.transparent
-                : Colors.transparent,
-            elevation: 0,
-            badgeContent: notificationBloc.existNotifications &&
-                    notificationBloc.listNotifications!
-                        .where((e) => e.read == false)
-                        .isNotEmpty
-                ? Text(
-                    notificationBloc.listNotifications!
-                        .where((e) => e.read == false)
-                        .length
-                        .toString(),
-                    style: const TextStyle(color: Colors.white),
-                  )
-                : Container(),
-            child: IconBtnComponent(
-                iconText: 'assets/icons/email.svg',
-                onPressed: () => dialogInbox(context)),
-          ),
-          body: pageList.elementAt(_currentIndex),
-          bottomNavigationBar: Stack(
-            children: [
-              if (stateApp == 'complement')
-                SizedBox(
-                  height: 50,
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Center(
-                        child: SizedBox(
-                          key: keyBottomNavigation1,
-                          height: 40,
-                          width: MediaQuery.of(context).size.width / 4,
-                        ),
-                      )),
-                      Expanded(
-                          child: Center(
-                        child: SizedBox(
-                          key: keyBottomNavigation2,
-                          height: 40,
-                          width: MediaQuery.of(context).size.width / 4,
-                        ),
-                      )),
-                    ],
-                  ),
+        child: Scaffold(
+                floatingActionButton: Badge(
+                  key: keyNotification,
+                  animationDuration: const Duration(milliseconds: 300),
+                  animationType: BadgeAnimationType.slide,
+                  badgeColor: notificationBloc.existNotifications
+                      ? notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
+                          ? Colors.red
+                          : Colors.transparent
+                      : Colors.transparent,
+                  elevation: 0,
+                  badgeContent: notificationBloc.existNotifications && notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
+                      ? Text(
+                          notificationBloc.listNotifications!.where((e) => e.read == false).length.toString(),
+                          style: const TextStyle(color: Colors.white),
+                        )
+                      : Container(),
+                  child: IconBtnComponent(iconText: 'assets/icons/email.svg', onPressed: () => dialogInbox(context)),
                 ),
-              if (stateApp == 'complement')
-                ConvexAppBar(
-                    height: 65,
-                    elevation: 0,
-                    backgroundColor: const Color(0xff419388),
-                    // color: Color(0xff419388),
-                    style: TabStyle.react,
-                    items: [
-                      TabItem(
-                          isIconBlend: true,
-                          icon: SvgPicture.asset(
-                            'assets/icons/newProcedure.svg',
-                            height: 30.sp,
-                            color: Colors.white,
-                          ),
-                          title: "Trámites Vigentes"),
-                      TabItem(
-                          isIconBlend: true,
-                          icon: SvgPicture.asset(
-                            'assets/icons/historyProcedure.svg',
-                            height: 30.sp,
-                            color: Colors.white,
-                          ),
-                          title: "Trámites Históricos"),
-                    ],
-                    initialActiveIndex: 0,
-                    onTap: (int i) => {setState(() => _currentIndex = i)}),
-              if (stateApp == 'virtualofficine')
-                ConvexAppBar(
-                    height: 65,
-                    elevation: 0,
-                    backgroundColor: const Color(0xff419388),
-                    // color: Color(0xff419388),
-                    style: TabStyle.react,
-                    items: [
-                      TabItem(
-                          isIconBlend: true,
-                          icon: SvgPicture.asset(
-                            'assets/icons/newProcedure.svg',
-                            height: 30.sp,
-                            color: Colors.white,
-                          ),
-                          title: "Aportes"),
-                      TabItem(
-                          isIconBlend: true,
-                          icon: SvgPicture.asset(
-                            'assets/icons/historyProcedure.svg',
-                            height: 30.sp,
-                            color: Colors.white,
-                          ),
-                          title: "Beneficios"),
-                      TabItem(
-                          isIconBlend: true,
-                          icon: SvgPicture.asset(
-                            'assets/icons/historyProcedure.svg',
-                            height: 30.sp,
-                            color: Colors.white,
-                          ),
-                          title: "Prestamos"),
-                    ],
-                    initialActiveIndex: 0,
-                    onTap: (int i) => {setState(() => _currentIndex = i)}),
-            ],
-          ),
-        );})
-        );
+                body: pageList.elementAt(_currentIndex),
+                bottomNavigationBar: Stack(
+                  children: [
+                    if (widget.stateApp == 'complement')
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: Center(
+                              child: SizedBox(
+                                key: keyBottomNavigation1,
+                                height: 40,
+                                width: MediaQuery.of(context).size.width / 4,
+                              ),
+                            )),
+                            Expanded(
+                                child: Center(
+                              child: SizedBox(
+                                key: keyBottomNavigation2,
+                                height: 40,
+                                width: MediaQuery.of(context).size.width / 4,
+                              ),
+                            )),
+                          ],
+                        ),
+                      ),
+                    if (widget.stateApp == 'complement')
+                      ConvexAppBar(
+                          height: 65,
+                          elevation: 0,
+                          backgroundColor: const Color(0xff419388),
+                          // color: Color(0xff419388),
+                          style: TabStyle.react,
+                          items: [
+                            TabItem(
+                                isIconBlend: true,
+                                icon: SvgPicture.asset(
+                                  'assets/icons/newProcedure.svg',
+                                  height: 30.sp,
+                                  color: Colors.white,
+                                ),
+                                title: "Trámites Vigentes"),
+                            TabItem(
+                                isIconBlend: true,
+                                icon: SvgPicture.asset(
+                                  'assets/icons/historyProcedure.svg',
+                                  height: 30.sp,
+                                  color: Colors.white,
+                                ),
+                                title: "Trámites Históricos"),
+                          ],
+                          initialActiveIndex: 0,
+                          onTap: (int i) => {setState(() => _currentIndex = i)}),
+                    if (widget.stateApp == 'virtualofficine')
+                      ConvexAppBar(
+                          height: 65,
+                          elevation: 0,
+                          backgroundColor: const Color(0xff419388),
+                          // color: Color(0xff419388),
+                          style: TabStyle.react,
+                          items: [
+                            TabItem(
+                                isIconBlend: true,
+                                icon: SvgPicture.asset(
+                                  'assets/icons/newProcedure.svg',
+                                  height: 30.sp,
+                                  color: Colors.white,
+                                ),
+                                title: "Aportes"),
+                            TabItem(
+                                isIconBlend: true,
+                                icon: SvgPicture.asset(
+                                  'assets/icons/historyProcedure.svg',
+                                  height: 30.sp,
+                                  color: Colors.white,
+                                ),
+                                title: "Prestamos"),
+                          ],
+                          initialActiveIndex: 0,
+                          onTap: (int i) => {setState(() => _currentIndex = i)}),
+                  ],
+                ),
+              )
+            );
   }
 
   dialogInbox(BuildContext context) {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) => const ScreenInbox());
+    showDialog(barrierDismissible: false, context: context, builder: (BuildContext context) => const ScreenInbox());
   }
 
   Future<bool> _onBackPressed() async {
-    return await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) => const ComponentAnimate(child: DialogBack()));
+    return await showDialog(barrierDismissible: false, context: context, builder: (context) => const ComponentAnimate(child: DialogBack()));
   }
 
   void showTutorial() {
@@ -362,15 +301,14 @@ class _NavigatorBarState extends State<NavigatorBar> {
       },
       onClickTargetWithTapPosition: (target, tapDetails) {
         debugPrint("target: $target");
-        debugPrint(
-            "clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
+        debugPrint("clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
       },
       onClickOverlay: (target) {
         debugPrint('onClickOverlay: $target');
       },
       onSkip: () {
         debugPrint("skip");
-        if (stateApp == 'comlement') {
+        if (widget.stateApp == 'comlement') {
           getEconomicComplement(true);
           getEconomicComplement(false);
         }
@@ -465,10 +403,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
               children: <Widget>[
                 const Text(
                   "CREACIÓN DE TRÁMITE",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
                 ),
                 const Padding(
                   padding: EdgeInsets.only(top: 10.0),
@@ -500,10 +435,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
                 children: const <Widget>[
                   Text(
                     "BUZÓN DE MENSAJES",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20.0),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 10.0),
@@ -534,10 +466,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
                 children: <Widget>[
                   const Text(
                     "MENÚ",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20.0),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
                   ),
                   const Padding(
                     padding: EdgeInsets.only(top: 10.0),
@@ -567,10 +496,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
                 children: const <Widget>[
                   Text(
                     "ACTUALIZAR",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20.0),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 10.0),

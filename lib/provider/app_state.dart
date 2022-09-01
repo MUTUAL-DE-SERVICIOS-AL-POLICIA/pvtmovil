@@ -103,3 +103,9 @@ class AppState with ChangeNotifier {
     notifyListeners();
   }
 }
+
+// class NavigatorArguments {
+//   final String stateApp;
+
+//   NavigatorArguments(this.stateApp);
+// }

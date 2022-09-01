@@ -20,6 +20,7 @@ import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/model_update_pwd.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
+import 'package:muserpol_pvt/screens/navigator_bar.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
@@ -36,12 +37,7 @@ class ScreenLogin extends StatefulWidget {
   final String title;
   final bool stateOfficeVirtual;
   final String deviceId;
-  const ScreenLogin(
-      {Key? key,
-      required this.title,
-      this.stateOfficeVirtual = true,
-      required this.deviceId})
-      : super(key: key);
+  const ScreenLogin({Key? key, required this.title, this.stateOfficeVirtual = true, required this.deviceId}) : super(key: key);
 
   @override
   State<ScreenLogin> createState() => _ScreenLoginState();
@@ -88,13 +84,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
             child: Column(children: [
               Image(
                 image: AssetImage(
-                  ThemeProvider.themeOf(context).id.contains('dark')
-                      ? 'assets/images/muserpol-logo.png'
-                      : 'assets/images/muserpol-logo2.png',
+                  ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
                 ),
               ),
-              Text(widget.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(
                 height: 20.h,
               ),
@@ -112,9 +105,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                 child: InputComponent(
                                   textInputAction: TextInputAction.next,
                                   controllerText: dniCtrl,
-                                  onEditingComplete: () => dniComplement
-                                      ? node.nextFocus()
-                                      : selectDate(context),
+                                  onEditingComplete: () => dniComplement ? node.nextFocus() : selectDate(context),
                                   validator: (value) {
                                     if (value.length > 3) {
                                       return null;
@@ -122,14 +113,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                       return 'Ingrese su cédula de indentidad';
                                     }
                                   },
-                                  inputFormatters: [
-                                    LengthLimitingTextInputFormatter(10),
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp("[0-9]"))
-                                  ],
+                                  inputFormatters: [LengthLimitingTextInputFormatter(10), FilteringTextInputFormatter.allow(RegExp("[0-9]"))],
                                   keyboardType: TextInputType.number,
-                                  textCapitalization:
-                                      TextCapitalization.characters,
+                                  textCapitalization: TextCapitalization.characters,
                                   icon: Icons.person,
                                   labelText: "Cédula de indentidad",
                                 ),
@@ -137,25 +123,17 @@ class _ScreenLoginState extends State<ScreenLogin> {
                               if (dniComplement)
                                 Text(
                                   '  _  ',
-                                  style: TextStyle(
-                                      fontSize: 15.sp,
-                                      color: const Color(0xff419388)),
+                                  style: TextStyle(fontSize: 15.sp, color: const Color(0xff419388)),
                                 ),
                               if (dniComplement)
                                 SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width / 3.4,
+                                  width: MediaQuery.of(context).size.width / 3.4,
                                   child: InputComponent(
                                     focusNode: textSecondFocusNode,
                                     textInputAction: TextInputAction.next,
                                     controllerText: dniComCtrl,
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(2),
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp("[0-9a-zA-Z]"))
-                                    ],
-                                    onEditingComplete: () =>
-                                        selectDate(context),
+                                    inputFormatters: [LengthLimitingTextInputFormatter(2), FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]"))],
+                                    onEditingComplete: () => selectDate(context),
                                     validator: (value) {
                                       if (value.isNotEmpty) {
                                         return null;
@@ -164,8 +142,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                       }
                                     },
                                     keyboardType: TextInputType.text,
-                                    textCapitalization:
-                                        TextCapitalization.characters,
+                                    textCapitalization: TextCapitalization.characters,
                                     icon: Icons.person,
                                     labelText: "Complemento",
                                   ),
@@ -180,17 +157,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text('Fecha de nacimiento:'),
-                                ButtonDate(
-                                    text: dateCtrl,
-                                    onPressed: () => selectDate(context)),
+                                ButtonDate(text: dateCtrl, onPressed: () => selectDate(context)),
                                 if (dateState)
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15),
+                                    padding: const EdgeInsets.symmetric(horizontal: 15),
                                     child: Text(
                                       'Ingrese su fecha de nacimiento',
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 15.sp),
+                                      style: TextStyle(color: Colors.red, fontSize: 15.sp),
                                     ),
                                   ),
                               ],
@@ -209,7 +182,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                         if (value.length >= 4) {
                                           return null;
                                         } else {
-                                          return 'Debe tener un mínimo de 6 caracteres.';
+                                          return 'Debe tener un mínimo de 4 caracteres.';
                                         }
                                       } else {
                                         return 'Ingrese su contraseña';
@@ -219,11 +192,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                     icon: Icons.lock,
                                     labelText: "Contraseña",
                                     obscureText: hidePassword,
-                                    onTap: () => setState(
-                                        () => hidePassword = !hidePassword),
-                                    iconOnTap: hidePassword
-                                        ? Icons.lock_outline
-                                        : Icons.lock_open_sharp),
+                                    onTap: () => setState(() => hidePassword = !hidePassword),
+                                    iconOnTap: hidePassword ? Icons.lock_outline : Icons.lock_open_sharp),
                                 SizedBox(
                                   height: 20.h,
                                 ),
@@ -232,21 +202,16 @@ class _ScreenLoginState extends State<ScreenLogin> {
                           SizedBox(
                             height: 10.h,
                           ),
-                          ButtonComponent(
-                              text: 'INGRESAR', onPressed: () => initSession()),
+                          ButtonComponent(text: 'INGRESAR', onPressed: () => initSession()),
                           SizedBox(
                             height: 20.h,
                           ),
                           Center(
-                            child: ButtonWhiteComponent(
-                                text: 'Contactos a nivel nacional',
-                                onPressed: () =>
-                                    Navigator.pushNamed(context, 'contacts')),
+                            child:
+                                ButtonWhiteComponent(text: 'Contactos a nivel nacional', onPressed: () => Navigator.pushNamed(context, 'contacts')),
                           ),
                           Center(
-                            child: ButtonWhiteComponent(
-                                text: 'Política de privacidad',
-                                onPressed: () => privacyPolicy(context)),
+                            child: ButtonWhiteComponent(text: 'Política de privacidad', onPressed: () => privacyPolicy(context)),
                           ),
                           SizedBox(
                             height: 10.h,
@@ -287,12 +252,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
   privacyPolicy(BuildContext context) async {
     setState(() => btnAccess = false);
 
-    var response = await serviceMethod(
-        mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, false);
+    var response = await serviceMethod(mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, false);
     setState(() => btnAccess = true);
     if (response != null) {
-      String pathFile = await saveFile(
-          'Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
+      String pathFile = await saveFile('Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
       await OpenFile.open(pathFile);
     }
   }
@@ -307,8 +270,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
               debugPrint('date $newDataTime');
               setState(() {
                 currentDate = newDataTime;
-                dateCtrl =
-                    DateFormat(' dd, MMMM yyyy ', "es_ES").format(newDataTime);
+                dateCtrl = DateFormat(' dd, MMMM yyyy ', "es_ES").format(newDataTime);
                 dateState = false;
               });
             }));
@@ -324,8 +286,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
               child: const Text('Elegir'),
               onPressed: () {
                 setState(() {
-                  dateCtrl = DateFormat(' dd, MMMM yyyy ', "es_ES")
-                      .format(currentDate);
+                  dateCtrl = DateFormat(' dd, MMMM yyyy ', "es_ES").format(currentDate);
                   dateCtrlText = DateFormat('dd-MM-yyyy').format(currentDate);
                 });
                 Navigator.of(context, rootNavigator: true).pop("Discard");
@@ -345,15 +306,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
       final appState = Provider.of<AppState>(context, listen: false);
       if (dateCtrlText == null && !widget.stateOfficeVirtual) return;
       setState(() => btnAccess = false);
-      if (await InternetConnectionChecker().connectionStatus ==
-          InternetConnectionStatus.disconnected) {
+      if (await InternetConnectionChecker().connectionStatus == InternetConnectionStatus.disconnected) {
         setState(() => btnAccess = true);
         // return callDialogAction(context, 'Verifique su conexión a Internet');
         return showDialog(
             barrierDismissible: false,
             context: context,
-            builder: (BuildContext context) => const DialogAction(
-                message: 'Verifique su conexión a Internet'));
+            builder: (BuildContext context) => const DialogAction(message: 'Verifique su conexión a Internet'));
       }
       await checkVersion(mounted, context);
       String token = await PushNotificationService.initializeapp();
@@ -361,38 +320,26 @@ class _ScreenLoginState extends State<ScreenLogin> {
       data['device_id'] = widget.deviceId;
       data['firebase_token'] = token;
       if (!widget.stateOfficeVirtual) {
-        data['identity_card'] =
-            '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
+        data['identity_card'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
         data['birth_date'] = dateCtrlText;
         data['is_new_app'] = true;
       } else {
-        data['username'] =
-            '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
+        data['username'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
         data['password'] = passwordCtrl.text.trim();
       }
       if (!mounted) return;
       var response = await serviceMethod(
-          mounted,
-          context,
-          'post',
-          data,
-          widget.stateOfficeVirtual
-              ? serviceAuthSessionOF()
-              : serviceAuthSession(null),
-          false,
-          true);
+          mounted, context, 'post', data, widget.stateOfficeVirtual ? serviceAuthSessionOF() : serviceAuthSession(null), false, true);
       setState(() => btnAccess = true);
       if (response != null) {
         await DBProvider.db.database;
         if (!widget.stateOfficeVirtual) {
-          UserModel user = userModelFromJson(
-              json.encode(json.decode(response.body)['data']));
+          UserModel user = userModelFromJson(json.encode(json.decode(response.body)['data']));
           await authService.auxtoken(user.apiToken!);
           appState.updateStateAuxToken(true);
           userBloc.add(UpdateUser(user.user!));
           if (!mounted) return;
-          await authService.user(
-              context, json.encode(json.decode(response.body)['data']));
+          await authService.user(context, json.encode(json.decode(response.body)['data']));
           //add words validations for files
           // files.addKey('cianverso', dniCtrl.text.trim()); //num carnet
           // files.addKey('cireverso', dniCtrl.text.trim()); //num carnet
@@ -401,34 +348,39 @@ class _ScreenLoginState extends State<ScreenLogin> {
           // await Permission.storage.request();
           // await Permission.manageExternalStorage.request();
           // await Permission.accessMediaLocation.request();
-           if (!mounted) return;
+          if (!mounted) return;
           await authService.stateApp(context, 'complement');
           if (!json.decode(response.body)['data']['user']['enrolled']) {
             _showModalInside(user.apiToken!, data);
           } else {
             if (!mounted) return;
             await authService.login(context, user.apiToken!, data);
-           
-            
+
             appState.updateStateAuxToken(false);
             if (!mounted) return;
-            return Navigator.pushReplacementNamed(context, 'navigator');
+            return Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                        pageBuilder: (_, __, ___) =>
+                            const NavigatorBar(stateApp:'complement'),
+                        transitionDuration: const Duration(seconds: 0)));
           }
         } else {
           switch (json.decode(response.body)['data']['status']) {
             case 'Pendiente':
-              return virtualOfficineUpdatePwd(
-                  json.decode(response.body)['message']);
+              return virtualOfficineUpdatePwd(json.decode(response.body)['message']);
             case 'Activo':
               if (!mounted) return;
-              await authService.login(
-                  context,
-                  json.decode(response.body)['data']['user']['api_token'],
-                  data);
+              await authService.login(context, json.decode(response.body)['data']['user']['api_token'], data);
               if (!mounted) return;
               await authService.stateApp(context, 'virtualofficine');
               if (!mounted) return;
-              return Navigator.pushReplacementNamed(context, 'navigator');
+              return Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                        pageBuilder: (_, __, ___) =>
+                            const NavigatorBar(tutorial:false,stateApp:'virtualofficine'),
+                        transitionDuration: const Duration(seconds: 0)));
           }
         }
       }
@@ -445,12 +397,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
           message: message,
           onPressed: (password) async {
             data['new_password'] = password;
-            var response = await serviceMethod(mounted, context, 'patch', data,
-                serviceChangePasswordOF(), false, true);
+            var response = await serviceMethod(mounted, context, 'patch', data, serviceChangePasswordOF(), false, true);
             if (response != null) {
               if (!mounted) return;
-              return showSuccessful(
-                  context, json.decode(response.body)['message'], () {
+              return showSuccessful(context, json.decode(response.body)['message'], () {
                 debugPrint('res ${response.body}');
                 setState(() => passwordCtrl.text = '');
                 Navigator.of(context).pop();

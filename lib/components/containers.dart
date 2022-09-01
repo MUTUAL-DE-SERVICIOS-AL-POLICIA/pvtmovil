@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class ContainerComponent extends StatelessWidget {
   final Widget child;
@@ -23,11 +24,11 @@ class ContainerComponent extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
               color: color,
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
-                  color: Colors.black,
+                  color: ThemeProvider.themeOf(context).data.primaryColorDark,
                   blurRadius: 1.0,
-                  offset: Offset(0, 0.5),
+                  offset: const Offset(0, 0.5),
                 )
               ],
             ),

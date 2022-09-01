@@ -44,10 +44,6 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   bool stateBtn = true;
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    //   DeviceOrientation.portraitDown,
-    // ]);
     final procedureBloc =
         BlocProvider.of<ProcedureBloc>(context, listen: true).state;
     final appState = Provider.of<AppState>(context, listen: true);
