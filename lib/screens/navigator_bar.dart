@@ -70,7 +70,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
             ScreenProcedures(current: false, scroll: _scrollController),
           ]);
     } else {
-      setState(() => pageList = const [ScreenContributions(), ScreenLoans()]);
+      setState(() => pageList = const [ScreenContributions(), ScreenPageLoans()]);
     }
   }
 

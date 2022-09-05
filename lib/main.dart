@@ -9,7 +9,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/screens/inbox/notification.dart';
+import 'package:muserpol_pvt/screens/switch.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
+import 'package:muserpol_pvt/swipe/slider.dart';
 import 'package:muserpol_pvt/utils/style.dart';
 import 'bloc/notification/notification_bloc.dart';
 import 'firebase_options.dart';
@@ -194,7 +196,8 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver{
                       title: 'MUSERPOL PVT',
                       initialRoute: 'check_auth',
                       routes: {
-                        'switch': (_) => const CheckAuthScreen(),
+                        'slider': (_) => const PageSlider(),
+                        'switch': (_) => const ScreenSwitch(),
                         'check_auth': (_) => const CheckAuthScreen(),
                         // 'navigator': (_) => const NavigatorBar(),
                         'contacts': (_) => const ScreenContact(),

@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:barcode_scan2/barcode_scan2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/components/animate.dart';
-import 'package:muserpol_pvt/components/cupertino.dart';
+import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/components/heders.dart';
 import 'package:muserpol_pvt/dialogs/dialog_back.dart';
 import 'package:muserpol_pvt/model/qr_model.dart';
@@ -28,31 +27,15 @@ class ScreenSwitch extends StatefulWidget {
 class ScreenSwitchState extends State<ScreenSwitch> {
   String? deviceId;
   final deviceInfo = DeviceInfoPlugin();
-  DateTime? dateTime;
-  Duration initialtimer = const Duration();
   int value = 0;
-  final itemsRequisitos = [
-    "Complemento Económico",
-    "Item 2",
-    "Item 3",
-    "Item 4",
-    "Item 5",
-  ];
-  final itemsSimulacion = [
-    "Corto Plazo",
-    "Largo Plazo",
-    "Item 3",
-    "Item 4",
-    "Item 5",
-  ];
+
   ScanResult? scanResult;
 
   final _flashOnController = TextEditingController(text: 'CON FLASH');
   final _flashOffController = TextEditingController(text: 'SIN FLASH');
   final _cancelController = TextEditingController(text: 'ATRAS');
 
-  static final _possibleFormats = BarcodeFormat.values.toList()
-    ..removeWhere((e) => e == BarcodeFormat.unknown);
+  static final _possibleFormats = BarcodeFormat.values.toList()..removeWhere((e) => e == BarcodeFormat.unknown);
   List<BarcodeFormat> selectedFormats = [..._possibleFormats];
   @override
   void initState() {
@@ -74,7 +57,77 @@ class ScreenSwitchState extends State<ScreenSwitch> {
     }
   }
 
-Future scan() async {
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+        onWillPop: _onBackPressed,
+        child: Scaffold(
+            body: Padding(
+          padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
+          child: Column(
+            children: [
+              const HedersComponent(title: 'Mutual de Servicios al Policía'),
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        BottonTool(
+                          title: 'Complemento Económico',
+                          description: 'Creación de tramites y seguimiento para el pago del Complemento Económico',
+                          onPress: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenLogin(
+                                      title: 'Complemento Económico',
+                                      stateOfficeVirtual: false,
+                                      deviceId: deviceId!,
+                                    )),
+                          ),
+                          child: const Image(
+                            image: AssetImage(
+                              'assets/images/couple.png',
+                            ),
+                          ),
+                        ),
+                        BottonTool(
+                          title: 'Oficina Virtual',
+                          description: 'Seguimiento de Aportes y Prestamos',
+                          onPress: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenLogin(
+                                      title: 'Oficina Virtual',
+                                      deviceId: deviceId!,
+                                    )),
+                          ),
+                          child: const Image(
+                            image: AssetImage(
+                              'assets/images/computer.png',
+                            ),
+                          ),
+                        ),
+                        BottonTool(
+                          title: 'Seguimiento de trámites',
+                          description: 'Seguimiento de trámites con QR',
+                          onPress: () => scan(),
+                          child: SvgPicture.asset(
+                            'assets/icons/qr.svg',
+                            height: 100.sp,
+                            color: const Color(0xff419388),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        )));
+  }
+
+  Future scan() async {
     try {
       var options = ScanOptions(
         strings: {
@@ -93,11 +146,10 @@ Future scan() async {
       var result = await BarcodeScanner.scan(options: options);
       setState(() => scanResult = result);
       if (scanResult!.rawContent != '') {
-        // ScreenWorkFlow
         debugPrint('scanResult!.rawContent ${scanResult!.rawContent}');
         if (!mounted) return;
-        var response = await serviceMethod( mounted, context, 'get', null, serviceGetQr(scanResult!.rawContent), false, false);
-        if(response!=null){
+        var response = await serviceMethod(mounted, context, 'get', null, serviceGetQr(scanResult!.rawContent), false, false);
+        if (response != null) {
           if (!mounted) return;
           Navigator.push(
             context,
@@ -111,165 +163,53 @@ Future scan() async {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: _onBackPressed,
-        child: Scaffold(
-            body: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
-          child: Column(
-            children: [
-              const HedersComponent(title: 'Mutual de servicios al policía'),
-              Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenLogin(
-                                      title: 'Complemento Económico',
-                                      stateOfficeVirtual: false,
-                                      deviceId: deviceId!,
-                                    )),
-                          ),
-                          child: Row(
-                            children: [
-                              const Expanded(
-                                child: Image(
-                                  image: AssetImage(
-                                    'assets/images/couple.png',
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  'Complemento Económico',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 20.sp),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 40),
-                        GestureDetector(
-                            onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ScreenLogin(
-                                            title: 'Oficina Virtual',
-                                            deviceId: deviceId!,
-                                          )),
-                                ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    'Oficina Virtual',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 20.sp),
-                                  ),
-                                ),
-                                const Expanded(
-                                  child: Image(
-                                    image: AssetImage(
-                                      'assets/images/computer.png',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                  decoration: const BoxDecoration(
-                    color: Color(0xff419388),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      BottonTool(
-                          icon: 'assets/icons/qr.svg',
-                          text: 'QR',
-                          onPress: () => scan()),
-                      BottonTool(
-                          icon: 'assets/icons/requisites.svg',
-                          text: 'REQUISITOS',
-                          onPress: () =>
-                              select(context, 'REQUISITOS', itemsRequisitos)),
-                      BottonTool(
-                          icon: 'assets/icons/calculator.svg',
-                          text: 'SIMULAR',
-                          onPress: () =>
-                              select(context, 'SIMULACIÓN', itemsSimulacion)),
-                    ],
-                  ))
-            ],
-          ),
-        )));
-  }
-
-  select(BuildContext context, String title, List<String> items) {
-    showCupertinoModalPopup(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoPickerWidget(
-            title: title,
-            items: items,
-            onEvent: (s) {
-              debugPrint('ssss $s');
-            },
-          );
-        });
-  }
-
   Future<bool> _onBackPressed() async {
-    return await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) => const ComponentAnimate(child: DialogBack()));
+    return await showDialog(barrierDismissible: false, context: context, builder: (context) => const ComponentAnimate(child: DialogBack()));
   }
 }
 
 class BottonTool extends StatelessWidget {
-  final String icon;
-  final String text;
+  final Widget child;
+  final String title;
+  final String description;
   final Function() onPress;
-  const BottonTool(
-      {Key? key, required this.icon, required this.text, required this.onPress})
-      : super(key: key);
+  const BottonTool({
+    Key? key,
+    required this.child,
+    required this.title,
+    required this.description,
+    required this.onPress,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: GestureDetector(
-            onTap: onPress,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              alignment: Alignment.center,
-              child: Column(
-                children: [
-                  SvgPicture.asset(
-                    icon,
-                    height: 20.sp,
-                    color: Colors.white,
+    return GestureDetector(
+        onTap: onPress,
+        child: ContainerComponent(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(padding: const EdgeInsets.all(8.0), child: child),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 2,
+                  child: Column(
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(description)
+                    ],
                   ),
-                  Text(text,
-                      style:
-                          const TextStyle(color: Colors.white, fontSize: 17)),
-                ],
-              ),
-            )));
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }

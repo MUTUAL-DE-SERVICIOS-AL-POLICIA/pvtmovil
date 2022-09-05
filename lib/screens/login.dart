@@ -359,11 +359,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
             appState.updateStateAuxToken(false);
             if (!mounted) return;
             return Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) =>
-                            const NavigatorBar(stateApp:'complement'),
-                        transitionDuration: const Duration(seconds: 0)));
+                context,
+                PageRouteBuilder(
+                    pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
           }
         } else {
           switch (json.decode(response.body)['data']['status']) {
@@ -376,11 +374,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
               await authService.stateApp(context, 'virtualofficine');
               if (!mounted) return;
               return Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) =>
-                            const NavigatorBar(tutorial:false,stateApp:'virtualofficine'),
-                        transitionDuration: const Duration(seconds: 0)));
+                  context,
+                  PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => const NavigatorBar(tutorial: false, stateApp: 'virtualofficine'),
+                      transitionDuration: const Duration(seconds: 0)));
           }
         }
       }
@@ -424,7 +421,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
           await authService.login(context, token, data);
           appState.updateStateAuxToken(false);
           if (!mounted) return;
-          Navigator.pushReplacementNamed(context, 'navigator');
+           Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
         });
       }),
     );

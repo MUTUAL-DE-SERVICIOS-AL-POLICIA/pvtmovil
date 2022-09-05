@@ -56,6 +56,7 @@ dependencies:
   intl: ^0.17.0
   just_the_tooltip: ^0.0.12
   liquid_progress_indicator: ^0.4.0
+  liquid_swipe: ^3.0.0
   map_launcher: ^2.3.0+1
   modal_bottom_sheet: ^2.1.0
   open_file: ^3.2.1

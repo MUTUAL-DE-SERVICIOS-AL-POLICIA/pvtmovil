@@ -6,17 +6,17 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class AuthService extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
 
-  Future stateApp( BuildContext context, String value) async{
+  Future stateApp(BuildContext context, String value) async {
     await storage.write(key: 'stateApp', value: value);
     return;
   }
 
-  Future user( BuildContext context, String value )async{
+  Future user(BuildContext context, String value) async {
     await storage.write(key: 'user', value: value);
     return;
   }
-  Future login(
-      BuildContext context, String token, Map<String, dynamic> data) async {
+
+  Future login(BuildContext context, String token, Map<String, dynamic> data) async {
     await storage.write(key: 'token', value: token);
     await storage.write(key: 'data', value: json.encode(data));
     return;
@@ -28,16 +28,21 @@ class AuthService extends ChangeNotifier {
   }
 
   Future logout() async {
-    await storage.delete(key:'user');
+    await storage.delete(key: 'user');
     await storage.delete(key: 'token');
     await storage.delete(key: 'data');
     await storage.delete(key: 'auxToken');
+    await storage.delete(key: 'stateApp');
+    await storage.delete(key: 'firstTime');
+
     return;
   }
-  Future<String>readStateApp() async{
+
+  Future<String> readStateApp() async {
     return await storage.read(key: 'stateApp') ?? '';
   }
-  Future<String>readUser() async{
+
+  Future<String> readUser() async {
     return await storage.read(key: 'user') ?? '';
   }
 
@@ -51,5 +56,14 @@ class AuthService extends ChangeNotifier {
 
   Future<String> readData() async {
     return await storage.read(key: 'data') ?? '';
+  }
+
+  Future firstTime(BuildContext context) async {
+    await storage.write(key: 'firstTime', value: 'true');
+    return;
+  }
+
+  Future<String> readFirstTime() async {
+    return await storage.read(key: 'firstTime') ?? '';
   }
 }
