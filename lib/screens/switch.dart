@@ -93,6 +93,7 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                         BottonTool(
                           title: 'Oficina Virtual',
                           description: 'Seguimiento de Aportes y Prestamos',
+                          textDirection: TextDirection.rtl,
                           onPress: () => Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -155,6 +156,9 @@ class ScreenSwitchState extends State<ScreenSwitch> {
             context,
             MaterialPageRoute(builder: (context) => ScreenWorkFlow(qrModel: qrModelFromJson(response.body))),
           );
+        } else {
+          if (!mounted) return;
+          callDialogAction(context, 'No pudimos encontrar el trámite');
         }
       }
     } on PlatformException catch (e) {
@@ -173,13 +177,9 @@ class BottonTool extends StatelessWidget {
   final String title;
   final String description;
   final Function() onPress;
-  const BottonTool({
-    Key? key,
-    required this.child,
-    required this.title,
-    required this.description,
-    required this.onPress,
-  }) : super(key: key);
+  final TextDirection? textDirection;
+  const BottonTool({Key? key, required this.child, required this.title, required this.description, required this.onPress, this.textDirection})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -190,6 +190,7 @@ class BottonTool extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
+              textDirection: textDirection,
               children: [
                 Expanded(
                   child: Padding(padding: const EdgeInsets.all(8.0), child: child),

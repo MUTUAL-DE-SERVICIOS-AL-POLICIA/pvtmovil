@@ -17,10 +17,10 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> with SingleTickerProvid
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      lowerBound: widget.qrModel.payload!.porcentage!/100,
-      upperBound: widget.qrModel.payload!.porcentage!/100,
+      lowerBound: widget.qrModel.payload!.porcentage! / 100,
+      upperBound: widget.qrModel.payload!.porcentage! / 100,
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 30),
     );
 
     _animationController!.addListener(() => setState(() {}));
@@ -40,7 +40,7 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> with SingleTickerProvid
         body: Padding(
             padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
             child: Column(children: [
-              HedersComponent(title: 'Trámite ${widget.qrModel.payload!.code!}', stateBack: true),
+              HedersComponent(title: widget.qrModel.payload!.code!, stateBack: true),
               Text(
                 widget.qrModel.payload!.moduleDisplayName!,
                 textAlign: TextAlign.center,
@@ -84,26 +84,35 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> with SingleTickerProvid
                 const Text('Ubicación del trámite:', style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(widget.qrModel.payload!.location!)
               ]))),
+              const Text('Progreso:', style: TextStyle(fontWeight: FontWeight.bold)),
               Container(
                 width: double.infinity,
                 height: 75.0,
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: LiquidLinearProgressIndicator(
-                  value: _animationController!.value,
-                  backgroundColor: const Color(0xfff2f2f2),
-                  valueColor: const AlwaysStoppedAnimation(Color(0xff419388)),
-                  borderRadius: 12.0,
-                  borderWidth:2.1,
-                  borderColor:Colors.black,
-                  center: Text(
-                    "${percentage.toStringAsFixed(0)}%",
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                    value: _animationController!.value,
+                    backgroundColor: const Color(0xfff2f2f2),
+                    valueColor: const AlwaysStoppedAnimation(Color(0xff419388)),
+                    borderRadius: 12.0,
+                    borderWidth: 0.5,
+                    borderColor: Colors.black,
+                    center: Stack(
+                      children: <Widget>[
+                        Text(
+                          "${percentage.toStringAsFixed(0)}%",
+                          style: TextStyle(
+                            foreground: Paint()
+                              ..style = PaintingStyle.stroke
+                              ..strokeWidth = 5
+                              ..color = Colors.white,
+                          ),
+                        ),
+                        Text(
+                          "${percentage.toStringAsFixed(0)}%",
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xff419388)),
+                        ),
+                      ],
+                    )),
               )
             ])));
   }
