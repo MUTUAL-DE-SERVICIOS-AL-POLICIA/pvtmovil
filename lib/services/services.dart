@@ -1,13 +1,12 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 String? url = dotenv.env['HOST_URL'];
-String? urleo = dotenv.env['HOST_URLEO'];
+String? urlPrueba = dotenv.env['HOST_URL_PVT_PRUEBA'];
 String? urlbla = dotenv.env['HOST_URLBLA'];
-String? urlea = dotenv.env['HOST_URLEA'];
 
-String? reazon = dotenv.env['reazon'];
-String? reazonAffiliate = dotenv.env['reazonAffiliate'];
-String? reazonQr = dotenv.env['reazonQr'];
+String? reazon = dotenv.env['reazon'];//vi
+String? reazonAffiliate = dotenv.env['reazonAffiliate'];//affiliate
+String? reazonQr = dotenv.env['reazonQr'];//global
 //AUTH
 serviceAuthSession(int? affiliateId) => '$url/$reazon/auth/${affiliateId??''}';
 //CONTACTS
@@ -33,7 +32,7 @@ serviceGetObservation(int affiliateId) =>
     '$url/$reazon/affiliate/$affiliateId/observation';
 serviceEcoComProcedure(int ecoComId) => '$url/$reazon/eco_com_procedure/$ecoComId';
 //GET VERSION
-servicePostVersion()=>'$url/version';
+servicePostVersion()=>'$urlPrueba/$reazon/version';
 //////////////////////////////////////////////////
 /////////////OFICINA VIRTUAL/////////////////////
 ////////////////////////////////////////////////

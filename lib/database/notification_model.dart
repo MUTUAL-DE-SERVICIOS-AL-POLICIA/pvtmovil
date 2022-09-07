@@ -14,6 +14,7 @@ class NotificationModel {
   NotificationModel({
     this.id,
     required this.title,
+    required this.idAffiliate,
     required this.content,
     required this.read,
     required this.date,
@@ -21,6 +22,7 @@ class NotificationModel {
 
   int? id;
   String title;
+  int idAffiliate;
   String content;
   bool read;
   DateTime date;
@@ -28,6 +30,7 @@ class NotificationModel {
   NotificationModel copyWith({
     int? id,
     String? title,
+    int? idAffiliate,
     String? content,
     bool? read,
     DateTime? date,
@@ -35,6 +38,7 @@ class NotificationModel {
       NotificationModel(
         id: id ?? this.id,
         title: title ?? this.title,
+        idAffiliate: idAffiliate ?? this.idAffiliate,
         content: content ?? this.content,
         read: read ?? this.read,
         date: date ?? this.date,
@@ -44,6 +48,7 @@ class NotificationModel {
       NotificationModel(
         id: json["id"],
         title: json["title"],
+        idAffiliate: json["idAffiliate"],
         content: json["content"],
         read: json["read"] == 'true'?true:false,
         date: DateTime.parse(json["date"]),
@@ -52,6 +57,7 @@ class NotificationModel {
   Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
+        "idAffiliate": idAffiliate,
         "content": content,
         "read": read,
         "date": date.toIso8601String(),

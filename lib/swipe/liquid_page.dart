@@ -9,7 +9,7 @@ final liquidPages = [
   const LiquidPage(
     imageBackground: 'assets/images/001.jpg',
     imageFront: "assets/icons/6.png",
-    titleText: "BIENVENIDO\nAL",
+    titleText: "BIENVENIDO",
     subtitleText: "MUTUAL DE SERVICIOS AL POLICÍA",
     text: "",
   ),

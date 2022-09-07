@@ -4,16 +4,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
+import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
+import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<dynamic> serviceMethod(
     bool mounted,
@@ -86,6 +90,33 @@ Future<dynamic> serviceMethod(
         debugPrint('url $url');
         return await http
             .post(url, headers: headers, body: json.encode(body))
+            .timeout(const Duration(seconds: 40))
+            .then((value) {
+          debugPrint('statusCode ${value.statusCode}');
+          debugPrint('value ${value.body}');
+          switch (value.statusCode) {
+            case 200:
+              return value;
+            default:
+              callDialogAction(context, json.decode(value.body)['message']);
+              return null;
+          }
+        }).catchError((err) {
+          debugPrint('errA $err');
+          if ('$err'.contains('html')) {
+            callDialogAction(context,
+                'Tenemos un problema con nuestro servidor, intente luego');
+          } else if ('$err' == 'Software caused connection abort') {
+            callDialogAction(context, 'Verifique su conexión a Internet');
+          } else {
+            callDialogAction(
+                context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+          }
+          return null;
+        });
+      case 'delete':
+        return await http
+            .delete(url, headers: headers)
             .timeout(const Duration(seconds: 40))
             .then((value) {
           debugPrint('statusCode ${value.statusCode}');
@@ -184,6 +215,7 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   userBloc.add(UpdateCtrlLive(false));
   // var appDir = (await getTemporaryDirectory()).path;
   // Directory(appDir).delete(recursive: true);
+  await PushNotificationService.closeStreams();
   authService.logout();
   procedureBloc.add(ClearProcedures());
   appState.updateTabProcedure(0);

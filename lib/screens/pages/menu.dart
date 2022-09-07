@@ -66,32 +66,27 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 'Mis datos',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              if(stateApp == 'complement' )
               IconName(
                 icon: Icons.person_outline,
                 text: userBloc!.fullName!,
               ),
-              if(stateApp == 'complement')
-              if (userBloc!.degree != null)
+              if (userBloc.degree != null)
                 IconName(
                   icon: Icons.local_police_outlined,
                   text: 'GRADO: ${userBloc.degree!}',
                 ),
-              if(stateApp == 'complement')
               IconName(
                 icon: Icons.contact_page_outlined,
-                text: 'C.I.: ${userBloc!.identityCard!}',
+                text: 'C.I.: ${userBloc.identityCard!}',
               ),
-              if(stateApp == 'complement')
-              if (userBloc!.category != null)
+              if (userBloc.category != null)
                 IconName(
                   icon: Icons.av_timer,
                   text: 'CATEGORÍA: ${userBloc.category!}',
                 ),
-              if(stateApp == 'complement')
               IconName(
                 icon: Icons.account_balance,
-                text: 'GESTORA: ${userBloc!.pensionEntity!}',
+                text: 'GESTORA: ${userBloc.pensionEntity!}',
               ),
               Divider(height: 0.03.sh),
               const Text(
@@ -159,7 +154,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
           return ComponentAnimate(
               child: DialogTwoAction(
                   message: '¿Estás seguro que quieres cerrar sesión?',
-                  actionCorrect: () => confirmDeleteSession(mounted, context,false),
+                  actionCorrect: () => confirmDeleteSession(mounted, context,true),
                   messageCorrect: 'Salir'));
         });
   }

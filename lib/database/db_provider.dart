@@ -31,6 +31,7 @@ class DBProvider {
       await db.execute('''
             CREATE TABLE notification(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
+              idAffiliate INTEGER,
               title TEXT,
               content TEXT,
               read TEXT,

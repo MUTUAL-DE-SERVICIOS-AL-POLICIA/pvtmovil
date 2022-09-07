@@ -315,10 +315,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
             builder: (BuildContext context) => const DialogAction(message: 'Verifique su conexión a Internet'));
       }
       await checkVersion(mounted, context);
-      String token = await PushNotificationService.initializeapp();
-
+      
       data['device_id'] = widget.deviceId;
-      data['firebase_token'] = token;
+      data['firebase_token'] = await PushNotificationService.getTokenFirebase();
       if (!widget.stateOfficeVirtual) {
         data['identity_card'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
         data['birth_date'] = dateCtrlText;

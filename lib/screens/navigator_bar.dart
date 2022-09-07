@@ -165,7 +165,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
   @override
   Widget build(BuildContext context) {
     final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: true).state;
-
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: true).state.user;
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
@@ -174,14 +174,14 @@ class _NavigatorBarState extends State<NavigatorBar> {
                   animationDuration: const Duration(milliseconds: 300),
                   animationType: BadgeAnimationType.slide,
                   badgeColor: notificationBloc.existNotifications
-                      ? notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
+                      ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == userBloc!.id).isNotEmpty
                           ? Colors.red
                           : Colors.transparent
                       : Colors.transparent,
                   elevation: 0,
                   badgeContent: notificationBloc.existNotifications && notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
                       ? Text(
-                          notificationBloc.listNotifications!.where((e) => e.read == false).length.toString(),
+                          notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == userBloc!.id).length.toString(),
                           style: const TextStyle(color: Colors.white),
                         )
                       : Container(),
@@ -307,7 +307,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
       },
       onSkip: () {
         debugPrint("skip");
-        if (widget.stateApp == 'comlement') {
+        if (widget.stateApp == 'complement') {
           getEconomicComplement(true);
           getEconomicComplement(false);
         }

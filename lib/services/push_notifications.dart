@@ -16,6 +16,7 @@ class PushNotificationService {
   static Future initializeapp() async {
     //push notifications
     await Firebase.initializeApp();
+
     await requestPermission();
     token = await FirebaseMessaging.instance.getToken();
     debugPrint('tokenNotification $token');
@@ -28,13 +29,13 @@ class PushNotificationService {
         .onData((data) => _onMessageHandler(data));
     //cuando se abre la app desde la notificacion y la app esta en segundo plano pero no esta cerrado del todo
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenApp);
-    return token!;
   }
 
   static Future _backgroundHandle(RemoteMessage message) async {
     debugPrint('_backgroundHandle ${json.encode(message.data)}');
     final notification = NotificationModel(
         title: message.data['title'],
+        idAffiliate: int.parse(message.data['idAffiliate']),
         content: json.encode(message.data),
         read: false,
         date: DateTime.now());
@@ -42,17 +43,18 @@ class PushNotificationService {
     debugPrint('REGISTRADO');
   }
 
-  static _onMessageHandler(RemoteMessage data) async {
-    debugPrint('data from stream: ${data.data}');
+  static _onMessageHandler(RemoteMessage message) async {
+    debugPrint('data from stream: ${message.data}');
     final notification = NotificationModel(
-        title: data.data['title'],
-        content: json.encode(data.data),
+        title: message.data['title'],
+        idAffiliate: int.parse(message.data['idAffiliate']),
+        content: json.encode(message.data),
         read: false,
         date: DateTime.now());
     await DBProvider.db.newNotificationModel(notification);
     debugPrint('REGISTRADO');
-    data.data['origin'] = '_onMessageHandler';
-    _messageStream.add(json.encode(data.data));
+    message.data['origin'] = '_onMessageHandler';
+    _messageStream.add(json.encode(message.data));
   }
 
   static Future _onMessageOpenApp(RemoteMessage message) async {
@@ -75,7 +77,11 @@ class PushNotificationService {
     debugPrint('User push notification status ${settings.authorizationStatus}');
   }
 
-  static closeStreams() {
-    _messageStream.close();
+  static closeStreams() async {
+    // _messageStream.close();
+    // await Firebase.
+  }
+  static Future getTokenFirebase() async {
+    return await FirebaseMessaging.instance.getToken();
   }
 }

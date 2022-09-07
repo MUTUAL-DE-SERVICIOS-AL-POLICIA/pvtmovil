@@ -33,7 +33,6 @@ class AuthService extends ChangeNotifier {
     await storage.delete(key: 'data');
     await storage.delete(key: 'auxToken');
     await storage.delete(key: 'stateApp');
-    await storage.delete(key: 'firstTime');
 
     return;
   }
@@ -62,8 +61,14 @@ class AuthService extends ChangeNotifier {
     await storage.write(key: 'firstTime', value: 'true');
     return;
   }
-
+  Future initialFirebase(BuildContext context) async {
+    await storage.write(key: 'firebase', value: 'true');
+    return;
+  }
   Future<String> readFirstTime() async {
     return await storage.read(key: 'firstTime') ?? '';
+  }
+  Future<String> readInitialFirebase() async {
+    return await storage.read(key: 'firebase') ?? '';
   }
 }
