@@ -16,6 +16,7 @@ import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
+import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/model_update_pwd.dart';
@@ -339,6 +340,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
           userBloc.add(UpdateUser(user.user!));
           if (!mounted) return;
           await authService.user(context, json.encode(json.decode(response.body)['data']));
+          prefs!.setInt('idAffiliate', json.decode(response.body)['data']['user']['id']);
           //add words validations for files
           // files.addKey('cianverso', dniCtrl.text.trim()); //num carnet
           // files.addKey('cireverso', dniCtrl.text.trim()); //num carnet
@@ -371,6 +373,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
               await authService.login(context, json.decode(response.body)['data']['user']['api_token'], data);
               if (!mounted) return;
               await authService.stateApp(context, 'virtualofficine');
+              prefs!.setInt('idAffiliate', json.decode(response.body)['data']['user']['affiliate_id']);
               if (!mounted) return;
               return Navigator.pushReplacement(
                   context,

@@ -12,6 +12,7 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/dialogs/dialog_back.dart';
+import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/inbox/screen_inbox.dart';
@@ -174,14 +175,14 @@ class _NavigatorBarState extends State<NavigatorBar> {
                   animationDuration: const Duration(milliseconds: 300),
                   animationType: BadgeAnimationType.slide,
                   badgeColor: notificationBloc.existNotifications
-                      ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == userBloc!.id).isNotEmpty
+                      ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == prefs!.getInt('idAffiliate')).isNotEmpty
                           ? Colors.red
                           : Colors.transparent
                       : Colors.transparent,
                   elevation: 0,
                   badgeContent: notificationBloc.existNotifications && notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
                       ? Text(
-                          notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == userBloc!.id).length.toString(),
+                          notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == prefs!.getInt('idAffiliate')).length.toString(),
                           style: const TextStyle(color: Colors.white),
                         )
                       : Container(),

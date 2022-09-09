@@ -42,3 +42,5 @@ serviceGetQr(String info)=> '$urlbla/$reazonQr/procedure_qr/$info';
 serviceAuthSessionOF()=>'$urlbla/$reazonAffiliate/auth';
 // CHANGE PASSWORD
 serviceChangePasswordOF()=>'$urlbla/$reazonAffiliate/change_password';
+// APORTES
+serviceContributions(int affiliateId)=>'$urlbla/app/all_contributions/$affiliateId';

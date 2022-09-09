@@ -13,6 +13,7 @@ import 'package:muserpol_pvt/screens/switch.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/swipe/slider.dart';
 import 'package:muserpol_pvt/utils/style.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'bloc/notification/notification_bloc.dart';
 import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,7 +37,7 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
-
+SharedPreferences? prefs;
 void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +46,7 @@ void main() async {
   );
 
   HttpOverrides.global = MyHttpOverrides();
+  prefs = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 

@@ -25,7 +25,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   bool colorValue = false;
   bool autentificaction = false;
   String? fullPaths;
-  String stateApp='';
+  String stateApp = '';
   @override
   void initState() {
     super.initState();
@@ -35,10 +35,12 @@ class _MenuDrawerState extends State<MenuDrawer> {
       }
     });
   }
-  services()async{
+
+  services() async {
     final authService = Provider.of<AuthService>(context, listen: false);
     setState(() async => stateApp = await authService.readStateApp());
-    }
+  }
+
   bool status = true;
   bool sendNotifications = true;
   bool darkTheme = false;
@@ -47,6 +49,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   Widget build(BuildContext context) {
     final userBloc =
         BlocProvider.of<UserBloc>(context, listen: true).state.user;
+    final authService = Provider.of<AuthService>(context, listen: false);
     return Drawer(
       width: MediaQuery.of(context).size.width / 1.5,
       child: Padding(
@@ -66,28 +69,43 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 'Mis datos',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              IconName(
-                icon: Icons.person_outline,
-                text: userBloc!.fullName!,
-              ),
-              if (userBloc.degree != null)
-                IconName(
-                  icon: Icons.local_police_outlined,
-                  text: 'GRADO: ${userBloc.degree!}',
-                ),
-              IconName(
-                icon: Icons.contact_page_outlined,
-                text: 'C.I.: ${userBloc.identityCard!}',
-              ),
-              if (userBloc.category != null)
-                IconName(
-                  icon: Icons.av_timer,
-                  text: 'CATEGORÍA: ${userBloc.category!}',
-                ),
-              IconName(
-                icon: Icons.account_balance,
-                text: 'GESTORA: ${userBloc.pensionEntity!}',
-              ),
+              // authService.readStateApp()
+              FutureBuilder(
+                  //verificamos si el usuario está autenticado
+                  future: authService.readStateApp(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.data == 'complement') {
+                      return Column(
+                        children: [
+                          IconName(
+                            icon: Icons.person_outline,
+                            text: userBloc!.fullName!,
+                          ),
+                          if (userBloc.degree != null)
+                            IconName(
+                              icon: Icons.local_police_outlined,
+                              text: 'GRADO: ${userBloc.degree!}',
+                            ),
+                          IconName(
+                            icon: Icons.contact_page_outlined,
+                            text: 'C.I.: ${userBloc.identityCard!}',
+                          ),
+                          if (userBloc.category != null)
+                            IconName(
+                              icon: Icons.av_timer,
+                              text: 'CATEGORÍA: ${userBloc.category!}',
+                            ),
+                          IconName(
+                            icon: Icons.account_balance,
+                            text: 'GESTORA: ${userBloc.pensionEntity!}',
+                          ),
+                        ],
+                      );
+                    }
+                    return Container();
+                  }),
+
               Divider(height: 0.03.sh),
               const Text(
                 'Configuración de preferencias',
@@ -154,7 +172,8 @@ class _MenuDrawerState extends State<MenuDrawer> {
           return ComponentAnimate(
               child: DialogTwoAction(
                   message: '¿Estás seguro que quieres cerrar sesión?',
-                  actionCorrect: () => confirmDeleteSession(mounted, context,true),
+                  actionCorrect: () =>
+                      confirmDeleteSession(mounted, context, true),
                   messageCorrect: 'Salir'));
         });
   }

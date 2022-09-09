@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/components/heders.dart';
+import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
+import 'package:muserpol_pvt/services/service_method.dart';
+import 'package:muserpol_pvt/services/services.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class ScreenContributions extends StatefulWidget {
@@ -22,7 +25,11 @@ class _ScreenContributionsState extends State<ScreenContributions> {
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
-          child: HedersComponent(title: 'Mis Aportes', menu: true, keyMenu: widget.keyMenu, onPressMenu: () => Scaffold.of(context).openDrawer()),
+          child: HedersComponent(
+              title: 'Mis Aportes',
+              menu: true,
+              keyMenu: widget.keyMenu,
+              onPressMenu: () => Scaffold.of(context).openDrawer()),
         ),
         Padding(
             padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
@@ -52,7 +59,8 @@ class _ScreenContributionsState extends State<ScreenContributions> {
                           child: SvgPicture.asset(
                             'assets/icons/back.svg',
                             height: 37.sp,
-                            color: ThemeProvider.themeOf(context).data.hintColor,
+                            color:
+                                ThemeProvider.themeOf(context).data.hintColor,
                           ),
                         ))),
               ],
@@ -65,11 +73,14 @@ class _ScreenContributionsState extends State<ScreenContributions> {
             return GestureDetector(
               onTap: () {
                 debugPrint('HOLA COMO ESTAS');
+                getContribution(context);
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ContainerComponent(
-                    color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                    color: ThemeProvider.themeOf(context)
+                        .data
+                        .scaffoldBackgroundColor,
                     child: Center(
                         child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -84,5 +95,14 @@ class _ScreenContributionsState extends State<ScreenContributions> {
         ))
       ]),
     );
+  }
+
+  getContribution(BuildContext context) async {
+    // serviceContributions
+    var response = await serviceMethod(mounted, context, 'get', null,
+        serviceContributions(prefs!.getInt('idAffiliate')!), true, true);
+    if (response != null) {
+      debugPrint('${response.body}');
+    }
   }
 }

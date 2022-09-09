@@ -12,12 +12,13 @@ import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
+import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 Future<dynamic> serviceMethod(
     bool mounted,
@@ -54,6 +55,8 @@ Future<dynamic> serviceMethod(
     debugPrint('body $body');
     switch (method) {
       case 'get':
+        debugPrint('headers $headers');
+        debugPrint('url $url');
         return await http
             .get(url, headers: headers)
             .timeout(const Duration(seconds: 40))
@@ -115,6 +118,8 @@ Future<dynamic> serviceMethod(
           return null;
         });
       case 'delete':
+        debugPrint('headers $headers');
+        debugPrint('url $url');
         return await http
             .delete(url, headers: headers)
             .timeout(const Duration(seconds: 40))
@@ -207,7 +212,7 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
   final appState = Provider.of<AppState>(context, listen: false);
   if (voluntary) {
-    await serviceMethod(mounted, context, 'delete', null, serviceAuthSession(userBloc.state.user!.id!), true, false);
+    await serviceMethod(mounted, context, 'delete', null, serviceAuthSession(prefs!.getInt('idAffiliate')), true, false);
   }
   for (var element in appState.files) {
     appState.updateFile(element.id!, null);
@@ -223,7 +228,8 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   if (!mounted) return;
   Navigator.pushReplacementNamed(context, 'switch');
 }
-
+// cN3F_I_CQwW7e2a8fNcVRz:APA91bGlmFhSpj7CAEKulB4LaI-wNE_rafpG3P6ACrrFzD4_XhFOI0DywrvMRaff3-fuXb3kXJb8DNnsJ0owMJJsjLESOeMrj5qyiTfuPraQLCHKnMhEHBiBxKe06BFzt82ZWUkdrknL
+// cN3F_I_CQwW7e2a8fNcVRz:APA91bGlmFhSpj7CAEKulB4LaI-wNE_rafpG3P6ACrrFzD4_XhFOI0DywrvMRaff3-fuXb3kXJb8DNnsJ0owMJJsjLESOeMrj5qyiTfuPraQLCHKnMhEHBiBxKe06BFzt82ZWUkdrknL
 checkVersion(bool mounted, BuildContext context) async {
   // if (await InternetConnectionChecker().connectionStatus ==
   //     InternetConnectionStatus.disconnected) {
