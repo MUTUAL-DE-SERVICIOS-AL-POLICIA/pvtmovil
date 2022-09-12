@@ -7,6 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:muserpol_pvt/bloc/contribution/contribution_bloc.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/screens/inbox/notification.dart';
 import 'package:muserpol_pvt/screens/switch.dart';
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (_) => UserBloc()),
           BlocProvider(create: (_) => ProcedureBloc()),
           BlocProvider(create: (_) => NotificationBloc()),
+          BlocProvider(create: (_) => ContributionBloc())
         ],
         child: MultiProvider(providers: [
           ChangeNotifierProvider(create: (_) => AuthService()),

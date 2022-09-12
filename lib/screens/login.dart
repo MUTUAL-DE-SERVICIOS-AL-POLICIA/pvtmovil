@@ -317,7 +317,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
       }
       await checkVersion(mounted, context);
       
-      data['device_id'] = widget.deviceId;
+      // data['device_id'] = widget.deviceId;
+      data['device_id'] = '581c344528622a8a';
       data['firebase_token'] = await PushNotificationService.getTokenFirebase();
       if (!widget.stateOfficeVirtual) {
         data['identity_card'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';

@@ -16,6 +16,7 @@ import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:muserpol_pvt/services/services.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class ScreenSwitch extends StatefulWidget {
   const ScreenSwitch({Key? key}) : super(key: key);
@@ -186,7 +187,7 @@ class BottonTool extends StatelessWidget {
     return GestureDetector(
         onTap: onPress,
         child: ContainerComponent(
-          color: Colors.white,
+          color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
