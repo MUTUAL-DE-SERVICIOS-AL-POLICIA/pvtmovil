@@ -18,7 +18,7 @@ import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
-// import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<dynamic> serviceMethod(
     bool mounted,
@@ -228,40 +228,38 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   if (!mounted) return;
   Navigator.pushReplacementNamed(context, 'switch');
 }
-// cN3F_I_CQwW7e2a8fNcVRz:APA91bGlmFhSpj7CAEKulB4LaI-wNE_rafpG3P6ACrrFzD4_XhFOI0DywrvMRaff3-fuXb3kXJb8DNnsJ0owMJJsjLESOeMrj5qyiTfuPraQLCHKnMhEHBiBxKe06BFzt82ZWUkdrknL
-// cN3F_I_CQwW7e2a8fNcVRz:APA91bGlmFhSpj7CAEKulB4LaI-wNE_rafpG3P6ACrrFzD4_XhFOI0DywrvMRaff3-fuXb3kXJb8DNnsJ0owMJJsjLESOeMrj5qyiTfuPraQLCHKnMhEHBiBxKe06BFzt82ZWUkdrknL
 checkVersion(bool mounted, BuildContext context) async {
-  // if (await InternetConnectionChecker().connectionStatus ==
-  //     InternetConnectionStatus.disconnected) {
-  //   return callDialogAction(context, 'Verifique su conexión a Internet');
-  // }
-  // final Map<String, dynamic> data = {'version': dotenv.env['versions']};
-  // if (Platform.isIOS) {
-  //   data['store'] = 'appstore';
-  // }
-  // if (Platform.isAndroid) {
-  //   data['store'] = 'playstore';
-  // }
-  // var response = await serviceMethod(
-  //     mounted, context, 'post', data, servicePostVersion(), false, false);
-  // if (response != null) {
-  //   if (!json.decode(response.body)['error']) {
-  //     return await showDialog(
-  //         barrierDismissible: false,
-  //         context: context,
-  //         builder: (context) => ComponentAnimate(
-  //             child: DialogOneFunction(
-  //                 title: json.decode(response.body)['message'],
-  //                 message:
-  //                     'Para mejorar la experiencia, Porfavor actualiza la nueva versión',
-  //                 textButton: 'Actualizar',
-  //                 onPressed: () async {
-  //                   launchUrl(
-  //                       Uri.parse(
-  //                           json.decode(response.body)['data']['url_store']),
-  //                       mode: LaunchMode.externalApplication);
-  //                 })));
-  //   }
-  //   return;
-  // }
+  if (await InternetConnectionChecker().connectionStatus ==
+      InternetConnectionStatus.disconnected) {
+    return callDialogAction(context, 'Verifique su conexión a Internet');
+  }
+  final Map<String, dynamic> data = {'version': dotenv.env['versions']};
+  if (Platform.isIOS) {
+    data['store'] = 'appstore';
+  }
+  if (Platform.isAndroid) {
+    data['store'] = 'playstore';
+  }
+  var response = await serviceMethod(
+      mounted, context, 'post', data, servicePostVersion(), false, false);
+  if (response != null) {
+    if (!json.decode(response.body)['error']) {
+      return await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => ComponentAnimate(
+              child: DialogOneFunction(
+                  title: json.decode(response.body)['message'],
+                  message:
+                      'Para mejorar la experiencia, Porfavor actualiza la nueva versión',
+                  textButton: 'Actualizar',
+                  onPressed: () async {
+                    launchUrl(
+                        Uri.parse(
+                            json.decode(response.body)['data']['url_store']),
+                        mode: LaunchMode.externalApplication);
+                  })));
+    }
+    return;
+  }
 }

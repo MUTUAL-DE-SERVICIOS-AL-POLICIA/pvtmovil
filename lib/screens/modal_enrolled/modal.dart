@@ -107,11 +107,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
     userBloc.add(UpdateStateCam(true));
     if (response != null) {
       if (json.decode(response.body)['error']) {
-        setState(() {
-          // title = json.decode(response.body)['message'];
-          title = json.decode(response.body)['data']['action']['message'];
-        });
-        // callDialogAction(context, json.decode(response.body)['message']);
+        setState(() => title = json.decode(response.body)['data']['action']['message']);
         showDialog(
             barrierDismissible: false,
             context: context,

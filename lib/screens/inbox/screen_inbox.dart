@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
-import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/containers.dart';
@@ -27,8 +26,6 @@ class _ScreenInboxState extends State<ScreenInbox> {
   Widget build(BuildContext context) {
     final notificationBloc =
         BlocProvider.of<NotificationBloc>(context, listen: true).state;
-    final userBloc =
-        BlocProvider.of<UserBloc>(context, listen: true).state.user;
     return ComponentAnimate(
         child: AlertDialog(
       actionsAlignment: MainAxisAlignment.spaceAround,
