@@ -19,7 +19,7 @@ serviceGetEconomicComplements(int page, bool current) =>
 //GET VERIFIED DOCUMENT
 serviceGetMessageFace() => '$url/$reazon/message/verified';
 //GET PROCESS ENROLLED
-serviceProcessEnrolled() => '$url/$reazon/liveness';
+serviceProcessEnrolled(String? deviceId) => '$url/$reazon/liveness/${deviceId!=null?'?device_id=$deviceId':''}';
 //GET PERMISION PROCEDURE
 serviceGetProcessingPermit(int affiliateId) => '$url/$reazon/liveness/$affiliateId';
 //SEND IMAGES FOR PROCEDURE

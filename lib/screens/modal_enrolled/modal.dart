@@ -16,15 +16,14 @@ import 'package:muserpol_pvt/services/services.dart';
 
 class ModalInsideModal extends StatefulWidget {
   final Function(String) nextScreen;
-  const ModalInsideModal({Key? key, required this.nextScreen})
-      : super(key: key);
+  final String? deviceId;
+  const ModalInsideModal({Key? key, required this.nextScreen, this.deviceId}) : super(key: key);
 
   @override
   State<ModalInsideModal> createState() => _ModalInsideModalState();
 }
 
-class _ModalInsideModalState extends State<ModalInsideModal>
-    with TickerProviderStateMixin {
+class _ModalInsideModalState extends State<ModalInsideModal> with TickerProviderStateMixin {
   TabController? tabController;
   String title = '';
   String textContent = '';
@@ -40,8 +39,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
 
   getMessage() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(
-        mounted, context, 'get', null, serviceProcessEnrolled(), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null, serviceProcessEnrolled(widget.deviceId), true, true);
     if (response != null) {
       userBloc.add(UpdateStateCam(true));
       setState(() {
@@ -62,9 +60,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
         child: Scaffold(
             body: SizedBox(
                 child: Column(children: [
-          Padding(
-              padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-              child: HedersComponent(title: title, center: true)),
+          Padding(padding: const EdgeInsets.fromLTRB(10, 15, 10, 0), child: HedersComponent(title: title, center: true)),
           Expanded(
             child: DefaultTabController(
                 length: 2,
@@ -102,8 +98,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
   sendImage(String image) async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     final Map<String, dynamic> data = {'image': image};
-    var response = await serviceMethod(
-        mounted, context, 'post', data, serviceProcessEnrolled(), true, true);
+    var response = await serviceMethod(mounted, context, 'post', data, serviceProcessEnrolled(null), true, true);
     userBloc.add(UpdateStateCam(true));
     if (response != null) {
       if (json.decode(response.body)['error']) {
@@ -111,8 +106,7 @@ class _ModalInsideModalState extends State<ModalInsideModal>
         showDialog(
             barrierDismissible: false,
             context: context,
-            builder: (BuildContext context) =>
-                DialogAction(message: json.decode(response.body)['message']));
+            builder: (BuildContext context) => DialogAction(message: json.decode(response.body)['message']));
       } else {
         if (json.decode(response.body)['data']['completed']) {
           User user = userBloc.state.user!;
@@ -120,13 +114,9 @@ class _ModalInsideModalState extends State<ModalInsideModal>
           userBloc.add(UpdateUser(user));
           return widget.nextScreen(json.decode(response.body)['message']);
         } else {
-          setState(() =>
-              title = json.decode(response.body)['data']['action']['message']);
+          setState(() => title = json.decode(response.body)['data']['action']['message']);
           if (!mounted) return;
-          showSuccessful(
-              context,
-              'Correcto, ${json.decode(response.body)['data']['action']['message']}',
-              () {});
+          showSuccessful(context, 'Correcto, ${json.decode(response.body)['data']['action']['message']}', () {});
         }
       }
     }

@@ -100,6 +100,8 @@ Future<dynamic> serviceMethod(
           switch (value.statusCode) {
             case 200:
               return value;
+            case 201:
+              return value;
             default:
               callDialogAction(context, json.decode(value.body)['message']);
               return null;

@@ -62,7 +62,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   FocusNode textSecondFocusNode = FocusNode();
   final tooltipController = JustTheController();
   bool stateCom = false;
-  Map<String, dynamic> data = {};
+  Map<String, dynamic> body = {};
   @override
   void initState() {
     super.initState();
@@ -302,9 +302,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
     FocusScope.of(context).unfocus();
     if (!widget.stateOfficeVirtual) validateDate();
     if (formKey.currentState!.validate()) {
-      final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-      final authService = Provider.of<AuthService>(context, listen: false);
-      final appState = Provider.of<AppState>(context, listen: false);
       if (dateCtrlText == null && !widget.stateOfficeVirtual) return;
       setState(() => btnAccess = false);
       if (await InternetConnectionChecker().connectionStatus == InternetConnectionStatus.disconnected) {
@@ -316,73 +313,91 @@ class _ScreenLoginState extends State<ScreenLogin> {
             builder: (BuildContext context) => const DialogAction(message: 'Verifique su conexión a Internet'));
       }
       await checkVersion(mounted, context);
-      
-      data['device_id'] = widget.deviceId;
-      // data['device_id'] = '581c344528622a8a';
-      data['firebase_token'] = await PushNotificationService.getTokenFirebase();
+
+      body['device_id'] = widget.deviceId;
+      body['firebase_token'] = await PushNotificationService.getTokenFirebase();
       if (!widget.stateOfficeVirtual) {
-        data['identity_card'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
-        data['birth_date'] = dateCtrlText;
-        data['is_new_app'] = true;
+        body['identity_card'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
+        body['birth_date'] = dateCtrlText;
+        body['is_new_app'] = true;
       } else {
-        data['username'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
-        data['password'] = passwordCtrl.text.trim();
+        body['username'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
+        body['password'] = passwordCtrl.text.trim();
       }
       if (!mounted) return;
       var response = await serviceMethod(
-          mounted, context, 'post', data, widget.stateOfficeVirtual ? serviceAuthSessionOF() : serviceAuthSession(null), false, true);
+          mounted, context, 'post', body, widget.stateOfficeVirtual ? serviceAuthSessionOF() : serviceAuthSession(null), false, true);
       setState(() => btnAccess = true);
       if (response != null) {
         await DBProvider.db.database;
-        if (!widget.stateOfficeVirtual) {
-          UserModel user = userModelFromJson(json.encode(json.decode(response.body)['data']));
-          await authService.auxtoken(user.apiToken!);
-          appState.updateStateAuxToken(true);
-          userBloc.add(UpdateUser(user.user!));
-          if (!mounted) return;
-          await authService.user(context, json.encode(json.decode(response.body)['data']));
-          prefs!.setInt('idAffiliate', json.decode(response.body)['data']['user']['id']);
-          //add words validations for files
-          // files.addKey('cianverso', dniCtrl.text.trim()); //num carnet
-          // files.addKey('cireverso', dniCtrl.text.trim()); //num carnet
-          // files.addKey('cireverso',
-          //     '${response.data['data']['user']['full_name']}'); //nombre
-          // await Permission.storage.request();
-          // await Permission.manageExternalStorage.request();
-          // await Permission.accessMediaLocation.request();
-          if (!mounted) return;
-          await authService.stateApp(context, 'complement');
-          if (!json.decode(response.body)['data']['user']['enrolled']) {
-            _showModalInside(user.apiToken!, data);
-          } else {
-            if (!mounted) return;
-            await authService.login(context, user.apiToken!, data);
-
-            appState.updateStateAuxToken(false);
-            if (!mounted) return;
-            return Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
-          }
+        if (widget.stateOfficeVirtual) {
+          initSessionVirtualOfficine(response);
         } else {
-          switch (json.decode(response.body)['data']['status']) {
-            case 'Pendiente':
-              return virtualOfficineUpdatePwd(json.decode(response.body)['message']);
-            case 'Activo':
-              if (!mounted) return;
-              await authService.login(context, json.decode(response.body)['data']['user']['api_token'], data);
-              if (!mounted) return;
-              await authService.stateApp(context, 'virtualofficine');
-              prefs!.setInt('idAffiliate', json.decode(response.body)['data']['user']['affiliate_id']);
-              if (!mounted) return;
-              return Navigator.pushReplacement(
-                  context,
-                  PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => const NavigatorBar(tutorial: false, stateApp: 'virtualofficine'),
-                      transitionDuration: const Duration(seconds: 0)));
-          }
+          intSessionComplement(response);
         }
+      }
+    }
+  }
+
+  initSessionVirtualOfficine(dynamic response) async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    switch (json.decode(response.body)['data']['status']) {
+      case 'Pendiente':
+        return virtualOfficineUpdatePwd(json.decode(response.body)['message']);
+      case 'Activo':
+        if (!mounted) return;
+        await authService.login(context, json.decode(response.body)['data']['user']['api_token'], body);
+        if (!mounted) return;
+        await authService.stateApp(context, 'virtualofficine');
+        prefs!.setInt('idAffiliate', json.decode(response.body)['data']['user']['affiliate_id']);
+        if (!mounted) return;
+        return Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const NavigatorBar(tutorial: false, stateApp: 'virtualofficine'),
+                transitionDuration: const Duration(seconds: 0)));
+    }
+  }
+
+  intSessionComplement(dynamic response) async {
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final appState = Provider.of<AppState>(context, listen: false);
+    if (response.statusCode == 200) {
+      UserModel user = userModelFromJson(json.encode(json.decode(response.body)['data']));
+      await authService.auxtoken(user.apiToken!);
+      appState.updateStateAuxToken(true);
+      userBloc.add(UpdateUser(user.user!));
+      if (!mounted) return;
+      await authService.user(context, json.encode(json.decode(response.body)['data']));
+      prefs!.setInt('idAffiliate', json.decode(response.body)['data']['user']['id']);
+      //add words validations for files
+      // files.addKey('cianverso', dniCtrl.text.trim()); //num carnet
+      // files.addKey('cireverso', dniCtrl.text.trim()); //num carnet
+      // files.addKey('cireverso',
+      //     '${response.data['data']['user']['full_name']}'); //nombre
+      // await Permission.storage.request();
+      // await Permission.manageExternalStorage.request();
+      // await Permission.accessMediaLocation.request();
+      if (!mounted) return;
+      await authService.stateApp(context, 'complement');
+      if (!json.decode(response.body)['data']['user']['enrolled']) {
+        _showModalInside(user.apiToken!, false);
+      } else {
+        if (!mounted) return;
+        await authService.login(context, user.apiToken!, body);
+        appState.updateStateAuxToken(false);
+        if (!mounted) return;
+        return Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
+      }
+    } else {
+      if (json.decode(response.body)['data']['update_device_id']) {
+        return _showModalInside('', true); //reconocimiento facial
+      } else {
+        return callDialogAction(context, json.decode(response.body)['message']);
       }
     }
   }
@@ -396,8 +411,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
       builder: (context) => ModalUpdatePwd(
           message: message,
           onPressed: (password) async {
-            data['new_password'] = password;
-            var response = await serviceMethod(mounted, context, 'patch', data, serviceChangePasswordOF(), false, true);
+            body['new_password'] = password;
+            var response = await serviceMethod(mounted, context, 'patch', body, serviceChangePasswordOF(), false, true);
             if (response != null) {
               if (!mounted) return;
               return showSuccessful(context, json.decode(response.body)['message'], () {
@@ -410,7 +425,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
     );
   }
 
-  _showModalInside(String token, Map<String, dynamic> data) async {
+  _showModalInside(String token, bool facialRecognition) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final appState = Provider.of<AppState>(context, listen: false);
     await Future.delayed(const Duration(milliseconds: 50));
@@ -419,17 +434,23 @@ class _ScreenLoginState extends State<ScreenLogin> {
       enableDrag: false,
       isDismissible: false,
       context: context,
-      builder: (context) => ModalInsideModal(nextScreen: (message) {
-        return showSuccessful(context, message, () async {
-          await authService.login(context, token, data);
-          appState.updateStateAuxToken(false);
-          if (!mounted) return;
-           Navigator.pushReplacement(
-              context,
-              PageRouteBuilder(
-                  pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
-        });
-      }),
+      builder: (context) => ModalInsideModal(
+          deviceId: facialRecognition ? widget.deviceId : null,
+          nextScreen: (message) {
+            if(facialRecognition){
+              //en teoria me deberia dejar entrar
+            }else{
+              return showSuccessful(context, message, () async {
+                await authService.login(context, token, body);
+                appState.updateStateAuxToken(false);
+                if (!mounted) return;
+                Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
+              });
+            }
+          }),
     );
   }
 

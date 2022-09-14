@@ -4,11 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:muserpol_pvt/bloc/contribution/contribution_bloc.dart';
-import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/components/heders.dart';
-import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
 import 'package:theme_provider/theme_provider.dart';
 
@@ -25,18 +23,13 @@ class _ScreenContributionsState extends State<ScreenContributions> {
   int countItems = 1;
   @override
   Widget build(BuildContext context) {
-    final contributionBloc =
-        BlocProvider.of<ContributionBloc>(context, listen: true).state;
+    final contributionBloc = BlocProvider.of<ContributionBloc>(context, listen: true).state;
     return Scaffold(
       drawer: const MenuDrawer(),
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
-          child: HedersComponent(
-              title: 'Mis Aportes',
-              menu: true,
-              keyMenu: widget.keyMenu,
-              onPressMenu: () => Scaffold.of(context).openDrawer()),
+          child: HedersComponent(title: 'Mis Aportes', menu: true, keyMenu: widget.keyMenu, onPressMenu: () => Scaffold.of(context).openDrawer()),
         ),
         Padding(
             padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
@@ -66,8 +59,7 @@ class _ScreenContributionsState extends State<ScreenContributions> {
                           child: SvgPicture.asset(
                             'assets/icons/back.svg',
                             height: 37.sp,
-                            color:
-                                ThemeProvider.themeOf(context).data.hintColor,
+                            color: ThemeProvider.themeOf(context).data.hintColor,
                           ),
                         ))),
               ],
@@ -80,40 +72,23 @@ class _ScreenContributionsState extends State<ScreenContributions> {
                         padding: const EdgeInsets.only(bottom: 50),
                         crossAxisCount: 3,
                         children: List.generate(
-                            contributionBloc
-                                .contribution!.payload!.contributions!
-                                .where(
-                                    (e) => e.monthYear!.year == dateTime.year)
-                                .length, (index) {
-                          // return Center():
+                            contributionBloc.contribution!.payload!.contributions!.where((e) => e.monthYear!.year == dateTime.year).length, (index) {
                           return GestureDetector(
-                            onTap: () {
-                              debugPrint('HOLA COMO ESTAS');
-                              callDialogAction(context,'${contributionBloc.contribution!.payload!.contributions!.where((e) => e.monthYear!.year == dateTime.year).toList()[index].id}');
-                            },
                             child: Hero(
-                                tag: '${contributionBloc.contribution!.payload!.contributions!.where((e) => e.monthYear!.year == dateTime.year).toList()[index].id}',
+                                tag: 'flipcardHero$index',
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: ContainerComponent(
-                                      color: ThemeProvider.themeOf(context)
-                                          .data
-                                          .scaffoldBackgroundColor,
+                                      color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
                                       child: Center(
                                           child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Text(
                                               '${contributionBloc.contribution!.payload!.contributions!.where((e) => e.monthYear!.year == dateTime.year).toList()[index].state}'),
                                           Text(DateFormat('MMMM', "es_ES")
-                                              .format(contributionBloc
-                                                  .contribution!
-                                                  .payload!
-                                                  .contributions!
-                                                  .where((e) =>
-                                                      e.monthYear!.year ==
-                                                      dateTime.year)
+                                              .format(contributionBloc.contribution!.payload!.contributions!
+                                                  .where((e) => e.monthYear!.year == dateTime.year)
                                                   .toList()[index]
                                                   .monthYear!)
                                               .toUpperCase()),
@@ -122,6 +97,14 @@ class _ScreenContributionsState extends State<ScreenContributions> {
                                         ],
                                       ))),
                                 )),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  opaque: false,
+                                  pageBuilder: (_, __, ___) => SingleFlipCard(id: 'flipcardHero$index'),
+                                ),
+                              );
+                            },
                           );
                         }),
                       )
@@ -137,54 +120,73 @@ class _ScreenContributionsState extends State<ScreenContributions> {
   }
 
   subtractYear() {
-    final contributionBloc =
-        BlocProvider.of<ContributionBloc>(context, listen: false).state;
+    final contributionBloc = BlocProvider.of<ContributionBloc>(context, listen: false).state;
     setState(() {
       dateTime = DateTime(dateTime.year - 1);
-      countItems = contributionBloc.contribution!.payload!.contributions!
-          .where((e) => e.monthYear!.year == dateTime.year)
-          .length;
+      countItems = contributionBloc.contribution!.payload!.contributions!.where((e) => e.monthYear!.year == dateTime.year).length;
     });
   }
 
   addYear() {
-    final contributionBloc =
-        BlocProvider.of<ContributionBloc>(context, listen: false).state;
+    final contributionBloc = BlocProvider.of<ContributionBloc>(context, listen: false).state;
     if (DateTime.now().year > dateTime.year) {
       setState(() {
         dateTime = DateTime(dateTime.year + 1);
-        countItems = contributionBloc.contribution!.payload!.contributions!
-            .where((e) => e.monthYear!.year == dateTime.year)
-            .length;
+        countItems = contributionBloc.contribution!.payload!.contributions!.where((e) => e.monthYear!.year == dateTime.year).length;
       });
     }
   }
 
-  void callDialogAction(BuildContext context,String tag) {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) => Hero(tag: tag, child: DialogActions(tag:tag)));
-  }
+  // callDialogAction(BuildContext context,String tag) {
+  //   showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (BuildContext context) => Hero(
+  //         tag:tag,
+  //         child: DialogActions(tag:tag)));
+  // }
 }
-class DialogActions extends StatelessWidget {
-  final String tag;
-  const DialogActions({Key? key, required this.tag}) : super(key: key);
+
+class SingleFlipCard extends StatefulWidget {
+  final id;
+  SingleFlipCard({@required this.id});
+
+  @override
+  SingleFlipCardState createState() => SingleFlipCardState();
+}
+
+class SingleFlipCardState extends State<SingleFlipCard> {
+  // final GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
+
+  // @override
+  // void afterFirstLayout(BuildContext context) {
+  //   cardKey.currentState.toggleCard();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return  Hero(
-      tag: tag,
-      child: AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        title: Text(
-          'message',
-          textAlign: TextAlign.center,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: GestureDetector(
+        child: Center(
+          child: Hero(
+              tag: widget.id,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ContainerComponent(
+                    height: 200,
+                    width: 300,
+                    color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                    child: Center(
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Text('data')],
+                    ))),
+              )),
         ),
-        actions: <Widget>[
-          ButtonComponent(
-              text: 'Aceptar', onPressed: () => Navigator.pop(context))
-        ],
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
     );
   }
