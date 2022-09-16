@@ -9,7 +9,6 @@ import 'package:muserpol_pvt/components/image_ctrl_live.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/model/liveness_data_model.dart';
-import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/tab_info.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
@@ -17,7 +16,9 @@ import 'package:muserpol_pvt/services/services.dart';
 class ModalInsideModal extends StatefulWidget {
   final Function(String) nextScreen;
   final String? deviceId;
-  const ModalInsideModal({Key? key, required this.nextScreen, this.deviceId}) : super(key: key);
+  final bool stateFacialRecognition;
+  final String? firebaseToken;
+  const ModalInsideModal({Key? key, required this.nextScreen, this.deviceId, this.stateFacialRecognition = false, this.firebaseToken}) : super(key: key);
 
   @override
   State<ModalInsideModal> createState() => _ModalInsideModalState();
@@ -39,7 +40,7 @@ class _ModalInsideModalState extends State<ModalInsideModal> with TickerProvider
 
   getMessage() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(mounted, context, 'get', null, serviceProcessEnrolled(widget.deviceId), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null, serviceProcessEnrolled(widget.stateFacialRecognition? widget.deviceId:null), true, true);
     if (response != null) {
       userBloc.add(UpdateStateCam(true));
       setState(() {
@@ -96,9 +97,12 @@ class _ModalInsideModalState extends State<ModalInsideModal> with TickerProvider
   }
 
   sendImage(String image) async {
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    final Map<String, dynamic> data = {'image': image};
-    var response = await serviceMethod(mounted, context, 'post', data, serviceProcessEnrolled(null), true, true);
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: false); 
+    final Map<String, dynamic> body = {
+      'firebase_token':widget.firebaseToken,
+      'device_id': widget.deviceId,
+      'image': image};
+    var response = await serviceMethod(mounted, context, 'post', body, serviceProcessEnrolled(null), true, true);
     userBloc.add(UpdateStateCam(true));
     if (response != null) {
       if (json.decode(response.body)['error']) {
@@ -109,9 +113,10 @@ class _ModalInsideModalState extends State<ModalInsideModal> with TickerProvider
             builder: (BuildContext context) => DialogAction(message: json.decode(response.body)['message']));
       } else {
         if (json.decode(response.body)['data']['completed']) {
-          User user = userBloc.state.user!;
-          user.enrolled = true;
-          userBloc.add(UpdateUser(user));
+          debugPrint('==============HOLA========');
+          // User user = userBloc.state.user!;
+          // user.enrolled = true;
+          // userBloc.add(UpdateUser(user));
           return widget.nextScreen(json.decode(response.body)['message']);
         } else {
           setState(() => title = json.decode(response.body)['data']['action']['message']);

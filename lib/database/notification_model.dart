@@ -47,7 +47,7 @@ class NotificationModel {
         title: json["title"],
         idAffiliate: json["idAffiliate"],
         content: json["content"],
-        read: json["read"],
+        read: json["read"]=='true'?true:false,
         date: DateTime.parse(json["date"]),
       );
 

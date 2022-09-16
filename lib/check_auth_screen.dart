@@ -75,6 +75,7 @@ class CheckAuthScreen extends StatelessWidget {
   getInfo(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    debugPrint('holaa ${await authService.readStateApp()}');
     if (await authService.readStateApp() == 'complement') {
       UserModel user = userModelFromJson(await authService.readUser());
       userBloc.add(UpdateUser(user.user!));

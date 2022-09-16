@@ -3,7 +3,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 String? url = dotenv.env['HOST_URL'];
 String? urlPrueba = dotenv.env['HOST_URL_PVT_PRUEBA'];
 String? urlbla = dotenv.env['HOST_URLBLA'];
-
 String? reazon = dotenv.env['reazon'];//vi
 String? reazonAffiliate = dotenv.env['reazonAffiliate'];//affiliate
 String? reazonQr = dotenv.env['reazonQr'];//global
@@ -19,7 +18,7 @@ serviceGetEconomicComplements(int page, bool current) =>
 //GET VERIFIED DOCUMENT
 serviceGetMessageFace() => '$url/$reazon/message/verified';
 //GET PROCESS ENROLLED
-serviceProcessEnrolled(String? deviceId) => '$url/$reazon/liveness/${deviceId!=null?'?device_id=$deviceId':''}';
+String serviceProcessEnrolled(String? deviceId) => '$url/$reazon/liveness/${deviceId!=null?'?device_id=$deviceId':''}';
 //GET PERMISION PROCEDURE
 serviceGetProcessingPermit(int affiliateId) => '$url/$reazon/liveness/$affiliateId';
 //SEND IMAGES FOR PROCEDURE
