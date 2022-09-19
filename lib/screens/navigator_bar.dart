@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/bloc/contribution/contribution_bloc.dart';
+import 'package:muserpol_pvt/bloc/loan/loan_bloc.dart';
 import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
@@ -15,6 +16,7 @@ import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/dialogs/dialog_back.dart';
 import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/contribution_model.dart';
+import 'package:muserpol_pvt/model/loan_model.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/inbox/screen_inbox.dart';
@@ -93,8 +95,9 @@ class _NavigatorBarState extends State<NavigatorBar> {
       });
     }
     if (widget.stateApp == 'virtualofficine') {
-      debugPrint('OBTENINENDO TODOS LOS APORTES');
+      debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
       getContributions();
+      getLoans();
     }
     if (widget.tutorial) {
       Future.delayed(const Duration(milliseconds: 500), showTutorial);
@@ -171,10 +174,17 @@ class _NavigatorBarState extends State<NavigatorBar> {
 
   getContributions()async{
     final contributionBloc = BlocProvider.of<ContributionBloc>(context, listen: false);
-    var response = await serviceMethod(mounted, context, 'get', null,serviceContributions(prefs!.getInt('idAffiliate')!), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null,serviceContributions(prefs!.getInt('idAffiliate')!,DateTime.now().year), true, true);
     if (response != null) {
       contributionBloc.add(UpdateContributions(contributionModelFromJson(response.body)));
     }
+  }
+  getLoans()async{
+    // final loanBloc = BlocProvider.of<LoanBloc>(context, listen: false);
+    // var response = await serviceMethod(mounted, context, 'get', null, serviceLoans(prefs!.getInt('idAffiliate')!),true,true);
+    // if ( response != null){
+    //   loanBloc.add(UpdateLoan(loanModelFromJson(response.body)));
+    // }
   }
   @override
   Widget build(BuildContext context) {

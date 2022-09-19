@@ -47,6 +47,8 @@ class Payload {
         this.surnameHusband,
         this.identityCard,
         this.cityIdentityCard,
+        this.yearMin,
+        this.yearMax,
         this.contributions,
     });
 
@@ -58,6 +60,8 @@ class Payload {
     String? surnameHusband;
     String? identityCard;
     String? cityIdentityCard;
+    String? yearMin;
+    String? yearMax;
     List<Contribution>? contributions;
 
     Payload copyWith({
@@ -69,6 +73,8 @@ class Payload {
         String? surnameHusband,
         String? identityCard,
         String? cityIdentityCard,
+        String? yearMin,
+        String? yearMax,
         List<Contribution>? contributions,
     }) => 
         Payload(
@@ -80,6 +86,8 @@ class Payload {
             surnameHusband: surnameHusband ?? this.surnameHusband,
             identityCard: identityCard ?? this.identityCard,
             cityIdentityCard: cityIdentityCard ?? this.cityIdentityCard,
+            yearMin: yearMin ?? this.yearMin,
+            yearMax: yearMax ?? this.yearMax,
             contributions: contributions ?? this.contributions,
         );
 
@@ -92,6 +100,8 @@ class Payload {
         surnameHusband: json["surname_husband"],
         identityCard: json["identity_card"],
         cityIdentityCard: json["city_identity_card"],
+        yearMin: json["year_min"],
+        yearMax: json["year_max"],
         contributions: List<Contribution>.from(json["contributions"].map((x) => Contribution.fromJson(x))),
     );
 
@@ -104,6 +114,8 @@ class Payload {
         "surname_husband": surnameHusband,
         "identity_card": identityCard,
         "city_identity_card": cityIdentityCard,
+        "year_min": yearMin,
+        "year_max": yearMax,
         "contributions": List<dynamic>.from(contributions!.map((x) => x.toJson())),
     };
 }

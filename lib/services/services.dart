@@ -3,43 +3,50 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 String? url = dotenv.env['HOST_URL'];
 String? urlPrueba = dotenv.env['HOST_URL_PVT_PRUEBA'];
 String? urlbla = dotenv.env['HOST_URLBLA'];
+String? urllea = dotenv.env['HOST_URLLEA'];
 String? reazon = dotenv.env['reazon'];//vi
 String? reazonAffiliate = dotenv.env['reazonAffiliate'];//affiliate
 String? reazonQr = dotenv.env['reazonQr'];//global
+
+
+
+
 //AUTH
-serviceAuthSession(int? affiliateId) => '$url/$reazon/auth/${affiliateId??''}';
+String serviceAuthSession(int? affiliateId) => '$url/$reazon/auth/${affiliateId??''}';
 //CONTACTS
-serviceGetContacts() => '$url/$reazon/city';
+String serviceGetContacts() => '$url/$reazon/city';
 //PRIVACY POLICY
-serviceGetPrivacyPolicy() => '$url/$reazon/policy';
+String serviceGetPrivacyPolicy() => '$url/$reazon/policy';
 //HISTORY
-serviceGetEconomicComplements(int page, bool current) =>
+String serviceGetEconomicComplements(int page, bool current) =>
     '$url/$reazon/economic_complement/?page=$page&current=$current';
 //GET VERIFIED DOCUMENT
-serviceGetMessageFace() => '$url/$reazon/message/verified';
+String serviceGetMessageFace() => '$url/$reazon/message/verified';
 //GET PROCESS ENROLLED
 String serviceProcessEnrolled(String? deviceId) => '$url/$reazon/liveness/${deviceId!=null?'?device_id=$deviceId':''}';
 //GET PERMISION PROCEDURE
-serviceGetProcessingPermit(int affiliateId) => '$url/$reazon/liveness/$affiliateId';
+String serviceGetProcessingPermit(int affiliateId) => '$url/$reazon/liveness/$affiliateId';
 //SEND IMAGES FOR PROCEDURE
-serviceSendImagesProcedure() => '$url/$reazon/economic_complement';
+String serviceSendImagesProcedure() => '$url/$reazon/economic_complement';
 //PRINT ECONOMIC COMPLEMENT
-serviceGetPDFEC(int economicComplementId) =>
+String serviceGetPDFEC(int economicComplementId) =>
     '$url/$reazon/economic_complement/print/$economicComplementId';
 //GET OBSERVATIONS
-serviceGetObservation(int affiliateId) =>
+String serviceGetObservation(int affiliateId) =>
     '$url/$reazon/affiliate/$affiliateId/observation';
-serviceEcoComProcedure(int ecoComId) => '$url/$reazon/eco_com_procedure/$ecoComId';
+String serviceEcoComProcedure(int ecoComId) => '$url/$reazon/eco_com_procedure/$ecoComId';
 //GET VERSION
-servicePostVersion()=>'$urlPrueba/$reazon/version';
+String servicePostVersion()=>'$urlPrueba/$reazon/version';
 //////////////////////////////////////////////////
 /////////////OFICINA VIRTUAL/////////////////////
 ////////////////////////////////////////////////
 // QR
-serviceGetQr(String info)=> '$urlbla/$reazonQr/procedure_qr/$info';
+String serviceGetQr(String info)=> '$urlbla/$reazonQr/procedure_qr/$info';
 // AUTH
-serviceAuthSessionOF()=>'$urlbla/$reazonAffiliate/auth';
+String serviceAuthSessionOF()=>'$urlbla/$reazonAffiliate/auth';
 // CHANGE PASSWORD
-serviceChangePasswordOF()=>'$urlbla/$reazonAffiliate/change_password';
+String serviceChangePasswordOF()=>'$urlbla/$reazonAffiliate/change_password';
 // APORTES
-serviceContributions(int affiliateId)=>'$urlbla/app/all_contributions/$affiliateId';
+String serviceContributions(int affiliateId,int year)=>'$urlbla/app/all_contributions/$affiliateId/$year';
+//PRESTAMOS
+String serviceLoans(int affiliateId)=> '$urllea/get_information_loan?id_affiliate=$affiliateId';

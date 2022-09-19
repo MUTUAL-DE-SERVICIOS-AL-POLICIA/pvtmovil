@@ -462,6 +462,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
             await PushNotificationService
                 .getTokenFirebase()); //reconocimiento facial
       } else {
+        if (!mounted) return;
         return callDialogAction(context, json.decode(response.body)['message']);
       }
     }
