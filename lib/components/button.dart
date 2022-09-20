@@ -18,12 +18,12 @@ class ButtonComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      minWidth: 200,
+      minWidth: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 19),
         color: ThemeProvider.themeOf(context).data.primaryColor,
         disabledColor: Colors.grey,
         onPressed: onPressed,
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        child: 
           stateLoading
               ? Center(
                   child: Image.asset(
@@ -37,7 +37,7 @@ class ButtonComponent extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   )),
-        ]));
+        );
   }
 }
 

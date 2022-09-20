@@ -22,7 +22,7 @@ import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/inbox/screen_inbox.dart';
 import 'package:muserpol_pvt/screens/pages/complement/procedure.dart';
 import 'package:muserpol_pvt/screens/pages/virtual_officine/contibutions/contribution.dart';
-import 'package:muserpol_pvt/screens/pages/virtual_officine/loan.dart';
+import 'package:muserpol_pvt/screens/pages/virtual_officine/loans/loan.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';

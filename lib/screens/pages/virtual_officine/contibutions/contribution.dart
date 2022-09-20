@@ -14,24 +14,19 @@ class ScreenContributions extends StatefulWidget {
 }
 
 class _ScreenContributionsState extends State<ScreenContributions> {
+
   @override
   Widget build(BuildContext context) {
-    final contributionBloc =
-        BlocProvider.of<ContributionBloc>(context, listen: true).state;
+    final contributionBloc = BlocProvider.of<ContributionBloc>(context, listen: true).state;
+
     return Scaffold(
       drawer: const MenuDrawer(),
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
-          child: HedersComponent(
-              title: 'Mis Aportes',
-              menu: true,
-              keyMenu: widget.keyMenu,
-              onPressMenu: () => Scaffold.of(context).openDrawer()),
+          child: HedersComponent(title: 'Mis Aportes', menu: true, keyMenu: widget.keyMenu, onPressMenu: () => Scaffold.of(context).openDrawer()),
         ),
-        !contributionBloc.existContribution
-            ? Container()
-            : const TabsContributions()
+        !contributionBloc.existContribution ? Container() : const TabsContributions(),
       ]),
     );
   }
