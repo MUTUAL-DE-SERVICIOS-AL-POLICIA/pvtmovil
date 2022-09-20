@@ -10,28 +10,34 @@ String contributionModelToJson(ContributionModel data) => json.encode(data.toJso
 
 class ContributionModel {
     ContributionModel({
+        this.error,
         this.message,
         this.payload,
     });
 
+    bool? error;
     String? message;
     Payload? payload;
 
     ContributionModel copyWith({
+        bool? error,
         String? message,
         Payload? payload,
     }) => 
         ContributionModel(
+            error: error ?? this.error,
             message: message ?? this.message,
             payload: payload ?? this.payload,
         );
 
     factory ContributionModel.fromJson(Map<String, dynamic> json) => ContributionModel(
+        error: json["error"],
         message: json["message"],
         payload: Payload.fromJson(json["payload"]),
     );
 
     Map<String, dynamic> toJson() => {
+        "error": error,
         "message": message,
         "payload": payload!.toJson(),
     };
@@ -47,9 +53,7 @@ class Payload {
         this.surnameHusband,
         this.identityCard,
         this.cityIdentityCard,
-        this.yearMin,
-        this.yearMax,
-        this.contributions,
+        this.contributionsTotal,
     });
 
     String? degree;
@@ -60,9 +64,7 @@ class Payload {
     String? surnameHusband;
     String? identityCard;
     String? cityIdentityCard;
-    String? yearMin;
-    String? yearMax;
-    List<Contribution>? contributions;
+    List<ContributionsTotal>? contributionsTotal;
 
     Payload copyWith({
         String? degree,
@@ -73,9 +75,7 @@ class Payload {
         String? surnameHusband,
         String? identityCard,
         String? cityIdentityCard,
-        String? yearMin,
-        String? yearMax,
-        List<Contribution>? contributions,
+        List<ContributionsTotal>? contributionsTotal,
     }) => 
         Payload(
             degree: degree ?? this.degree,
@@ -86,9 +86,7 @@ class Payload {
             surnameHusband: surnameHusband ?? this.surnameHusband,
             identityCard: identityCard ?? this.identityCard,
             cityIdentityCard: cityIdentityCard ?? this.cityIdentityCard,
-            yearMin: yearMin ?? this.yearMin,
-            yearMax: yearMax ?? this.yearMax,
-            contributions: contributions ?? this.contributions,
+            contributionsTotal: contributionsTotal ?? this.contributionsTotal,
         );
 
     factory Payload.fromJson(Map<String, dynamic> json) => Payload(
@@ -100,9 +98,7 @@ class Payload {
         surnameHusband: json["surname_husband"],
         identityCard: json["identity_card"],
         cityIdentityCard: json["city_identity_card"],
-        yearMin: json["year_min"],
-        yearMax: json["year_max"],
-        contributions: List<Contribution>.from(json["contributions"].map((x) => Contribution.fromJson(x))),
+        contributionsTotal: List<ContributionsTotal>.from(json["contributions_total"].map((x) => ContributionsTotal.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
@@ -114,8 +110,35 @@ class Payload {
         "surname_husband": surnameHusband,
         "identity_card": identityCard,
         "city_identity_card": cityIdentityCard,
-        "year_min": yearMin,
-        "year_max": yearMax,
+        "contributions_total": List<dynamic>.from(contributionsTotal!.map((x) => x.toJson())),
+    };
+}
+
+class ContributionsTotal {
+    ContributionsTotal({
+        this.year,
+        this.contributions,
+    });
+
+    String? year;
+    List<Contribution>? contributions;
+
+    ContributionsTotal copyWith({
+        String? year,
+        List<Contribution>? contributions,
+    }) => 
+        ContributionsTotal(
+            year: year ?? this.year,
+            contributions: contributions ?? this.contributions,
+        );
+
+    factory ContributionsTotal.fromJson(Map<String, dynamic> json) => ContributionsTotal(
+        year: json["year"],
+        contributions: List<Contribution>.from(json["contributions"].map((x) => Contribution.fromJson(x))),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "year": year,
         "contributions": List<dynamic>.from(contributions!.map((x) => x.toJson())),
     };
 }

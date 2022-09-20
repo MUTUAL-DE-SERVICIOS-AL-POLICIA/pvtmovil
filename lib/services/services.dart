@@ -4,6 +4,8 @@ String? url = dotenv.env['HOST_URL'];
 String? urlPrueba = dotenv.env['HOST_URL_PVT_PRUEBA'];
 String? urlbla = dotenv.env['HOST_URLBLA'];
 String? urllea = dotenv.env['HOST_URLLEA'];
+String? urlmoi = dotenv.env['HOST_MOI'];
+
 String? reazon = dotenv.env['reazon'];//vi
 String? reazonAffiliate = dotenv.env['reazonAffiliate'];//affiliate
 String? reazonQr = dotenv.env['reazonQr'];//global
@@ -47,6 +49,7 @@ String serviceAuthSessionOF()=>'$urlbla/$reazonAffiliate/auth';
 // CHANGE PASSWORD
 String serviceChangePasswordOF()=>'$urlbla/$reazonAffiliate/change_password';
 // APORTES
-String serviceContributions(int affiliateId,int year)=>'$urlbla/app/all_contributions/$affiliateId/$year';
+// String serviceContributions(int affiliateId,int year)=>'$urlbla/app/all_contributions/$affiliateId/$year';
+String serviceContributions(int affiliateId,int year)=>'$urlmoi';
 //PRESTAMOS
 String serviceLoans(int affiliateId)=> '$urllea/get_information_loan?id_affiliate=$affiliateId';
