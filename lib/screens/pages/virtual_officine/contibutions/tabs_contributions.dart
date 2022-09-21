@@ -5,7 +5,7 @@ import 'package:muserpol_pvt/bloc/contribution/contribution_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/model/contribution_model.dart';
-import 'package:muserpol_pvt/screens/pages/virtual_officine/contibutions/year.dart';
+import 'package:muserpol_pvt/screens/pages/virtual_officine/contibutions/card_contribution.dart';
 
 class TabsContributions extends StatefulWidget {
   const TabsContributions({Key? key}) : super(key: key);
