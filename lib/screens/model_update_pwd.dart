@@ -108,16 +108,16 @@ class _ModalUpdatePwdState extends State<ModalUpdatePwd>
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 15),
             child: Row(
-              mainAxisAlignment : MainAxisAlignment.spaceBetween ,
-              children: [
-                ButtonWhiteComponent(
-                  text: 'Cancelar',
-                  onPressed: () => _onBackPressed(),
-                ),
-                ButtonComponent(
-                    text: 'Actualizar', onPressed: () => updatePassword())
-              ],
-            ),
+                mainAxisAlignment : MainAxisAlignment.spaceBetween ,
+                children: [
+                  ButtonWhiteComponent(
+                      text: 'Cancelar',
+                      onPressed: () => _onBackPressed(),
+                    ),
+                  ButtonComponent(
+                      text: 'Actualizar', onPressed: () => updatePassword())
+                ],
+              ),
           )
         ])));
   }

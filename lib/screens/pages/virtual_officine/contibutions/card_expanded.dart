@@ -22,7 +22,7 @@ class _CardExpandedState extends State<CardExpanded> {
         Navigator.pop(context);
       },
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent.withOpacity(0.5),
         body: GestureDetector(
           child: Center(
             child: Hero(
@@ -32,7 +32,7 @@ class _CardExpandedState extends State<CardExpanded> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ContainerComponent(
-                        height: MediaQuery.of(context).size.height / 3,
+                        height: MediaQuery.of(context).size.height / 2.5,
                         width: 300,
                         color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
                         child: Center(

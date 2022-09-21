@@ -53,3 +53,5 @@ String serviceChangePasswordOF()=>'$urlbla/$reazonAffiliate/change_password';
 String serviceContributions(int affiliateId,int year)=>'$urlmoi';
 //PRESTAMOS
 String serviceLoans(int affiliateId)=> '$urllea/get_information_loan?id_affiliate=$affiliateId';
+//PRESTAMOS PLAN DE PAGOS
+String servicePrintLoans(int loanId)=> '$urllea/loan/$loanId/print/plan';

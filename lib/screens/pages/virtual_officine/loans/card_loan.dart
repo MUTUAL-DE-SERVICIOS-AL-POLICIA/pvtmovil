@@ -3,6 +3,7 @@ import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/components/table_row.dart';
 import 'package:muserpol_pvt/model/loan_model.dart';
 import 'package:muserpol_pvt/screens/pages/virtual_officine/loans/card_expanded.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class CardLoan extends StatelessWidget {
   final Payload item;
@@ -17,7 +18,7 @@ class CardLoan extends StatelessWidget {
           child: Material(
               type: MaterialType.transparency,
               child: ContainerComponent(
-                  color: item.state! == 'Vigente' ? const Color.fromARGB(255, 149, 212, 151) : const Color.fromARGB(255, 247, 145, 145),
+                              color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Center(

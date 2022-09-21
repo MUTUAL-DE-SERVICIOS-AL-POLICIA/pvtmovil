@@ -7,13 +7,12 @@ TableRow tableInfo(String text, String value) {
       child: Text(
         text,
         textAlign: TextAlign.right,
-        style: const TextStyle(fontFamily: 'Manrope'),
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
     ),
     const Text(':'),
     Text(
       value,
-      style: const TextStyle(fontFamily: 'Manrope'),
     ),
   ]);
 }
