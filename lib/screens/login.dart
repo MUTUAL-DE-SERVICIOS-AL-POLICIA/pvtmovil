@@ -306,7 +306,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
             mode: CupertinoDatePickerMode.date,
             initialDateTime: currentDate,
             onDateTimeChanged: (DateTime newDataTime) {
-              debugPrint('date $newDataTime');
               setState(() {
                 currentDate = newDataTime;
                 dateCtrl =
