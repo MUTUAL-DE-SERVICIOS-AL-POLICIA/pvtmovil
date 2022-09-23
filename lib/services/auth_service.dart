@@ -6,6 +6,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class AuthService extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
 
+  Future biometric(BuildContext context, String value) async {
+    await storage.write(key: 'biometric', value: value);
+  }
+
   Future stateApp(BuildContext context, String value) async {
     await storage.write(key: 'stateApp', value: value);
     return;
@@ -61,14 +65,21 @@ class AuthService extends ChangeNotifier {
     await storage.write(key: 'firstTime', value: 'true');
     return;
   }
+
   Future initialFirebase(BuildContext context) async {
     await storage.write(key: 'firebase', value: 'true');
     return;
   }
+
   Future<String> readFirstTime() async {
     return await storage.read(key: 'firstTime') ?? '';
   }
+
   Future<String> readInitialFirebase() async {
     return await storage.read(key: 'firebase') ?? '';
+  }
+
+  Future<String> readBiometric() async {
+    return await storage.read(key: 'biometric') ?? '';
   }
 }

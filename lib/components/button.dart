@@ -146,8 +146,6 @@ class Buttontoltip extends StatelessWidget {
         barrierDismissible: true,
         isModal: true,
         borderRadius: const BorderRadius.all(Radius.circular(18)),
-        backgroundColor:
-            ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
         content: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

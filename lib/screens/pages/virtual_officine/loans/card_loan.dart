@@ -24,7 +24,7 @@ class CardLoan extends StatelessWidget {
                     child: Center(
                       child: Table(
                           columnWidths: const {
-                            0: FlexColumnWidth(5),
+                            0: FlexColumnWidth(4),
                             1: FlexColumnWidth(0.3),
                             2: FlexColumnWidth(5),
                           },

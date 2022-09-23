@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,7 +16,6 @@ import 'package:muserpol_pvt/screens/switch.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/swipe/slider.dart';
 import 'package:muserpol_pvt/utils/style.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'bloc/notification/notification_bloc.dart';
 import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,7 +39,6 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
-SharedPreferences? prefs;
 void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,7 +47,6 @@ void main() async {
   );
 
   HttpOverrides.global = MyHttpOverrides();
-  prefs = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 
@@ -57,10 +55,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    //   DeviceOrientation.portraitDown,
-    // ]);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MultiBlocProvider(
         providers: [
           BlocProvider(create: (_) => UserBloc()),
@@ -97,8 +95,6 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver{
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    // _deleteCacheDir();
-    // _deleteAppDir();
     PushNotificationService.initializeapp();
     PushNotificationService.messagesStream.listen((message) {
       debugPrint('NO TI FI CA CION $message');
@@ -124,33 +120,6 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver{
           .then((res) => notificationBloc.add(UpdateNotifications(res)));
     });
   }
-  // notification(String message) {
-  //   Future.delayed(Duration.zero, () async {
-  //     final notificationBloc = BlocProvider.of<NotificationBloc>(context);
-  //     final notification = NotificationModel(
-  //         title: json.decode(message)['title'],
-  //         content: message,
-  //         read: false,
-  //         date: DateTime.now(),
-  //         selected: false);
-  //     notificationBloc.add(AddNotifications(notification));
-  //     await DBProvider.db.newNotificationModel(notification);
-  //   });
-  // }
-  // Future<void> _deleteCacheDir() async {
-  //   final cacheDir = await getTemporaryDirectory();
-  //   if (cacheDir.existsSync()) {
-  //     cacheDir.deleteSync(recursive: true);
-  //   }
-  // }
-
-  // Future<void> _deleteAppDir() async {
-  //   final appDir = await getApplicationSupportDirectory();
-  //   if (appDir.existsSync()) {
-  //     appDir.deleteSync(recursive: true);
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(

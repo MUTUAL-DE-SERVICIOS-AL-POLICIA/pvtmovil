@@ -13,6 +13,7 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/main.dart';
+import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
@@ -214,7 +215,9 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
   final appState = Provider.of<AppState>(context, listen: false);
   if (voluntary) {
-    await serviceMethod(mounted, context, 'delete', null, serviceAuthSession(prefs!.getInt('idAffiliate')), true, false);
+    final biometric = biometricUserModelFromJson(await authService.readBiometric());
+    if (!mounted) return;
+    await serviceMethod(mounted, context, 'delete', null, serviceAuthSession(biometric.affiliateId!), true, false);
   }
   for (var element in appState.files) {
     appState.updateFile(element.id!, null);

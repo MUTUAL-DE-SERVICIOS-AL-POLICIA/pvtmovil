@@ -14,7 +14,7 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/dialogs/dialog_back.dart';
-import 'package:muserpol_pvt/main.dart';
+import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/model/contribution_model.dart';
 import 'package:muserpol_pvt/model/loan_model.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
@@ -23,6 +23,7 @@ import 'package:muserpol_pvt/screens/inbox/screen_inbox.dart';
 import 'package:muserpol_pvt/screens/pages/complement/procedure.dart';
 import 'package:muserpol_pvt/screens/pages/virtual_officine/contibutions/contribution.dart';
 import 'package:muserpol_pvt/screens/pages/virtual_officine/loans/loan.dart';
+import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
@@ -172,129 +173,136 @@ class _NavigatorBarState extends State<NavigatorBar> {
     }
   }
 
-  getContributions()async{
+  getContributions() async {
     final contributionBloc = BlocProvider.of<ContributionBloc>(context, listen: false);
-    var response = await serviceMethod(mounted, context, 'get', null,serviceContributions(prefs!.getInt('idAffiliate')!,DateTime.now().year), true, true);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final biometric = biometricUserModelFromJson(await authService.readBiometric());
+    if (!mounted) return;
+    var response = await serviceMethod(mounted, context, 'get', null, serviceContributions(biometric.affiliateId!), true, true);
     if (response != null) {
       contributionBloc.add(UpdateContributions(contributionModelFromJson(response.body)));
     }
   }
-  getLoans()async{
+
+  getLoans() async {
+    final authService = Provider.of<AuthService>(context, listen: false);
     final loanBloc = BlocProvider.of<LoanBloc>(context, listen: false);
-    var response = await serviceMethod(mounted, context, 'get', null, serviceLoans(prefs!.getInt('idAffiliate')!),true,true);
-    if ( response != null){
+    final biometric = biometricUserModelFromJson(await authService.readBiometric());
+    if (!mounted) return;
+    var response = await serviceMethod(mounted, context, 'get', null, serviceLoans(biometric.affiliateId!), true, true);
+    if (response != null) {
       loanBloc.add(UpdateLoan(loanModelFromJson(response.body)));
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: true).state;
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
-                floatingActionButton: Badge(
-                  key: keyNotification,
-                  animationDuration: const Duration(milliseconds: 300),
-                  animationType: BadgeAnimationType.slide,
-                  badgeColor: notificationBloc.existNotifications
-                      ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == prefs!.getInt('idAffiliate')).isNotEmpty
-                          ? Colors.red
-                          : Colors.transparent
-                      : Colors.transparent,
-                  elevation: 0,
-                  badgeContent: notificationBloc.existNotifications && notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
-                      ? Text(
-                          notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == prefs!.getInt('idAffiliate')).length.toString(),
-                          style: const TextStyle(color: Colors.white),
-                        )
-                      : Container(),
-                  child: IconBtnComponent(iconText: 'assets/icons/email.svg', onPressed: () => dialogInbox(context)),
-                ),
-                body: pageList.elementAt(_currentIndex),
-                bottomNavigationBar: Stack(
-                  children: [
-                    if (widget.stateApp == 'complement')
-                      SizedBox(
-                        height: 50,
-                        child: Row(
-                          children: [
-                            Expanded(
-                                child: Center(
-                              child: SizedBox(
-                                key: keyBottomNavigation1,
-                                height: 40,
-                                width: MediaQuery.of(context).size.width / 4,
-                              ),
-                            )),
-                            Expanded(
-                                child: Center(
-                              child: SizedBox(
-                                key: keyBottomNavigation2,
-                                height: 40,
-                                width: MediaQuery.of(context).size.width / 4,
-                              ),
-                            )),
-                          ],
+          floatingActionButton: Badge(
+            key: keyNotification,
+            animationDuration: const Duration(milliseconds: 300),
+            animationType: BadgeAnimationType.slide,
+            badgeColor: notificationBloc.existNotifications
+                ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == 1).isNotEmpty
+                    ? Colors.red
+                    : Colors.transparent
+                : Colors.transparent,
+            elevation: 0,
+            badgeContent: notificationBloc.existNotifications && notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
+                ? Text(
+                    notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == 1).length.toString(),
+                    style: const TextStyle(color: Colors.white),
+                  )
+                : Container(),
+            child: IconBtnComponent(iconText: 'assets/icons/email.svg', onPressed: () => dialogInbox(context)),
+          ),
+          body: pageList.elementAt(_currentIndex),
+          bottomNavigationBar: Stack(
+            children: [
+              if (widget.stateApp == 'complement')
+                SizedBox(
+                  height: 50,
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Center(
+                        child: SizedBox(
+                          key: keyBottomNavigation1,
+                          height: 40,
+                          width: MediaQuery.of(context).size.width / 4,
                         ),
-                      ),
-                    if (widget.stateApp == 'complement')
-                      ConvexAppBar(
-                          height: 65,
-                          elevation: 0,
-                          backgroundColor: const Color(0xff419388),
-                          // color: Color(0xff419388),
-                          style: TabStyle.react,
-                          items: [
-                            TabItem(
-                                isIconBlend: true,
-                                icon: SvgPicture.asset(
-                                  'assets/icons/newProcedure.svg',
-                                  height: 30.sp,
-                                  color: Colors.white,
-                                ),
-                                title: "Trámites Vigentes"),
-                            TabItem(
-                                isIconBlend: true,
-                                icon: SvgPicture.asset(
-                                  'assets/icons/historyProcedure.svg',
-                                  height: 30.sp,
-                                  color: Colors.white,
-                                ),
-                                title: "Trámites Históricos"),
-                          ],
-                          initialActiveIndex: 0,
-                          onTap: (int i) => {setState(() => _currentIndex = i)}),
-                    if (widget.stateApp == 'virtualofficine')
-                      ConvexAppBar(
-                          height: 65,
-                          elevation: 0,
-                          backgroundColor: const Color(0xff419388),
-                          // color: Color(0xff419388),
-                          style: TabStyle.react,
-                          items: [
-                            TabItem(
-                                isIconBlend: true,
-                                icon: SvgPicture.asset(
-                                  'assets/icons/newProcedure.svg',
-                                  height: 30.sp,
-                                  color: Colors.white,
-                                ),
-                                title: "Aportes"),
-                            TabItem(
-                                isIconBlend: true,
-                                icon: SvgPicture.asset(
-                                  'assets/icons/historyProcedure.svg',
-                                  height: 30.sp,
-                                  color: Colors.white,
-                                ),
-                                title: "Prestamos"),
-                          ],
-                          initialActiveIndex: 0,
-                          onTap: (int i) => {setState(() => _currentIndex = i)}),
-                  ],
+                      )),
+                      Expanded(
+                          child: Center(
+                        child: SizedBox(
+                          key: keyBottomNavigation2,
+                          height: 40,
+                          width: MediaQuery.of(context).size.width / 4,
+                        ),
+                      )),
+                    ],
+                  ),
                 ),
-              )
-            );
+              if (widget.stateApp == 'complement')
+                ConvexAppBar(
+                    height: 65,
+                    elevation: 0,
+                    backgroundColor: const Color(0xff419388),
+                    // color: Color(0xff419388),
+                    style: TabStyle.react,
+                    items: [
+                      TabItem(
+                          isIconBlend: true,
+                          icon: SvgPicture.asset(
+                            'assets/icons/newProcedure.svg',
+                            height: 30.sp,
+                            color: Colors.white,
+                          ),
+                          title: "Trámites Vigentes"),
+                      TabItem(
+                          isIconBlend: true,
+                          icon: SvgPicture.asset(
+                            'assets/icons/historyProcedure.svg',
+                            height: 30.sp,
+                            color: Colors.white,
+                          ),
+                          title: "Trámites Históricos"),
+                    ],
+                    initialActiveIndex: 0,
+                    onTap: (int i) => {setState(() => _currentIndex = i)}),
+              if (widget.stateApp == 'virtualofficine')
+                ConvexAppBar(
+                    height: 65,
+                    elevation: 0,
+                    backgroundColor: const Color(0xff419388),
+                    // color: Color(0xff419388),
+                    style: TabStyle.react,
+                    items: [
+                      TabItem(
+                          isIconBlend: true,
+                          icon: SvgPicture.asset(
+                            'assets/icons/newProcedure.svg',
+                            height: 30.sp,
+                            color: Colors.white,
+                          ),
+                          title: "Aportes"),
+                      TabItem(
+                          isIconBlend: true,
+                          icon: SvgPicture.asset(
+                            'assets/icons/historyProcedure.svg',
+                            height: 30.sp,
+                            color: Colors.white,
+                          ),
+                          title: "Prestamos"),
+                    ],
+                    initialActiveIndex: 0,
+                    onTap: (int i) => {setState(() => _currentIndex = i)}),
+            ],
+          ),
+        ));
   }
 
   dialogInbox(BuildContext context) {

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/section_title.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
+import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
@@ -23,6 +25,7 @@ class MenuDrawer extends StatefulWidget {
 
 class _MenuDrawerState extends State<MenuDrawer> {
   bool colorValue = false;
+  bool biometricValue = false;
   bool autentificaction = false;
   String? fullPaths;
   String stateApp = '';
@@ -34,11 +37,20 @@ class _MenuDrawerState extends State<MenuDrawer> {
         setState(() => colorValue = true);
       }
     });
+    verifyBiometric();
   }
 
-  services() async {
+  verifyBiometric() async {
     final authService = Provider.of<AuthService>(context, listen: false);
-    setState(() async => stateApp = await authService.readStateApp());
+    debugPrint('etado ${await authService.readBiometric()}');
+    if (await authService.readBiometric() != "") {
+      final biometric = await authService.readBiometric();
+      if (await authService.readStateApp() == 'complement') {
+        setState(() => biometricValue = biometricUserModelFromJson(biometric).biometricComplement!);
+      } else {
+        setState(() => biometricValue = biometricUserModelFromJson(biometric).biometricVirtualOfficine!);
+      }
+    }
   }
 
   bool status = true;
@@ -47,8 +59,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   bool stateLoading = false;
   @override
   Widget build(BuildContext context) {
-    final userBloc =
-        BlocProvider.of<UserBloc>(context, listen: true).state.user;
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: true).state.user;
     final authService = Provider.of<AuthService>(context, listen: false);
     return Drawer(
       width: MediaQuery.of(context).size.width / 1.5,
@@ -60,21 +71,16 @@ class _MenuDrawerState extends State<MenuDrawer> {
             children: <Widget>[
               Image(
                 image: AssetImage(
-                  ThemeProvider.themeOf(context).id.contains('dark')
-                      ? 'assets/images/muserpol-logo.png'
-                      : 'assets/images/muserpol-logo2.png',
+                  ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
                 ),
               ),
               const Text(
                 'Mis datos',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              // authService.readStateApp()
               FutureBuilder(
-                  //verificamos si el usuario está autenticado
                   future: authService.readStateApp(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                     if (snapshot.data == 'complement') {
                       return Column(
                         children: [
@@ -105,7 +111,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
                     }
                     return Container();
                   }),
-
               Divider(height: 0.03.sh),
               const Text(
                 'Configuración de preferencias',
@@ -116,24 +121,21 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 valueSwitch: colorValue,
                 onChangedSwitch: (v) => switchTheme(v),
               ),
+              SectiontitleSwitchComponent(
+                title: 'Autenticación',
+                valueSwitch: biometricValue,
+                onChangedSwitch: (v) => authBiometric(v),
+              ),
               Divider(height: 0.03.sh),
               const Text(
                 'Configuración general',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SectiontitleComponent(
-                  title: 'Contactos a nivel nacional',
-                  icon: Icons.contact_phone_rounded,
-                  onTap: () => Navigator.pushNamed(context, 'contacts')),
+                  title: 'Contactos a nivel nacional', icon: Icons.contact_phone_rounded, onTap: () => Navigator.pushNamed(context, 'contacts')),
               SectiontitleComponent(
-                  title: 'Políticas de Privacidad',
-                  icon: Icons.privacy_tip,
-                  stateLoading: stateLoading,
-                  onTap: () => privacyPolicy(context)),
-              SectiontitleComponent(
-                  title: 'Cerrar Sesión',
-                  icon: Icons.info_outline,
-                  onTap: () => closeSession(context)),
+                  title: 'Políticas de Privacidad', icon: Icons.privacy_tip, stateLoading: stateLoading, onTap: () => privacyPolicy(context)),
+              SectiontitleComponent(title: 'Cerrar Sesión', icon: Icons.info_outline, onTap: () => closeSession(context)),
               Center(
                 child: Text('Versión ${dotenv.env['version']}'),
               ),
@@ -147,21 +149,67 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   privacyPolicy(BuildContext context) async {
     setState(() => stateLoading = true);
-    var response = await serviceMethod(
-        mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, true);
+    var response = await serviceMethod(mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, true);
     setState(() => stateLoading = false);
     if (response != null) {
-      String pathFile = await saveFile(
-          'Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
+      String pathFile = await saveFile('Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
       await OpenFile.open(pathFile);
     }
   }
 
-  void switchTheme(v) async {
-    setState(() {
-      colorValue = v;
-    });
+  void switchTheme(state) async {
+    setState(() => colorValue = state);
     ThemeProvider.controllerOf(context).nextTheme();
+  }
+
+  authBiometric(bool state) async {
+    setState(() {
+      biometricValue = state;
+    });
+    final authService = Provider.of<AuthService>(context, listen: false);
+    debugPrint('$state');
+    debugPrint('HUELLA BIOMETRICA');
+    final LocalAuthentication auth = LocalAuthentication();
+    // ···
+    final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
+    final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+    debugPrint('puede $canAuthenticate');
+
+    final List<BiometricType> availableBiometrics = await auth.getAvailableBiometrics();
+    debugPrint('availableBiometrics $availableBiometrics');
+
+    if (availableBiometrics.isNotEmpty) {
+      // Some biometrics are enrolled.
+      debugPrint('Algunos datos biométricos están inscritos.');
+    }
+
+    if (availableBiometrics.contains(BiometricType.strong) || availableBiometrics.contains(BiometricType.face)) {
+      debugPrint('Hay tipos específicos de datos biométricos disponibles.');
+    }
+    final biometric = biometricUserModelFromJson(await authService.readBiometric());
+    var biometricUserModel = BiometricUserModel();
+    debugPrint('ESTADO DE LA APP ${await authService.readStateApp()}');
+    if (await authService.readStateApp() == 'complement') {
+      biometricUserModel = BiometricUserModel(
+          biometricComplement: biometricValue,
+          biometricVirtualOfficine: biometric.biometricVirtualOfficine,
+          affiliateId: biometric.affiliateId,
+          userComplement: biometric.userComplement,
+          userVirtualOfficine: biometric.userVirtualOfficine);
+    } else {
+      biometricUserModel = BiometricUserModel(
+          biometricComplement: biometric.biometricComplement,
+          biometricVirtualOfficine: biometricValue,
+          affiliateId: biometric.affiliateId,
+          userComplement: biometric.userComplement,
+          userVirtualOfficine: biometric.userVirtualOfficine);
+    }
+    if (!mounted) return;
+
+    // debugPrint('${biometricUserModelFromJson(await authService.readBiometric()).biometricComplement}');
+    debugPrint('${biometricUserModelToJson(biometricUserModel)}');
+    if (!mounted) return;
+    await authService.biometric(context, biometricUserModelToJson(biometricUserModel));
   }
 
   closeSession(BuildContext context) async {
@@ -172,8 +220,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
           return ComponentAnimate(
               child: DialogTwoAction(
                   message: '¿Estás seguro que quieres cerrar sesión?',
-                  actionCorrect: () =>
-                      confirmDeleteSession(mounted, context, true),
+                  actionCorrect: () => confirmDeleteSession(mounted, context, true),
                   messageCorrect: 'Salir'));
         });
   }
@@ -182,8 +229,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
 class IconName extends StatelessWidget {
   final IconData icon;
   final String text;
-  const IconName({Key? key, required this.icon, required this.text})
-      : super(key: key);
+  const IconName({Key? key, required this.icon, required this.text}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

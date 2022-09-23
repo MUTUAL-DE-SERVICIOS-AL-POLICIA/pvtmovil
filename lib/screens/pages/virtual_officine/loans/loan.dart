@@ -32,14 +32,17 @@ class _ScreenPageLoansState extends State<ScreenPageLoans> {
               }),
         ),
         Expanded(
-            child: SingleChildScrollView(
-                child: Padding(
+            child: Center(
+                child: SingleChildScrollView(
+                    child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(children: [
             if (loanBloc.state.existLoan)
               for (var item in loanBloc.state.loan!.payload!) CardLoan(item: item),
+            if (loanBloc.state.existLoan)
+            if (loanBloc.state.loan!.payload!.isEmpty) const Text('No existen prestamos realizados')
           ]),
-        ))),
+        )))),
       ]),
     );
   }

@@ -38,9 +38,11 @@ class ScreenSwitchState extends State<ScreenSwitch> {
 
   static final _possibleFormats = BarcodeFormat.values.toList()..removeWhere((e) => e == BarcodeFormat.unknown);
   List<BarcodeFormat> selectedFormats = [..._possibleFormats];
+
   @override
   void initState() {
     super.initState();
+
     checkVersion(mounted, context);
     initializeDateFormatting();
     getId();
@@ -73,29 +75,33 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        BottonTool(
-                          title: 'Complemento Económico',
-                          description: 'Creación de tramites y seguimiento para el pago del Complemento Económico',
-                          onPress: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenLogin(
-                                      title: 'Complemento Económico',
-                                      stateOfficeVirtual: false,
-                                      deviceId: deviceId!,
-                                    )),
-                          ),
-                          child: const Image(
+                        optionTool(
+                            const Image(
+                              image: AssetImage(
+                                'assets/images/couple.png',
+                              ),
+                            ),
+                            'Complemento Económico',
+                            'Creación de tramites y seguimiento para el pago del Complemento Económico',
+                            () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ScreenLogin(
+                                            title: 'Complemento Económico',
+                                            stateOfficeVirtual: false,
+                                            deviceId: deviceId!,
+                                          )),
+                                ),
+                            null),
+                        optionTool(
+                          const Image(
                             image: AssetImage(
-                              'assets/images/couple.png',
+                              'assets/images/computer.png',
                             ),
                           ),
-                        ),
-                        BottonTool(
-                          title: 'Oficina Virtual',
-                          description: 'Seguimiento de Aportes y Prestamos',
-                          textDirection: TextDirection.rtl,
-                          onPress: () => Navigator.push(
+                          'Oficina Virtual',
+                          'Seguimiento de Aportes y Prestamos',
+                          () => Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ScreenLogin(
@@ -103,22 +109,18 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                                       deviceId: deviceId!,
                                     )),
                           ),
-                          child: const Image(
-                            image: AssetImage(
-                              'assets/images/computer.png',
+                          TextDirection.rtl,
+                        ),
+                        optionTool(
+                            SvgPicture.asset(
+                              'assets/icons/qr.svg',
+                              height: 100.sp,
+                              color: const Color(0xff419388),
                             ),
-                          ),
-                        ),
-                        BottonTool(
-                          title: 'Seguimiento de trámites',
-                          description: 'Seguimiento de trámites con QR',
-                          onPress: () => scan(),
-                          child: SvgPicture.asset(
-                            'assets/icons/qr.svg',
-                            height: 100.sp,
-                            color: const Color(0xff419388),
-                          ),
-                        ),
+                            'Seguimiento de trámites',
+                            'Seguimiento de trámites con QR',
+                            () => scan(),
+                            null),
                       ],
                     ),
                   ),
@@ -171,19 +173,8 @@ class ScreenSwitchState extends State<ScreenSwitch> {
   Future<bool> _onBackPressed() async {
     return await showDialog(barrierDismissible: false, context: context, builder: (context) => const ComponentAnimate(child: DialogBack()));
   }
-}
 
-class BottonTool extends StatelessWidget {
-  final Widget child;
-  final String title;
-  final String description;
-  final Function() onPress;
-  final TextDirection? textDirection;
-  const BottonTool({Key? key, required this.child, required this.title, required this.description, required this.onPress, this.textDirection})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget optionTool(Widget child, String title, String description, Function() onPress, TextDirection? textDirection) {
     return GestureDetector(
         onTap: onPress,
         child: ContainerComponent(

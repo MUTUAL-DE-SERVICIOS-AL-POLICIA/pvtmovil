@@ -1,12 +1,11 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 String? url = dotenv.env['HOST_URL'];
-String? urlPrueba = dotenv.env['HOST_URL_PVT_PRUEBA'];
+// String? urlPrueba = dotenv.env['HOST_URL_PVT_PRUEBA'];
 String? urlbla = dotenv.env['HOST_URLBLA'];
 String? urllea = dotenv.env['HOST_URLLEA'];
-String? urlmoi = dotenv.env['HOST_MOI'];
 
-String? reazon = dotenv.env['reazon'];//vi
+String? reazon = dotenv.env['reazon'];//v1
 String? reazonAffiliate = dotenv.env['reazonAffiliate'];//affiliate
 String? reazonQr = dotenv.env['reazonQr'];//global
 
@@ -38,7 +37,7 @@ String serviceGetObservation(int affiliateId) =>
     '$url/$reazon/affiliate/$affiliateId/observation';
 String serviceEcoComProcedure(int ecoComId) => '$url/$reazon/eco_com_procedure/$ecoComId';
 //GET VERSION
-String servicePostVersion()=>'$urlPrueba/$reazon/version';
+String servicePostVersion()=>'$url/$reazon/version';
 //////////////////////////////////////////////////
 /////////////OFICINA VIRTUAL/////////////////////
 ////////////////////////////////////////////////
@@ -49,9 +48,10 @@ String serviceAuthSessionOF()=>'$urlbla/$reazonAffiliate/auth';
 // CHANGE PASSWORD
 String serviceChangePasswordOF()=>'$urlbla/$reazonAffiliate/change_password';
 // APORTES
-// String serviceContributions(int affiliateId,int year)=>'$urlbla/app/all_contributions/$affiliateId/$year';
-String serviceContributions(int affiliateId,int year)=>'$urlmoi';
+String serviceContributions(int affiliateId)=>'$urlbla/app/all_contributions/$affiliateId';
 //PRESTAMOS
-String serviceLoans(int affiliateId)=> '$urllea/get_information_loan?id_affiliate=$affiliateId';
+String serviceLoans(int affiliateId)=> '$urllea/app/get_information_loan/$affiliateId';
 //PRESTAMOS PLAN DE PAGOS
 String servicePrintLoans(int loanId)=> '$urllea/loan/$loanId/print/plan';
+//APORTES PASIVO
+String servicePrintContributionPasive(int affiliateId)=>'$urlbla/app/contributions_passive/$affiliateId';

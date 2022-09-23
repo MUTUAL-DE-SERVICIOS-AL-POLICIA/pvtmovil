@@ -1,9 +1,9 @@
 package com.muserpol.pvt
 import android.app.NotificationManager
 import android.content.Context
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity: FlutterActivity() {
+class MainActivity: FlutterFragmentActivity() {
         override fun onResume() {
         super.onResume()
         closeAllNotifications();

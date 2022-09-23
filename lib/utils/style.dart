@@ -7,14 +7,10 @@ AppTheme styleLigth2() {
       id: 'light',
       data: ThemeData.light().copyWith(
           inputDecorationTheme: ThemeData.light().inputDecorationTheme.copyWith(
-                focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: Color(0xff419388))),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
-                errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: Colors.grey, width: 2)),
+                focusedErrorBorder:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: const BorderSide(color: Color(0xff419388))),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+                errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: const BorderSide(color: Colors.grey, width: 2)),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: const BorderSide(
@@ -29,22 +25,18 @@ AppTheme styleLigth2() {
                   ),
                 ),
                 iconColor: Colors.black,
-                errorStyle: TextStyle(fontSize: 15.sp)
-                    .apply(color: Colors.red, fontFamily: 'Poppins'),
+                errorStyle: TextStyle(fontSize: 15.sp).apply(color: Colors.red, fontFamily: 'Poppins'),
               ),
           buttonTheme: ButtonThemeData(
               padding: const EdgeInsets.all(0),
               splashColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               textTheme: ButtonTextTheme.accent),
           textTheme: ThemeData.light()
               .textTheme
               .copyWith(
-                bodyText1:
-                    TextStyle(color: const Color(0xff21232A), fontSize: 17.sp),
-                bodyText2:
-                    TextStyle(color: const Color(0xff21232A), fontSize: 17.sp),
+                bodyText1: TextStyle(color: const Color(0xff21232A), fontSize: 17.sp),
+                bodyText2: TextStyle(color: const Color(0xff21232A), fontSize: 17.sp),
                 button: TextStyle(fontSize: 17.sp),
               )
               .apply(
@@ -57,11 +49,9 @@ AppTheme styleLigth2() {
                 bodyText2: TextStyle(fontSize: 20.sp),
               )
               .apply(fontFamily: 'Poppins'),
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-              primary: const Color(0xff419388),
-              secondary: const Color(0xff419388)),
+          colorScheme: ColorScheme.fromSwatch().copyWith(primary: const Color(0xff419388), secondary: const Color(0xff419388)),
           primaryColor: const Color(0xff419388),
-          cardColor: Colors.transparent,
+          cardColor: const Color(0xfff2f2f2),
           highlightColor: Colors.transparent,
           splashColor: Colors.transparent,
           dialogBackgroundColor: const Color(0xfff2f2f2),
@@ -77,18 +67,12 @@ AppTheme styleDark2() {
           drawerTheme: const DrawerThemeData(
               elevation: 0,
               backgroundColor: Color(0xff060d09),
-              shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.horizontal(right: Radius.circular(8)))),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.horizontal(right: Radius.circular(8)))),
           inputDecorationTheme: ThemeData.dark().inputDecorationTheme.copyWith(
-                focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: Color(0xff419388))),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
-                errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: Color(0xffE8EAED))),
+                focusedErrorBorder:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: const BorderSide(color: Color(0xff419388))),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+                errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: const BorderSide(color: Color(0xffE8EAED))),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: const BorderSide(
@@ -103,14 +87,12 @@ AppTheme styleDark2() {
                   ),
                 ),
                 iconColor: Colors.white,
-                errorStyle: TextStyle(fontSize: 15.sp)
-                    .apply(color: Colors.red, fontFamily: 'Poppins'),
+                errorStyle: TextStyle(fontSize: 15.sp).apply(color: Colors.red, fontFamily: 'Poppins'),
               ),
           buttonTheme: ButtonThemeData(
               padding: const EdgeInsets.all(0),
               splashColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               textTheme: ButtonTextTheme.accent),
           textTheme: ThemeData.dark()
               .textTheme
@@ -129,11 +111,9 @@ AppTheme styleDark2() {
                 bodyText2: TextStyle(fontSize: 20.sp),
               )
               .apply(fontFamily: 'Poppins'),
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-              primary: const Color(0xff419388),
-              secondary: const Color(0xff419388)),
+          colorScheme: ColorScheme.fromSwatch().copyWith(primary: const Color(0xff419388), secondary: const Color(0xff419388)),
           primaryColor: const Color(0xff419388),
-          cardColor: Colors.transparent,
+          cardColor: const Color(0xff060d09),
           highlightColor: Colors.transparent,
           splashColor: Colors.transparent,
           dialogBackgroundColor: const Color(0xff060d09),

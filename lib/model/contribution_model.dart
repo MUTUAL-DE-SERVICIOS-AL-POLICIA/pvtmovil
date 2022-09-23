@@ -15,12 +15,12 @@ class ContributionModel {
         this.payload,
     });
 
-    bool? error;
+    String? error;
     String? message;
     Payload? payload;
 
     ContributionModel copyWith({
-        bool? error,
+        String? error,
         String? message,
         Payload? payload,
     }) => 
@@ -45,6 +45,7 @@ class ContributionModel {
 
 class Payload {
     Payload({
+        this.affiliatePassive,
         this.degree,
         this.firstName,
         this.secondName,
@@ -56,6 +57,7 @@ class Payload {
         this.contributionsTotal,
     });
 
+    bool? affiliatePassive;
     String? degree;
     String? firstName;
     String? secondName;
@@ -67,6 +69,7 @@ class Payload {
     List<ContributionsTotal>? contributionsTotal;
 
     Payload copyWith({
+        bool? affiliatePassive,
         String? degree,
         String? firstName,
         String? secondName,
@@ -78,6 +81,7 @@ class Payload {
         List<ContributionsTotal>? contributionsTotal,
     }) => 
         Payload(
+            affiliatePassive: affiliatePassive ?? this.affiliatePassive,
             degree: degree ?? this.degree,
             firstName: firstName ?? this.firstName,
             secondName: secondName ?? this.secondName,
@@ -90,6 +94,7 @@ class Payload {
         );
 
     factory Payload.fromJson(Map<String, dynamic> json) => Payload(
+        affiliatePassive: json["affiliate_passive"],
         degree: json["degree"],
         firstName: json["first_name"],
         secondName: json["second_name"],
@@ -102,6 +107,7 @@ class Payload {
     );
 
     Map<String, dynamic> toJson() => {
+        "affiliate_passive": affiliatePassive,
         "degree": degree,
         "first_name": firstName,
         "second_name": secondName,

@@ -8,6 +8,7 @@ import 'package:muserpol_pvt/services/services.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class ModalAceptTermin extends StatefulWidget {
   const ModalAceptTermin({Key? key}) : super(key: key);
@@ -42,13 +43,13 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                                       onTap: () => privacyPolicy(context),
                                       child: RichText(
                                           text: TextSpan(children: [
-                                        TextSpan(text: 'Acepto ', style: TextStyle(color: Colors.black, fontSize: 17.sp)),
+                                        TextSpan(text: 'Acepto ', style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark, fontSize: 17.sp)),
                                         TextSpan(
                                             text: 'Términos y condiciones ',
                                             style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 17.sp)),
                                         TextSpan(
                                             text: 'de uso de la aplicación móvil "MUSERPOL PVT"',
-                                            style: TextStyle(color: Colors.black, fontSize: 17.sp))
+                                            style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark, fontSize: 17.sp))
                                       ])),
                                     ),
                                   )

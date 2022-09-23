@@ -12,6 +12,7 @@ class HedersComponent extends StatelessWidget {
   final Function()? onPressMenu;
   final bool center;
   final GlobalKey? keyMenu;
+  final Widget? option;
   const HedersComponent(
       {Key? key,
       required this.title,
@@ -20,7 +21,8 @@ class HedersComponent extends StatelessWidget {
       this.menu = false,
       this.onPressMenu,
       this.center = false,
-      this.keyMenu})
+      this.keyMenu,
+      this.option})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -59,12 +61,8 @@ class HedersComponent extends StatelessWidget {
                   children: [
                     const Text('MUSERPOL'),
                     Text(title,
-                        textAlign: center ? TextAlign.center : TextAlign.start,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20.sp)),
-                    if (titleExtra != null)
-                      Text(titleExtra!,
-                          style: const TextStyle(fontWeight: FontWeight.w500))
+                        textAlign: center ? TextAlign.center : TextAlign.start, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp)),
+                    if (titleExtra != null) Text(titleExtra!, style: const TextStyle(fontWeight: FontWeight.w500))
                   ],
                 ),
               ),
@@ -77,6 +75,7 @@ class HedersComponent extends StatelessWidget {
           fit: BoxFit.cover,
           height: 40.sp,
         ),
+        if (option != null) option!
       ],
     );
   }
