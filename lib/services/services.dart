@@ -52,6 +52,6 @@ String serviceContributions(int affiliateId)=>'$urlbla/app/all_contributions/$af
 //PRESTAMOS
 String serviceLoans(int affiliateId)=> '$urllea/app/get_information_loan/$affiliateId';
 //PRESTAMOS PLAN DE PAGOS
-String servicePrintLoans(int loanId)=> '$urllea/loan/$loanId/print/plan';
+String servicePrintLoans(int loanId)=> '$urllea/app/loan/$loanId/print/plan';
 //APORTES PASIVO
 String servicePrintContributionPasive(int affiliateId)=>'$urlbla/app/contributions_passive/$affiliateId';

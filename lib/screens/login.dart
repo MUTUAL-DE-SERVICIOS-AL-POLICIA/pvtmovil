@@ -116,7 +116,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
       );
       debugPrint('HECHO');
     } on PlatformException catch (e) {
-      print(e);
+      debugPrint('$e');
       return;
     }
     if (!mounted) {
@@ -153,11 +153,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
         child: SingleChildScrollView(
             padding: const EdgeInsets.all(30),
             child: Column(children: [
-              Image(
-                image: AssetImage(
-                  ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
-                ),
-              ),
+              Hero(
+                  tag: 'image',
+                  child: Image(
+                    image: AssetImage(
+                      ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
+                    ),
+                  )),
               Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(
                 height: 20.h,

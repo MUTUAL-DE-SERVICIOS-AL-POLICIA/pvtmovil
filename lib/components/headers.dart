@@ -24,12 +24,12 @@ class FormButtomPainter extends CustomPainter {
       ..style = PaintingStyle.fill; //stroke //fill
 
     final path = Path()
-      ..moveTo(0, size.height)
-      ..quadraticBezierTo(size.width * 0.15, size.height * 0.85,
-          size.width * 0.5, size.height * 0.88)
-      ..quadraticBezierTo(
-          size.width / 1.2, size.height * 0.9, size.width, size.height * 0.75)
+      ..moveTo(0, size.height / 3)
+      // ..lineTo(0, size.height)
+      ..quadraticBezierTo(size.width * 0.15, size.height * 0.25, size.width * 0.5, size.height * 0.28)
+      ..quadraticBezierTo(size.width / 1.2, size.height * 0.3, size.width, size.height * 0.25)
       ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
       ..close();
     canvas.drawPath(path, paint);
   }
@@ -64,18 +64,11 @@ class FormtopPainter extends CustomPainter {
       ..style = PaintingStyle.fill; //stroke //fill
 
     final path = Path()
-      ..moveTo(0, size.height)
-      ..quadraticBezierTo(
-        size.width * 0.15,
-        size.height * 0.78,
-        size.width * 0.6,
-        size.height * 0.83)
-      ..quadraticBezierTo(
-          size.width / 1.3,
-          size.height * 0.85,
-          size.width,
-          size.height * 0.75)
+      ..moveTo(0, size.height / 3.4)
+      ..quadraticBezierTo(size.width * 0.15, size.height * 0.25, size.width * 0.5, size.height * 0.27)
+      ..quadraticBezierTo(size.width / 1.2, size.height * 0.3, size.width, size.height * 0.25)
       ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
       ..close();
     canvas.drawPath(path, paint);
   }

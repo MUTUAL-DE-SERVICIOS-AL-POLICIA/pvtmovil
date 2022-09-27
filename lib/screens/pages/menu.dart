@@ -207,7 +207,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
     if (!mounted) return;
 
     // debugPrint('${biometricUserModelFromJson(await authService.readBiometric()).biometricComplement}');
-    debugPrint('${biometricUserModelToJson(biometricUserModel)}');
+    debugPrint(biometricUserModelToJson(biometricUserModel));
     if (!mounted) return;
     await authService.biometric(context, biometricUserModelToJson(biometricUserModel));
   }

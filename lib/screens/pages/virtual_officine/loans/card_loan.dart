@@ -6,19 +6,20 @@ import 'package:muserpol_pvt/screens/pages/virtual_officine/loans/card_expanded.
 import 'package:theme_provider/theme_provider.dart';
 
 class CardLoan extends StatelessWidget {
-  final Payload item;
-  const CardLoan({Key? key, required this.item}) : super(key: key);
+  final InProcess? itemProcess;
+  final Current? itemCurrent;
+  const CardLoan({Key? key, this.itemProcess, this.itemCurrent}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Hero(
           transitionOnUserGestures: true,
-          tag: item.code!,
+          tag: itemProcess != null ? itemProcess!.code! : itemCurrent!.code!,
           child: Material(
               type: MaterialType.transparency,
               child: ContainerComponent(
-                              color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                  color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Center(
@@ -37,8 +38,8 @@ class CardLoan extends StatelessWidget {
                           ),
                           defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                           children: [
-                            tableInfo('Prestamo', item.code!),
-                            tableInfo('Estado', item.state!),
+                            tableInfo('Prestamo', itemProcess != null ? itemProcess!.code! : itemCurrent!.code!),
+                            tableInfo('Estado', itemProcess != null ? itemProcess!.stateName! : itemCurrent!.state!),
                           ]),
                     ),
                   )))),
@@ -46,7 +47,11 @@ class CardLoan extends StatelessWidget {
         Navigator.of(context).push(
           PageRouteBuilder(
             opaque: false,
-            pageBuilder: (_, __, ___) => CardExpanded(item: item),
+            pageBuilder: (_, __, ___) =>
+                CardExpanded(
+                  tag: itemProcess != null ? itemProcess!.stateName! : itemCurrent!.state!,
+                  inProcess: itemProcess,
+                  itemCurrent: itemCurrent),
           ),
         );
       },

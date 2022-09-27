@@ -12,7 +12,6 @@ import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
-import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';

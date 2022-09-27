@@ -38,9 +38,13 @@ class _ScreenPageLoansState extends State<ScreenPageLoans> {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(children: [
             if (loanBloc.state.existLoan)
-              for (var item in loanBloc.state.loan!.payload!) CardLoan(item: item),
+              for (var item in loanBloc.state.loan!.payload!.inProcess!) CardLoan(itemProcess: item),
             if (loanBloc.state.existLoan)
-            if (loanBloc.state.loan!.payload!.isEmpty) const Text('No existen prestamos realizados')
+              for (var item in loanBloc.state.loan!.payload!.current!) CardLoan(itemCurrent: item),
+            if (loanBloc.state.existLoan)
+              for (var item in loanBloc.state.loan!.payload!.liquited!) CardLoan(itemCurrent: item),
+            // if (loanBloc.state.existLoan)
+            // if (loanBloc.state.loan!.payload!.isEmpty) const Text('No existen prestamos realizados')
           ]),
         )))),
       ]),

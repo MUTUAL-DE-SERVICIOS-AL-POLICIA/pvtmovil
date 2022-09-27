@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/containers.dart';
-import 'package:muserpol_pvt/components/heders.dart';
+import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/dialogs/dialog_back.dart';
 import 'package:muserpol_pvt/model/qr_model.dart';
 import 'package:muserpol_pvt/screens/flowQR/flow.dart';
@@ -65,70 +65,76 @@ class ScreenSwitchState extends State<ScreenSwitch> {
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
-            body: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
-          child: Column(
-            children: [
-              const HedersComponent(title: 'Mutual de Servicios al Policía'),
-              Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        optionTool(
-                            const Image(
-                              image: AssetImage(
-                                'assets/images/couple.png',
-                              ),
-                            ),
-                            'Complemento Económico',
-                            'Creación de tramites y seguimiento para el pago del Complemento Económico',
-                            () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ScreenLogin(
-                                            title: 'Complemento Económico',
-                                            stateOfficeVirtual: false,
-                                            deviceId: deviceId!,
-                                          )),
-                                ),
-                            null),
-                        optionTool(
-                          const Image(
-                            image: AssetImage(
-                              'assets/images/computer.png',
-                            ),
+          body: Stack(children: [
+            const Formtop(),
+            const FormButtom(),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
+                child: Column(
+                  children: [
+                    Hero(
+                tag: 'image',
+                child:Image(
+                      image: AssetImage(
+                        ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
+                      ),
+                    )),
+                    Expanded(
+                      child: Center(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              optionTool(
+                                  const Image(
+                                    image: AssetImage(
+                                      'assets/images/couple.png',
+                                    ),
+                                  ),
+                                  'Complemento Económico',
+                                  'Creación de tramites y seguimiento para el pago del Complemento Económico',
+                                  () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ScreenLogin(
+                                                  title: 'Complemento Económico',
+                                                  stateOfficeVirtual: false,
+                                                  deviceId: deviceId!,
+                                                )),
+                                      )),
+                              optionTool(
+                                  const Image(
+                                    image: AssetImage(
+                                      'assets/images/computer.png',
+                                    ),
+                                  ),
+                                  'Oficina Virtual',
+                                  'Seguimiento de Aportes y Prestamos',
+                                  () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ScreenLogin(
+                                                  title: 'Oficina Virtual',
+                                                  deviceId: deviceId!,
+                                                )),
+                                      )),
+                              optionTool(
+                                  SvgPicture.asset(
+                                    'assets/icons/qr.svg',
+                                    height: 100.sp,
+                                    color: const Color(0xff419388),
+                                  ),
+                                  'Seguimiento de trámites',
+                                  'Seguimiento de trámites con QR',
+                                  () => scan()),
+                            ],
                           ),
-                          'Oficina Virtual',
-                          'Seguimiento de Aportes y Prestamos',
-                          () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ScreenLogin(
-                                      title: 'Oficina Virtual',
-                                      deviceId: deviceId!,
-                                    )),
-                          ),
-                          TextDirection.rtl,
                         ),
-                        optionTool(
-                            SvgPicture.asset(
-                              'assets/icons/qr.svg',
-                              height: 100.sp,
-                              color: const Color(0xff419388),
-                            ),
-                            'Seguimiento de trámites',
-                            'Seguimiento de trámites con QR',
-                            () => scan(),
-                            null),
-                      ],
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        )));
+                      ),
+                    )
+                  ],
+                ))
+          ]),
+        ));
   }
 
   Future scan() async {
@@ -174,35 +180,40 @@ class ScreenSwitchState extends State<ScreenSwitch> {
     return await showDialog(barrierDismissible: false, context: context, builder: (context) => const ComponentAnimate(child: DialogBack()));
   }
 
-  Widget optionTool(Widget child, String title, String description, Function() onPress, TextDirection? textDirection) {
+  Widget optionTool(Widget child, String title, String description, Function() onPress) {
     return GestureDetector(
-        onTap: onPress,
-        child: ContainerComponent(
-          color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              textDirection: textDirection,
-              children: [
-                Expanded(
-                  child: Padding(padding: const EdgeInsets.all(8.0), child: child),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 2,
-                  child: Column(
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(description)
-                    ],
+      onTap: onPress,
+      child: Stack(
+        children: [
+          ContainerComponent(
+            width: double.infinity,
+            color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(padding: const EdgeInsets.all(8.0), child: child),
                   ),
-                )
-              ],
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 2,
+                    child: Column(
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(description)
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-        ));
+        ],
+      ),
+    );
   }
 }

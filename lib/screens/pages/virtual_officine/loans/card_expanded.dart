@@ -12,8 +12,10 @@ import 'package:open_file/open_file.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class CardExpanded extends StatefulWidget {
-  final Payload item;
-  const CardExpanded({Key? key, required this.item}) : super(key: key);
+  final String tag;
+  final InProcess? inProcess;
+  final Current? itemCurrent;
+  const CardExpanded({Key? key, required this.tag, this.inProcess, this.itemCurrent}) : super(key: key);
 
   @override
   State<CardExpanded> createState() => _CardExpandedState();
@@ -32,7 +34,7 @@ class _CardExpandedState extends State<CardExpanded> {
         body: GestureDetector(
           child: Center(
             child: Hero(
-                tag: widget.item.code!,
+                tag: widget.tag,
                 child: Material(
                     type: MaterialType.transparency,
                     child: Padding(
@@ -46,7 +48,7 @@ class _CardExpandedState extends State<CardExpanded> {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(15, 5, 15, 0),
                               child: HedersComponent(
-                                title: widget.item.code!,
+                                title: widget.inProcess != null ? widget.inProcess!.code! : widget.itemCurrent!.code!,
                                 stateBack: true,
                               ),
                             ),
@@ -61,7 +63,7 @@ class _CardExpandedState extends State<CardExpanded> {
                                             columnWidths: const {
                                               0: FlexColumnWidth(4),
                                               1: FlexColumnWidth(0.3),
-                                              2: FlexColumnWidth(5),
+                                              2: FlexColumnWidth(6),
                                             },
                                             border: const TableBorder(
                                               horizontalInside: BorderSide(
@@ -72,53 +74,57 @@ class _CardExpandedState extends State<CardExpanded> {
                                             ),
                                             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                                             children: [
-                                              tableInfo('Modalidad', widget.item.procedureModality!),
-                                              tableInfo('Monto', '${widget.item.amountRequested!} Bs.'),
-                                              tableInfo('Porcentaje de Interés', '${widget.item.interest} %'),
-                                              tableInfo('Plazos', '${widget.item.loanTerm} meses'),
-                                              tableInfo('Tipo de pago', widget.item.paymentType!),
-                                              tableInfo('Destino', widget.item.destinyId!),
-                                              tableInfo('Apertura', DateFormat(' dd, MMMM yyyy ', "es_ES").format(widget.item.requestDate!)),
+                                              if (widget.inProcess != null) tableInfo('Tipo de trámite', widget.inProcess!.procedureTypeName!),
+                                              if (widget.itemCurrent != null) tableInfo('Modalidad', widget.itemCurrent!.procedureModality!),
+                                              if (widget.itemCurrent != null) tableInfo('Monto', '${widget.itemCurrent!.amountRequested!} Bs.'),
+                                              if (widget.itemCurrent != null) tableInfo('Porcentaje de Interés', '${widget.itemCurrent!.interest} %'),
+                                              if (widget.itemCurrent != null) tableInfo('Plazos', '${widget.itemCurrent!.loanTerm} meses'),
+                                              if (widget.itemCurrent != null) tableInfo('Tipo de pago', widget.itemCurrent!.paymentType!),
+                                              if (widget.itemCurrent != null) tableInfo('Destino', widget.itemCurrent!.destinyId!),
+                                              if (widget.itemCurrent != null)
+                                                tableInfo(
+                                                    'Apertura', DateFormat(' dd, MMMM yyyy ', "es_ES").format(widget.itemCurrent!.requestDate!)),
                                             ]),
                                       ),
-                                      !stateLoading
-                                          ? Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    getLoanPlan(context, widget.item.id!);
-                                                  },
-                                                  child: const ContainerComponent(
+                                      if (widget.itemCurrent != null)
+                                        !stateLoading
+                                            ? Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      getLoanPlan(context, widget.itemCurrent!.id!);
+                                                    },
+                                                    child: const ContainerComponent(
+                                                      color: Color(0xff419388),
+                                                      child: Padding(
+                                                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                                        child: Text(
+                                                          'PLAN DE PAGOS',
+                                                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const ContainerComponent(
                                                     color: Color(0xff419388),
                                                     child: Padding(
                                                       padding: EdgeInsets.symmetric(horizontal: 8.0),
                                                       child: Text(
-                                                        'PLAN DE PAGOS',
+                                                        'KARDEX',
                                                         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                                                       ),
                                                     ),
                                                   ),
+                                                ],
+                                              )
+                                            : Center(
+                                                child: Image.asset(
+                                                  'assets/images/load.gif',
+                                                  fit: BoxFit.cover,
+                                                  height: 15.sp,
                                                 ),
-                                                const ContainerComponent(
-                                                  color: Color(0xff419388),
-                                                  child: Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                                    child: Text(
-                                                      'KARDEX',
-                                                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          : Center(
-                                              child: Image.asset(
-                                                'assets/images/load.gif',
-                                                fit: BoxFit.cover,
-                                                height: 15.sp,
                                               ),
-                                            ),
                                     ])),
                               ),
                             ),
@@ -137,7 +143,7 @@ class _CardExpandedState extends State<CardExpanded> {
 
   getLoanPlan(BuildContext context, int loanId) async {
     setState(() => stateLoading = true);
-    var response = await serviceMethod(mounted, context, 'get', null, servicePrintLoans(loanId), false, true);
+    var response = await serviceMethod(mounted, context, 'get', null, servicePrintLoans(loanId), true, true);
     setState(() => stateLoading = false);
     if (response != null) {
       String pathFile = await saveFile('Lonas', 'plandepagos.pdf', response.bodyBytes);

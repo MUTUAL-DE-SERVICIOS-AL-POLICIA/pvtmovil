@@ -23,8 +23,6 @@ class CheckAuthScreen extends StatelessWidget {
           //verificamos si el usuario está autenticado
           future: authService.readToken(),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            //en el caso de no encontrar el token solicitado
-            //redireccionamos al usuario al ScreenLogin
             if (!snapshot.hasData) return const Text('');
             if (snapshot.data == '') {
               Future.microtask(() {
@@ -32,22 +30,9 @@ class CheckAuthScreen extends StatelessWidget {
               });
             } else {
               final notificationBloc = BlocProvider.of<NotificationBloc>(context);
-
-              // userBloc.add(UpdateUser(user.user!));
               DBProvider.db.getAllNotificationModel().then((res) => notificationBloc.add(UpdateNotifications(res)));
-              //en el caso de encontrar el token solicitado
-              //redireccionamos al usuario al ScreenLoading
-              // authService.logout();
-              // appState.addKey('cireverso', user.user!.fullName!); //nombre
               Future.microtask(() {
                 return getInfo(context);
-                //                 return Navigator.pushReplacementNamed(
-                //   context,
-                //   'navigator',
-                //   arguments: NavigatorArguments(
-                //     'virtualofficine',
-                //   ),
-                // );
               });
             }
             return const Scaffold();
@@ -75,16 +60,16 @@ class CheckAuthScreen extends StatelessWidget {
   getInfo(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    debugPrint('holaa ${await authService.readStateApp()}');
     if (await authService.readStateApp() == 'complement') {
       UserModel user = userModelFromJson(await authService.readUser());
       userBloc.add(UpdateUser(user.user!));
     }
     final stateApp = await authService.readStateApp();
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-            pageBuilder: (_, __, ___) => NavigatorBar(tutorial: false, stateApp: stateApp), transitionDuration: const Duration(seconds: 0)));
+    Future.microtask(() {
+      Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+              pageBuilder: (_, __, ___) => NavigatorBar(tutorial: false, stateApp: stateApp), transitionDuration: const Duration(seconds: 0)));
+    });
   }
 }

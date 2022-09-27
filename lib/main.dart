@@ -171,10 +171,9 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver{
                       title: 'MUSERPOL PVT',
                       initialRoute: 'check_auth',
                       routes: {
+                        'check_auth': (_) => const CheckAuthScreen(),
                         'slider': (_) => const PageSlider(),
                         'switch': (_) => const ScreenSwitch(),
-                        'check_auth': (_) => const CheckAuthScreen(),
-                        // 'navigator': (_) => const NavigatorBar(),
                         'contacts': (_) => const ScreenContact(),
                         'message': (_) => const ScreenNotification()
                       })),
