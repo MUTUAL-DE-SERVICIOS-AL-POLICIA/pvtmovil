@@ -15,12 +15,12 @@ class LoanModel {
         this.payload,
     });
 
-    String? error;
+    bool? error;
     String? message;
     Payload? payload;
 
     LoanModel copyWith({
-        String? error,
+        bool? error,
         String? message,
         Payload? payload,
     }) => 

@@ -152,7 +152,7 @@ class Buttontoltip extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
-                  '¿Cuenta con un un carnet alfanumerico? Ej. 123456-7L',
+                  '¿Cuenta con un un carnet alfanumerico? Ej. 123456-1M',
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -172,7 +172,7 @@ class Buttontoltip extends StatelessWidget {
           child: const Padding(
             padding: EdgeInsets.all(8.0),
             child: Icon(
-              Icons.question_mark_outlined,
+              Icons.horizontal_rule,
               color: Colors.white,
             ),
           ),

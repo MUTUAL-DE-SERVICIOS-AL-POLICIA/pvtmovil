@@ -13,7 +13,9 @@ import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
+import 'package:muserpol_pvt/components/target.dart';
 import 'package:muserpol_pvt/dialogs/dialog_back.dart';
+import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/model/contribution_model.dart';
 import 'package:muserpol_pvt/model/loan_model.dart';
@@ -54,6 +56,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
 
   GlobalKey keyBottomNavigation1 = GlobalKey();
   GlobalKey keyBottomNavigation2 = GlobalKey();
+  GlobalKey keyBottomHeader = GlobalKey();
   GlobalKey keyCreateProcedure = GlobalKey();
   GlobalKey keyNotification = GlobalKey();
   GlobalKey keyMenu = GlobalKey();
@@ -73,10 +76,10 @@ class _NavigatorBarState extends State<NavigatorBar> {
     if (widget.stateApp == 'complement') {
       setState(() => pageList = [
             ScreenProcedures(current: true, scroll: _scrollController, keyProcedure: keyCreateProcedure, keyMenu: keyMenu, keyRefresh: keyRefresh),
-            ScreenProcedures(current: false, scroll: _scrollController),
+            ScreenProcedures(current: false, scroll: _scrollController, keyMenu: keyMenu),
           ]);
     } else {
-      setState(() => pageList = const [ScreenContributions(), ScreenPageLoans()]);
+      setState(() => pageList = [ScreenContributions(keyMenu: keyMenu, keyBottomHeader: keyBottomHeader), ScreenPageLoans(keyMenu: keyMenu)]);
     }
   }
 
@@ -95,17 +98,16 @@ class _NavigatorBarState extends State<NavigatorBar> {
         }
       });
     }
-    if (widget.stateApp == 'virtualofficine') {
-      debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
-      getContributions();
-      getLoans();
-    }
     if (widget.tutorial) {
       Future.delayed(const Duration(milliseconds: 500), showTutorial);
     } else {
       if (widget.stateApp == 'complement') {
         getEconomicComplement(true);
         getEconomicComplement(false);
+      } else {
+        debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
+        getContributions();
+        getLoans();
       }
     }
   }
@@ -206,14 +208,17 @@ class _NavigatorBarState extends State<NavigatorBar> {
             animationDuration: const Duration(milliseconds: 300),
             animationType: BadgeAnimationType.slide,
             badgeColor: notificationBloc.existNotifications
-                ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == 1).isNotEmpty
+                ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == prefs!.getInt('affiliateId')!).isNotEmpty
                     ? Colors.red
                     : Colors.transparent
                 : Colors.transparent,
             elevation: 0,
             badgeContent: notificationBloc.existNotifications && notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
                 ? Text(
-                    notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == 1).length.toString(),
+                    notificationBloc.listNotifications!
+                        .where((e) => e.read == false && e.idAffiliate == prefs!.getInt('affiliateId')!)
+                        .length
+                        .toString(),
                     style: const TextStyle(color: Colors.white),
                   )
                 : Container(),
@@ -222,30 +227,29 @@ class _NavigatorBarState extends State<NavigatorBar> {
           body: pageList.elementAt(_currentIndex),
           bottomNavigationBar: Stack(
             children: [
-              if (widget.stateApp == 'complement')
-                SizedBox(
-                  height: 50,
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Center(
-                        child: SizedBox(
-                          key: keyBottomNavigation1,
-                          height: 40,
-                          width: MediaQuery.of(context).size.width / 4,
-                        ),
-                      )),
-                      Expanded(
-                          child: Center(
-                        child: SizedBox(
-                          key: keyBottomNavigation2,
-                          height: 40,
-                          width: MediaQuery.of(context).size.width / 4,
-                        ),
-                      )),
-                    ],
-                  ),
+              SizedBox(
+                height: 50,
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Center(
+                      child: SizedBox(
+                        key: keyBottomNavigation1,
+                        height: 40,
+                        width: MediaQuery.of(context).size.width / 4,
+                      ),
+                    )),
+                    Expanded(
+                        child: Center(
+                      child: SizedBox(
+                        key: keyBottomNavigation2,
+                        height: 40,
+                        width: MediaQuery.of(context).size.width / 4,
+                      ),
+                    )),
+                  ],
                 ),
+              ),
               if (widget.stateApp == 'complement')
                 ConvexAppBar(
                     height: 65,
@@ -261,7 +265,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
                             height: 30.sp,
                             color: Colors.white,
                           ),
-                          title: "Trámites Vigentes"),
+                          title: "Solicitud de Pago"),
                       TabItem(
                           isIconBlend: true,
                           icon: SvgPicture.asset(
@@ -319,12 +323,18 @@ class _NavigatorBarState extends State<NavigatorBar> {
       targets: targets,
       colorShadow: const Color(0xff419388),
       textSkip: "OMITIR",
+      textStyleSkip: const TextStyle(color: Color(0xffffdead), fontWeight: FontWeight.bold),
       paddingFocus: 10,
       opacityShadow: 0.8,
       onFinish: () {
-        debugPrint("finish");
-        getEconomicComplement(true);
-        getEconomicComplement(false);
+        if (widget.stateApp == 'complement') {
+          getEconomicComplement(true);
+          getEconomicComplement(false);
+        } else {
+          debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
+          getContributions();
+          getLoans();
+        }
       },
       onClickTarget: (target) {
         debugPrint('onClickTarget: $target');
@@ -341,6 +351,10 @@ class _NavigatorBarState extends State<NavigatorBar> {
         if (widget.stateApp == 'complement') {
           getEconomicComplement(true);
           getEconomicComplement(false);
+        } else {
+          debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
+          getContributions();
+          getLoans();
         }
       },
     )..show(context: context);
@@ -348,199 +362,151 @@ class _NavigatorBarState extends State<NavigatorBar> {
 
   void initTargets() {
     targets.clear();
-    targets.add(
-      TargetFocus(
-        identify: "keyBottomNavigation1",
-        keyTarget: keyBottomNavigation1,
-        alignSkip: Alignment.topRight,
-        contents: [
-          TargetContent(
-            align: ContentAlign.top,
-            builder: (context, controller) {
-              return Column(
-                children: <Widget>[
-                  const Padding(
-                      padding: EdgeInsets.only(bottom: 30.0),
-                      child: Text(
-                        "Aquí podrás ver tus Tramites disponibles ",
-                        style: TextStyle(color: Colors.white),
-                      )),
-                  Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationY(180),
-                      child: RotationTransition(
-                          turns: const AlwaysStoppedAnimation(15 / 180),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Image.asset(
-                              'assets/images/arrow.png',
-                              color: Colors.white,
-                              height: 100,
-                            ),
-                          ))),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-    );
-
-    targets.add(
-      TargetFocus(
-        identify: "keyBottomNavigation2",
-        keyTarget: keyBottomNavigation2,
-        alignSkip: Alignment.topRight,
-        contents: [
-          TargetContent(
-            align: ContentAlign.top,
-            builder: (context, controller) {
-              return Column(
-                // crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const Padding(
-                      padding: EdgeInsets.only(bottom: 30.0),
-                      child: Text(
-                        "Aquí podrás ver el historial de tus tramites ",
-                        style: TextStyle(color: Colors.white),
-                      )),
-                  Transform.rotate(
-                    angle: math.pi / 7,
+    targets.add(target(
+        "keyBottomNavigation1",
+        keyBottomNavigation1,
+        ContentAlign.top,
+        Alignment.topRight,
+        widget.stateApp == 'complement' ? "Aquí podrá ver su trámite solicitado" : "Aquí podrá ver sus aportes",
+        Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationY(180),
+            child: RotationTransition(
+                turns: const AlwaysStoppedAnimation(15 / 180),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Image.asset(
+                    'assets/images/arrow.png',
+                    color: Colors.white,
+                    height: 100,
+                  ),
+                ))),
+        null,
+        null,
+        null));
+    if (widget.stateApp != 'complement') {
+      targets.add(target(
+          "keyBottomHeader",
+          keyBottomHeader,
+          ContentAlign.bottom,
+          null,
+          "Para crear su trámite debe presionar el botón CREAR TRÁMITE, cuando se encuentre en color verde",
+          Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.rotationY(45),
+              child: RotationTransition(
+                  turns: const AlwaysStoppedAnimation(130 / 180),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
                     child: Image.asset(
                       'assets/images/arrow.png',
                       color: Colors.white,
-                      height: 100,
+                      height: 80,
                     ),
-                  ),
-                ],
-              );
-            },
+                  ))),
+          ShapeLightFocus.RRect,
+          20,
+          VerticalDirection.up));
+    }
+    targets.add(target(
+        "keyBottomNavigation2",
+        keyBottomNavigation2,
+        ContentAlign.top,
+        Alignment.topRight,
+        widget.stateApp == 'complement' ? "Aquí podrá ver el historial de sus trámites" : "Aquí podrá ver sus prestamos",
+        Transform.rotate(
+          angle: math.pi / 7,
+          child: Image.asset(
+            'assets/images/arrow.png',
+            color: Colors.white,
+            height: 100,
           ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "keyCreateProcedure",
-        keyTarget: keyCreateProcedure,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              // ignore: prefer_const_literals_to_create_immutables
-              children: <Widget>[
-                const Text(
-                  "CREACIÓN DE TRÁMITE",
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Si ves el botón de color verde, puedes crear tu trámite correspondiente al semestre",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-        shape: ShapeLightFocus.RRect,
-        radius: 20,
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "keyNotification",
-        keyTarget: keyNotification,
-        alignSkip: Alignment.topRight,
-        contents: [
-          TargetContent(
-            align: ContentAlign.top,
-            builder: (context, controller) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const <Widget>[
-                  Text(
-                    "BUZÓN DE MENSAJES",
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      "Acá podrás observar todos los mensajes que la MUSERPOL tiene para ti ",
-                      style: TextStyle(color: Colors.white),
+        ),
+        null,
+        null,
+        null));
+    if (widget.stateApp == 'complement') {
+      targets.add(target(
+          "keyCreateProcedure",
+          keyCreateProcedure,
+          ContentAlign.bottom,
+          null,
+          "Para crear su trámite debe presionar el botón CREAR TRÁMITE, cuando se encuentre en color verde",
+          Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.rotationY(45),
+              child: RotationTransition(
+                  turns: const AlwaysStoppedAnimation(130 / 180),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Image.asset(
+                      'assets/images/arrow.png',
+                      color: Colors.white,
+                      height: 80,
                     ),
-                  )
-                ],
-              );
-            },
+                  ))),
+          ShapeLightFocus.RRect,
+          20,
+          VerticalDirection.up));
+    } else {}
+
+    targets.add(target(
+        "keyNotification",
+        keyNotification,
+        ContentAlign.top,
+        Alignment.topRight,
+        "BUZÓN DE MENSAJES\nAquí podrá observar todos los mensajes enviados por la MUSERPOL",
+        Transform.rotate(
+          angle: math.pi / 7,
+          child: Image.asset(
+            'assets/images/arrow.png',
+            color: Colors.white,
+            height: 100,
           ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "keyMenu",
-        keyTarget: keyMenu,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            builder: (context, controller) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                // ignore: prefer_const_literals_to_create_immutables
-                children: <Widget>[
-                  const Text(
-                    "MENÚ",
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+        ),
+        null,
+        null,
+        null));
+    targets.add(target(
+        "keyMenu",
+        keyMenu,
+        ContentAlign.bottom,
+        null,
+        "MENU\nAquí podrá ingresar al menú de datos y configuraciones",
+        RotationTransition(
+            turns: const AlwaysStoppedAnimation(100 / 180),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Image.asset(
+                'assets/images/arrow.png',
+                color: Colors.white,
+                height: 80,
+              ),
+            )),
+        null,
+        null,
+        VerticalDirection.up));
+    targets.add(target(
+        "keyRefresh",
+        keyRefresh,
+        ContentAlign.top,
+        null,
+        "ACTUALIZAR\nPresionando este botón usted podrá actualizar la pantalla",
+        Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationY(10),
+            child: RotationTransition(
+                turns: const AlwaysStoppedAnimation(40 / 180),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Image.asset(
+                    'assets/images/arrow.png',
+                    color: Colors.white,
+                    height: 80,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      "Aquí podras observar un menú donde encontraras tus datos y diferentes opciones",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "keyRefresh",
-        keyTarget: keyRefresh,
-        contents: [
-          TargetContent(
-            align: ContentAlign.top,
-            builder: (context, controller) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const <Widget>[
-                  Text(
-                    "ACTUALIZAR",
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      "con este botón podrás refrescar la pantalla",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-    );
+                ))),
+        null,
+        null,
+        null));
   }
 }

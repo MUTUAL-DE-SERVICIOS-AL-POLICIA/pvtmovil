@@ -2,30 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/components/input.dart';
+import 'package:muserpol_pvt/components/table_row.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:provider/provider.dart';
 
 class TabInfoEconomicComplement extends StatefulWidget {
   final TextEditingController phoneCtrl;
   final Function() onEditingComplete;
-  const TabInfoEconomicComplement(
-      {Key? key, required this.phoneCtrl, required this.onEditingComplete})
-      : super(key: key);
+  const TabInfoEconomicComplement({Key? key, required this.phoneCtrl, required this.onEditingComplete}) : super(key: key);
 
   @override
-  State<TabInfoEconomicComplement> createState() =>
-      _TabInfoEconomicComplementState();
+  State<TabInfoEconomicComplement> createState() => _TabInfoEconomicComplementState();
 }
 
 class _TabInfoEconomicComplementState extends State<TabInfoEconomicComplement> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    final procedureBloc =
-        Provider.of<ProcedureBloc>(context, listen: true).state;
+    final procedureBloc = Provider.of<ProcedureBloc>(context, listen: true).state;
     final appState = Provider.of<AppState>(context, listen: true);
-    return procedureBloc.existInfoComplementInfo &&
-            appState.stateLoadingProcedure
+    return procedureBloc.existInfoComplementInfo && appState.stateLoadingProcedure
         ? Form(
             key: formKey,
             child: Column(
@@ -43,10 +39,7 @@ class _TabInfoEconomicComplementState extends State<TabInfoEconomicComplement> {
                       return 'Ingrese su número telefónico';
                     }
                   },
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(10),
-                    FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-                  ],
+                  inputFormatters: [LengthLimitingTextInputFormatter(10), FilteringTextInputFormatter.allow(RegExp("[0-9]"))],
                   keyboardType: TextInputType.number,
                   textCapitalization: TextCapitalization.characters,
                   icon: Icons.person,
@@ -66,19 +59,7 @@ class _TabInfoEconomicComplementState extends State<TabInfoEconomicComplement> {
                         style: BorderStyle.solid,
                       ),
                     ),
-                    children: [
-                      for (var item in procedureBloc
-                          .economicComplementInfo!.data!.display!)
-                        TableRow(children: [
-                          Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 3, horizontal: 10),
-                              child:
-                                  Text(item.key!, textAlign: TextAlign.right)),
-                          const Text(':'),
-                          Text('${item.value}')
-                        ])
-                    ]),
+                    children: [for (var item in procedureBloc.economicComplementInfo!.data!.display!) tableInfo(item.key!, Text('${item.value}'))]),
               ],
             ))
         : Center(

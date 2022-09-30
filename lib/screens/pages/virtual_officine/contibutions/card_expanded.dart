@@ -63,10 +63,30 @@ class _CardExpandedState extends State<CardExpanded> {
                                         ),
                                         defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                                         children: [
-                                          tableInfo('Cotizable', widget.contribution.quotable!),
-                                          tableInfo('Fondo de retiro', widget.contribution.retirementFund!),
-                                          tableInfo('Cuota mortuoria', widget.contribution.mortuaryQuota!),
-                                          tableInfo('Total', widget.contribution.total!),
+                                          tableInfo(
+                                              'Cotizable',
+                                              Text(
+                                                widget.contribution.quotable!,
+                                                style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                              )),
+                                          // tableInfo(
+                                          //     'Fondo de retiro',
+                                          //     Text(
+                                          //       widget.contribution.retirementFund!,
+                                          //       style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                          //     )),
+                                          // tableInfo(
+                                          //     'Cuota mortuoria',
+                                          //     Text(
+                                          //       widget.contribution.mortuaryQuota!,
+                                          //       style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                          //     )),
+                                          tableInfo(
+                                              'Total',
+                                              Text(
+                                                widget.contribution.total!,
+                                                style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                              )),
                                         ])
                                   ]))),
                         ),

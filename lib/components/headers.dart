@@ -25,7 +25,6 @@ class FormButtomPainter extends CustomPainter {
 
     final path = Path()
       ..moveTo(0, size.height / 3)
-      // ..lineTo(0, size.height)
       ..quadraticBezierTo(size.width * 0.15, size.height * 0.25, size.width * 0.5, size.height * 0.28)
       ..quadraticBezierTo(size.width / 1.2, size.height * 0.3, size.width, size.height * 0.25)
       ..lineTo(size.width, size.height)

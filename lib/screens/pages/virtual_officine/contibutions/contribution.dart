@@ -14,7 +14,8 @@ import 'package:provider/provider.dart';
 
 class ScreenContributions extends StatefulWidget {
   final GlobalKey? keyMenu;
-  const ScreenContributions({Key? key, this.keyMenu}) : super(key: key);
+  final GlobalKey keyBottomHeader;
+  const ScreenContributions({Key? key, this.keyMenu, required this.keyBottomHeader}) : super(key: key);
 
   @override
   State<ScreenContributions> createState() => _ScreenContributionsState();
@@ -37,6 +38,7 @@ class _ScreenContributionsState extends State<ScreenContributions> {
               keyMenu: widget.keyMenu,
               onPressMenu: () => Scaffold.of(context).openDrawer(),
               option: PopupMenuButton(
+                key: widget.keyBottomHeader,
                 icon: const Icon(Icons.library_books_outlined),
                 onSelected: (newValue) {
                   // add this property

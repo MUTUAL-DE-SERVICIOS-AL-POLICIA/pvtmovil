@@ -16,6 +16,7 @@ import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
+import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
@@ -77,17 +78,18 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   verifyBiometric() async {
     final authService = Provider.of<AuthService>(context, listen: false);
+    debugPrint('${widget.stateOfficeVirtual}');
     if (await authService.readBiometric() != "") {
       debugPrint('state ${widget.stateOfficeVirtual}');
       if (widget.stateOfficeVirtual) {
         if (biometricUserModelFromJson(await authService.readBiometric()).biometricVirtualOfficine!) {
-          //BIOMETICO
+          //BIOMETICO OFICINA VIRTUAL
           _authenticate();
         }
       } else {
         debugPrint('${biometricUserModelFromJson(await authService.readBiometric()).biometricComplement}');
         if (biometricUserModelFromJson(await authService.readBiometric()).biometricComplement!) {
-          //BIOMETICO
+          //BIOMETICO COMPLEMENTO
           _authenticate();
         }
       }
@@ -406,34 +408,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
     }
   }
 
-  initSessionVirtualOfficine(dynamic response, UserVirtualOfficine userVirtualOfficine) async {
-    final authService = Provider.of<AuthService>(context, listen: false);
-    switch (json.decode(response.body)['data']['status']) {
-      case 'Pendiente':
-        return virtualOfficineUpdatePwd(json.decode(response.body)['message']);
-      case 'Activo':
-        if (!mounted) return;
-        await authService.login(context, json.decode(response.body)['data']['user']['api_token'], body);
-        if (!mounted) return;
-        await authService.stateApp(context, 'virtualofficine');
-        final biometric = await authService.readBiometric();
-        final biometricUserModel = BiometricUserModel(
-            biometricVirtualOfficine: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
-            biometricComplement: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricComplement,
-            affiliateId: json.decode(response.body)['data']['user']['affiliate_id'],
-            userComplement: biometric == '' ? UserComplement() : biometricUserModelFromJson(biometric).userComplement,
-            userVirtualOfficine: userVirtualOfficine);
-        if (!mounted) return;
-        await authService.biometric(context, biometricUserModelToJson(biometricUserModel));
-        if (!mounted) return;
-        return Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-                pageBuilder: (_, __, ___) => const NavigatorBar(tutorial: false, stateApp: 'virtualofficine'),
-                transitionDuration: const Duration(seconds: 0)));
-    }
-  }
-
   intSessionComplement(dynamic response, UserComplement userComplement) async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
@@ -443,21 +417,23 @@ class _ScreenLoginState extends State<ScreenLogin> {
     appState.updateStateAuxToken(true);
     userBloc.add(UpdateUser(user.user!));
     if (!mounted) return;
-    await authService.user(context, json.encode(json.decode(response.body)['data']));
+    await authService.user(context, userModelToJson(user));
     final biometric = await authService.readBiometric();
-    debugPrint('biometrico $biometric');
     final biometricUserModel = BiometricUserModel(
         biometricComplement: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricComplement,
         biometricVirtualOfficine: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
-        affiliateId: json.decode(response.body)['data']['user']['id'],
+        affiliateId: user.user!.id,
         userComplement: userComplement,
         userVirtualOfficine: biometric == '' ? UserVirtualOfficine() : biometricUserModelFromJson(biometric).userVirtualOfficine);
+    prefs!.setInt('affiliateId', user.user!.id!);
+    prefs!.setBool('isDoblePerception', json.decode(response.body)['data']['is_doble_perception']);
     if (!mounted) return;
     await authService.biometric(context, biometricUserModelToJson(biometricUserModel));
     if (response.statusCode == 200) {
       if (!mounted) return;
       await authService.stateApp(context, 'complement');
       if (!json.decode(response.body)['data']['user']['enrolled']) {
+        //proceso de enrolamiento
         _showModalInside(user.apiToken!, false, await PushNotificationService.getTokenFirebase());
       } else {
         if (!mounted) return;
@@ -471,11 +447,71 @@ class _ScreenLoginState extends State<ScreenLogin> {
       }
     } else {
       if (json.decode(response.body)['data']['update_device_id']) {
-        return _showModalInside(user.apiToken!, true, await PushNotificationService.getTokenFirebase()); //reconocimiento facial
+        //reconocimiento facial
+        return _showModalInside(user.apiToken!, true, await PushNotificationService.getTokenFirebase());
       } else {
         if (!mounted) return;
         return callDialogAction(context, json.decode(response.body)['message']);
       }
+    }
+  }
+
+  _showModalInside(String token, bool facialRecognition, String firebaseToken) async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final appState = Provider.of<AppState>(context, listen: false);
+    await Future.delayed(const Duration(milliseconds: 50));
+    return showBarModalBottomSheet(
+      expand: false,
+      enableDrag: false,
+      isDismissible: false,
+      context: context,
+      builder: (context) => ModalInsideModal(
+          firebaseToken: firebaseToken,
+          deviceId: widget.deviceId,
+          stateFacialRecognition: facialRecognition,
+          nextScreen: (message) {
+            return showSuccessful(context, message, () async {
+              await authService.login(context, token, body);
+              appState.updateStateAuxToken(false);
+              if (!mounted) return;
+              Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
+            });
+          }),
+    );
+  }
+
+  initSessionVirtualOfficine(dynamic response, UserVirtualOfficine userVirtualOfficine) async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final appState = Provider.of<AppState>(context, listen: false);
+    appState.updateStateAuxToken(false);
+    switch (json.decode(response.body)['data']['status']) {
+      case 'Pendiente':
+        return virtualOfficineUpdatePwd(json.decode(response.body)['message']);
+      case 'Activo':
+      debugPrint('${ json.decode(response.body)['data']['user']['api_token']}');
+        if (!mounted) return;
+        await authService.login(context, json.decode(response.body)['data']['user']['api_token'], body);
+        if (!mounted) return;
+        await authService.stateApp(context, 'virtualofficine');
+        final biometric = await authService.readBiometric();
+        final biometricUserModel = BiometricUserModel(
+            biometricVirtualOfficine: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
+            biometricComplement: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricComplement,
+            affiliateId: json.decode(response.body)['data']['user']['affiliate_id'],
+            userComplement: biometric == '' ? UserComplement() : biometricUserModelFromJson(biometric).userComplement,
+            userVirtualOfficine: userVirtualOfficine);
+        prefs!.setInt('affiliateId', json.decode(response.body)['data']['user']['affiliate_id']);
+        if (!mounted) return;
+        await authService.biometric(context, biometricUserModelToJson(biometricUserModel));
+        if (!mounted) return;
+        return Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'virtualofficine'),
+                transitionDuration: const Duration(seconds: 0)));
     }
   }
 
@@ -498,33 +534,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 Navigator.of(context).pop();
               });
             }
-          }),
-    );
-  }
-
-  _showModalInside(String token, bool facialRecognition, String firebaseToken) async {
-    final authService = Provider.of<AuthService>(context, listen: false);
-    final appState = Provider.of<AppState>(context, listen: false);
-    await Future.delayed(const Duration(milliseconds: 50));
-    return showBarModalBottomSheet(
-      expand: false,
-      enableDrag: false,
-      isDismissible: false,
-      context: context,
-      builder: (context) => ModalInsideModal(
-          firebaseToken: firebaseToken,
-          deviceId: widget.deviceId,
-          stateFacialRecognition: true,
-          nextScreen: (message) {
-            return showSuccessful(context, message, () async {
-              await authService.login(context, token, body);
-              appState.updateStateAuxToken(false);
-              if (!mounted) return;
-              Navigator.pushReplacement(
-                  context,
-                  PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
-            });
           }),
     );
   }

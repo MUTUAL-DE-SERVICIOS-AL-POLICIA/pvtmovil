@@ -47,11 +47,25 @@ String serviceGetQr(String info)=> '$urlbla/$reazonQr/procedure_qr/$info';
 String serviceAuthSessionOF()=>'$urlbla/$reazonAffiliate/auth';
 // CHANGE PASSWORD
 String serviceChangePasswordOF()=>'$urlbla/$reazonAffiliate/change_password';
+
+//////////////////////////////////////////////////
+/////////////APORTES/////////////////////
+////////////////////////////////////////////////
+
 // APORTES
 String serviceContributions(int affiliateId)=>'$urlbla/app/all_contributions/$affiliateId';
-//PRESTAMOS
-String serviceLoans(int affiliateId)=> '$urllea/app/get_information_loan/$affiliateId';
-//PRESTAMOS PLAN DE PAGOS
-String servicePrintLoans(int loanId)=> '$urllea/app/loan/$loanId/print/plan';
-//APORTES PASIVO
+//PRINT APORTES PASIVO
 String servicePrintContributionPasive(int affiliateId)=>'$urlbla/app/contributions_passive/$affiliateId';
+//PRINT APORTES ACTIVO
+String servicePrintContributionActive(int affiliateId)=>'$urlbla/app/contributions_active/$affiliateId';
+
+//////////////////////////////////////////////////
+/////////////PRSTAMOS/////////////////////
+////////////////////////////////////////////////
+
+//PRESTAMOS
+String serviceLoans(int affiliateId)=> '$urlbla/app/get_information_loan/$affiliateId';
+//PRINT PLAN DE PAGOS
+String servicePrintLoans(int loanId)=> '$urlbla/app/loan/$loanId/print/plan';
+//PRINT KARDEX
+String servicePrintKadex(int loanId)=>'$urllea/app/loan/$loanId/print/kardex';

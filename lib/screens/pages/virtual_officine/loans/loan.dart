@@ -34,19 +34,24 @@ class _ScreenPageLoansState extends State<ScreenPageLoans> {
         Expanded(
             child: Center(
                 child: SingleChildScrollView(
-                    child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Column(children: [
-            if (loanBloc.state.existLoan)
-              for (var item in loanBloc.state.loan!.payload!.inProcess!) CardLoan(itemProcess: item),
-            if (loanBloc.state.existLoan)
-              for (var item in loanBloc.state.loan!.payload!.current!) CardLoan(itemCurrent: item),
-            if (loanBloc.state.existLoan)
-              for (var item in loanBloc.state.loan!.payload!.liquited!) CardLoan(itemCurrent: item),
-            // if (loanBloc.state.existLoan)
-            // if (loanBloc.state.loan!.payload!.isEmpty) const Text('No existen prestamos realizados')
-          ]),
-        )))),
+                    child: loanBloc.state.existLoan
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              if (loanBloc.state.loan!.payload!.inProcess!.isNotEmpty) const Text('Prestamos en proceso:'),
+                              if (loanBloc.state.loan!.payload!.inProcess!.isNotEmpty)
+                                for (var item in loanBloc.state.loan!.payload!.inProcess!)
+                                  CardLoan(itemProcess: item, color: const Color(0xffffdead)),
+                              if (loanBloc.state.loan!.payload!.current!.isNotEmpty) const Text('Prestamos vigentes:'),
+                              if (loanBloc.state.loan!.payload!.current!.isNotEmpty)
+                                for (var item in loanBloc.state.loan!.payload!.current!) CardLoan(itemCurrent: item),
+                              if (loanBloc.state.loan!.payload!.liquited!.isNotEmpty) const Text('Prestamos Liquidados:'),
+                              if (loanBloc.state.loan!.payload!.liquited!.isNotEmpty)
+                                for (var item in loanBloc.state.loan!.payload!.liquited!) CardLoan(itemCurrent: item),
+                              if (loanBloc.state.loan!.error!) Text(loanBloc.state.loan!.message!)
+                            ]),
+                          )
+                        : Container()))),
       ]),
     );
   }

@@ -122,7 +122,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 onChangedSwitch: (v) => switchTheme(v),
               ),
               SectiontitleSwitchComponent(
-                title: 'Autenticación',
+                title: 'Autenticación Biométrica',
                 valueSwitch: biometricValue,
                 onChangedSwitch: (v) => authBiometric(v),
               ),
@@ -163,10 +163,8 @@ class _MenuDrawerState extends State<MenuDrawer> {
   }
 
   authBiometric(bool state) async {
-    setState(() {
-      biometricValue = state;
-    });
     final authService = Provider.of<AuthService>(context, listen: false);
+    setState(() => biometricValue = state);
     debugPrint('$state');
     debugPrint('HUELLA BIOMETRICA');
     final LocalAuthentication auth = LocalAuthentication();
@@ -191,7 +189,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
     debugPrint('ESTADO DE LA APP ${await authService.readStateApp()}');
     if (await authService.readStateApp() == 'complement') {
       biometricUserModel = BiometricUserModel(
-          biometricComplement: biometricValue,
+          biometricComplement: state,
           biometricVirtualOfficine: biometric.biometricVirtualOfficine,
           affiliateId: biometric.affiliateId,
           userComplement: biometric.userComplement,
@@ -199,7 +197,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
     } else {
       biometricUserModel = BiometricUserModel(
           biometricComplement: biometric.biometricComplement,
-          biometricVirtualOfficine: biometricValue,
+          biometricVirtualOfficine: state,
           affiliateId: biometric.affiliateId,
           userComplement: biometric.userComplement,
           userVirtualOfficine: biometric.userVirtualOfficine);

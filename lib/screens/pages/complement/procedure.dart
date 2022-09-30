@@ -8,6 +8,7 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/card_observation.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
+import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
 import 'package:muserpol_pvt/screens/pages/complement/card_economic_complement.dart';
@@ -26,14 +27,7 @@ class ScreenProcedures extends StatefulWidget {
   final GlobalKey? keyProcedure;
   final GlobalKey? keyMenu;
   final GlobalKey? keyRefresh;
-  const ScreenProcedures(
-      {Key? key,
-      required this.current,
-      required this.scroll,
-      this.keyProcedure,
-      this.keyMenu,
-      this.keyRefresh})
-      : super(key: key);
+  const ScreenProcedures({Key? key, required this.current, required this.scroll, this.keyProcedure, this.keyMenu, this.keyRefresh}) : super(key: key);
 
   @override
   State<ScreenProcedures> createState() => _ScreenProceduresState();
@@ -44,8 +38,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   bool stateBtn = true;
   @override
   Widget build(BuildContext context) {
-    final procedureBloc =
-        BlocProvider.of<ProcedureBloc>(context, listen: true).state;
+    final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: true).state;
     final appState = Provider.of<AppState>(context, listen: true);
     return Scaffold(
         drawer: const MenuDrawer(),
@@ -54,22 +47,15 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
                     child: HedersComponent(
-                        title: 'Complemento Económico',
-                        menu: true,
-                        keyMenu: widget.keyMenu,
-                        onPressMenu: () => Scaffold.of(context).openDrawer()),
+                        title: 'Complemento Económico', menu: true, keyMenu: widget.keyMenu, onPressMenu: () => Scaffold.of(context).openDrawer()),
                   ),
                   if (appState.messageObservation != "")
-                    const CardObservation(),
+                    if (json.decode(appState.messageObservation)['message'] != "") const CardObservation(),
                   if (widget.current && stateBtn)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: ButtonComponent(
-                          key: widget.keyProcedure,
-                          text: 'CREAR TRÁMITE',
-                          onPressed: stateBtn && appState.stateProcessing
-                              ? () => create()
-                              : null),
+                          key: widget.keyProcedure, text: 'CREAR TRÁMITE', onPressed: stateBtn && appState.stateProcessing ? () => create() : null),
                     ),
                   if (!stateBtn)
                     Image.asset(
@@ -86,39 +72,26 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                                     : Center(
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Text(
-                                                'No se encontraron trámites'),
-                                            stateInfo()
-                                          ],
+                                          children: [const Text('No se encontraron trámites'), stateInfo()],
                                         ),
                                       )
                                 : SingleChildScrollView(
                                     controller: widget.scroll,
                                     child: Column(
-                                      children: [
-                                        for (var item
-                                            in procedureBloc.currentProcedures!)
-                                          CardEc(item: item),
-                                        stateInfo()
-                                      ],
+                                      children: [for (var item in procedureBloc.currentProcedures!) CardEc(item: item), stateInfo()],
                                     ))
                             : stateInfo()),
                   if (!widget.current)
                     Expanded(
                         child: procedureBloc.existHistoricalProcedures
                             ? procedureBloc.historicalProcedures!.isEmpty
-                                ? const Center(
-                                    child: Text('No se encontraron trámites'))
+                                ? const Center(child: Text('No se encontraron trámites'))
                                 : ListView.builder(
                                     controller: widget.scroll,
                                     scrollDirection: Axis.vertical,
                                     shrinkWrap: true,
-                                    itemCount: procedureBloc
-                                        .historicalProcedures!.length,
-                                    itemBuilder: (c, i) => CardEc(
-                                        item: procedureBloc
-                                            .historicalProcedures![i]))
+                                    itemCount: procedureBloc.historicalProcedures!.length,
+                                    itemBuilder: (c, i) => CardEc(item: procedureBloc.historicalProcedures![i]))
                             : Center(
                                 child: Image.asset(
                                 'assets/images/load.gif',
@@ -140,8 +113,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                 key: widget.keyRefresh,
                 iconText: 'assets/icons/reload.svg',
                 onPressed: () async {
-                  final appState =
-                      Provider.of<AppState>(context, listen: false);
+                  final appState = Provider.of<AppState>(context, listen: false);
                   appState.updateTabProcedure(0);
                   for (var element in appState.files) {
                     appState.updateFile(element.id!, null);
@@ -178,12 +150,12 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   procedure(dynamic response) {
     final appState = Provider.of<AppState>(context, listen: false);
     final procedureBloc = Provider.of<ProcedureBloc>(context, listen: false);
-    return showSuccessful(context, 'Trámite registrado correctamente',
-        () async {
-      String pathFile = await saveFile(
-          'Documents',
-          'sol_eco_com_${DateTime.now().millisecondsSinceEpoch}.pdf',
-          response.bodyBytes);
+    return showSuccessful(context, 'Trámite registrado correctamente', () async {
+      if (!prefs!.getBool('isDoblePerception')!) {
+        String pathFile = await saveFile('Documents', 'sol_eco_com_${DateTime.now().millisecondsSinceEpoch}.pdf', response.bodyBytes);
+        await OpenFile.open(pathFile);
+      }
+
       setState(() {
         appState.updateTabProcedure(0);
         appState.clearFiles();
@@ -191,19 +163,15 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
       await getEconomicComplement();
       await getObservations();
       procedureBloc.add(UpdateStateComplementInfo(false));
-      await OpenFile.open(pathFile);
     });
   }
 
   getEconomicComplement() async {
     //REINICIO DEL LISTADO DE TRÁMITES VIGENTES
-    final procedureBloc =
-        BlocProvider.of<ProcedureBloc>(context, listen: false);
-    var response = await serviceMethod(mounted, context, 'get', null,
-        serviceGetEconomicComplements(0, true), true, true);
+    final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: false);
+    var response = await serviceMethod(mounted, context, 'get', null, serviceGetEconomicComplements(0, true), true, true);
     if (response != null) {
-      procedureBloc.add(UpdateCurrentProcedures(
-          procedureModelFromJson(response.body).data!.data!));
+      procedureBloc.add(UpdateCurrentProcedures(procedureModelFromJson(response.body).data!.data!));
     } else {
       return setState(() => stateLoad = false);
     }
@@ -212,8 +180,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   getObservations() async {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(mounted, context, 'get', null,
-        serviceGetObservation(userBloc.state.user!.id!), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null, serviceGetObservation(userBloc.state.user!.id!), true, true);
     if (response != null) {
       appState.updateObservation(response.body);
       if (json.decode(response.body)['data']['enabled']) {
@@ -226,44 +193,35 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
 
   controleVerified() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(
-        mounted, context, 'get', null, serviceGetMessageFace(), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null, serviceGetMessageFace(), true, true);
     if (response != null) {
-      userBloc.add(UpdateVerifiedDocument(
-          json.decode(response.body)['data']['verified']));
+      userBloc.add(UpdateVerifiedDocument(json.decode(response.body)['data']['verified']));
     }
   }
 
   getProcessingPermit() async {
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    var response = await serviceMethod(mounted, context, 'get', null,
-        serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
+    var response = await serviceMethod(mounted, context, 'get', null, serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
     if (response != null) {
-      userBloc.add(UpdateCtrlLive(
-          json.decode(response.body)['data']['liveness_success']));
+      userBloc.add(UpdateCtrlLive(json.decode(response.body)['data']['liveness_success']));
       if (json.decode(response.body)['data']['liveness_success']) {
         appState.updateTabProcedure(1);
         if (userBloc.state.user!.verified!) {
-          appState.updateStateLoadingProcedure(
-              true); //MOSTRAMOS EL BTN DE CONTINUAR
+          appState.updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
           setState(() {});
         } else {
-          appState.updateStateLoadingProcedure(
-              false); //OCULTAMOS EL BTN DE CONTINUAR
+          appState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
           setState(() {});
         }
       } else {
         appState.updateTabProcedure(0);
-        appState
-            .updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+        appState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
         setState(() {});
       }
-      userBloc.add(UpdateProcedureId(
-          json.decode(response.body)['data']['procedure_id']));
+      userBloc.add(UpdateProcedureId(json.decode(response.body)['data']['procedure_id']));
       if (json.decode(response.body)['data']['cell_phone_number'].length > 0) {
-        userBloc.add(UpdatePhone(
-            json.decode(response.body)['data']['cell_phone_number'][0]));
+        userBloc.add(UpdatePhone(json.decode(response.body)['data']['cell_phone_number'][0]));
       }
     }
   }

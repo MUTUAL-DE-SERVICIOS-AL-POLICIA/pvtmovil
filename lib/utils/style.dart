@@ -32,6 +32,7 @@ AppTheme styleLigth2() {
               splashColor: Colors.transparent,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               textTheme: ButtonTextTheme.accent),
+              
           textTheme: ThemeData.light()
               .textTheme
               .copyWith(

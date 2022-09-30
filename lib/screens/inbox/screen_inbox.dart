@@ -13,6 +13,8 @@ import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:theme_provider/theme_provider.dart';
 
+import '../../main.dart';
+
 class ScreenInbox extends StatefulWidget {
   const ScreenInbox({Key? key}) : super(key: key);
 
@@ -33,9 +35,10 @@ class _ScreenInboxState extends State<ScreenInbox> {
         height: MediaQuery.of(context).size.height / 2,
         child: Column(
           children: [
+            
             if (notificationBloc.existNotifications)
               Text(
-                  '${notificationBloc.listNotifications!.where((e) => e.idAffiliate == 1).isEmpty ? 'Sin' : notificationBloc.listNotifications!.where((e) => e.idAffiliate == 1).length} Notificación(es)',
+                  '${notificationBloc.listNotifications!.where((e) => e.idAffiliate == prefs!.getInt('affiliateId')!).isEmpty ? 'Sin' : notificationBloc.listNotifications!.where((e) => e.idAffiliate == prefs!.getInt('affiliateId')!).length} Notificación(es)',
                   style: const TextStyle(
                       fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
             Expanded(
@@ -63,7 +66,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
                       if (notificationBloc.existNotifications)
                         for (final item in notificationBloc
                             .listNotifications!.reversed
-                            .where((e) => e.idAffiliate == 1))
+                            .where((e) => e.idAffiliate == prefs!.getInt('affiliateId')!))
                           messageWidget(item)
                     ],
                   ),

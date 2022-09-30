@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:muserpol_pvt/components/containers.dart';
+import 'package:muserpol_pvt/components/table_row.dart';
 import 'package:muserpol_pvt/model/contacts_model.dart';
 import 'package:theme_provider/theme_provider.dart';
 import 'package:url_launcher/url_launcher.dart' as urlauncher;
@@ -32,73 +33,54 @@ class _CardContactState extends State<CardContact> {
                   Text(widget.city.name!),
                   const SizedBox(height: 20),
                   Table(
-                      // ignore: prefer_const_literals_to_create_immutables
-                      columnWidths: {
-                        0: const FlexColumnWidth(3.5),
-                        1: const FlexColumnWidth(8.5),
-                        // 2: FlexColumnWidth(6),
+                      columnWidths: const {
+                        0: FlexColumnWidth(3.5),
+                        1: FlexColumnWidth(0.5),
+                        2: FlexColumnWidth(6),
                       },
-                      defaultVerticalAlignment:
-                          TableCellVerticalAlignment.middle,
+                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                       children: [
-                        TableRow(children: [
-                          const Text('Dirección:'),
-                          GestureDetector(
-                            onTap: () => openMapsSheet(
-                                context,
-                                Coords(widget.city.latitude!,
-                                    widget.city.longitude!),
-                                widget.city.companyAddress!),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.location_on),
-                                Flexible(
-                                    child: Text(
-                                  widget.city.companyAddress!,
-                                  style:
-                                      const TextStyle(color: Color(0xff439CAB)),
-                                ))
-                              ],
-                            ),
-                          ),
-                        ]),
+                        tableInfo(
+                            'Dirección:',
+                            GestureDetector(
+                              onTap: () => openMapsSheet(context, Coords(widget.city.latitude!, widget.city.longitude!), widget.city.companyAddress!),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.location_on),
+                                  Flexible(
+                                      child: Text(
+                                    widget.city.companyAddress!,
+                                    style: const TextStyle(color: Color(0xff439CAB)),
+                                  ))
+                                ],
+                              ),
+                            )),
                         if (json.decode(widget.city.companyPhones!).length > 0)
-                          TableRow(children: [
-                            const Text('Teléfonos:'),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                for (var item
-                                    in json.decode(widget.city.companyPhones!))
-                                  GestureDetector(
-                                    onTap: () => urlauncher.launchUrl(
-                                        Uri(scheme: 'tel', path: '$item')),
-                                    child: Text('$item',
-                                        style: const TextStyle(
-                                            color: Color(0xff439CAB))),
-                                  )
-                              ],
-                            )
-                          ]),
-                        if (json.decode(widget.city.companyCellphones!).length >
-                            0)
-                          TableRow(children: [
-                            const Text('Celulares:'),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                for (var item in json
-                                    .decode(widget.city.companyCellphones!))
-                                  GestureDetector(
-                                    onTap: () => urlauncher.launchUrl(
-                                        Uri(scheme: 'tel', path: '$item')),
-                                    child: Text('$item',
-                                        style: const TextStyle(
-                                            color: Color(0xff439CAB))),
-                                  )
-                              ],
-                            )
-                          ])
+                          tableInfo(
+                              'Teléfonos:',
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (var item in json.decode(widget.city.companyPhones!))
+                                    GestureDetector(
+                                      onTap: () => urlauncher.launchUrl(Uri(scheme: 'tel', path: '$item')),
+                                      child: Text('$item', style: const TextStyle(color: Color(0xff439CAB))),
+                                    )
+                                ],
+                              )),
+                        if (json.decode(widget.city.companyCellphones!).length > 0)
+                          tableInfo(
+                              'Celulares:',
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (var item in json.decode(widget.city.companyCellphones!))
+                                    GestureDetector(
+                                      onTap: () => urlauncher.launchUrl(Uri(scheme: 'tel', path: '$item')),
+                                      child: Text('$item', style: const TextStyle(color: Color(0xff439CAB))),
+                                    )
+                                ],
+                              )),
                       ])
                 ],
               ))

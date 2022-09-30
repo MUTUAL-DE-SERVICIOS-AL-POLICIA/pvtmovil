@@ -73,12 +73,14 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                 child: Column(
                   children: [
                     Hero(
-                tag: 'image',
-                child:Image(
-                      image: AssetImage(
-                        ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
-                      ),
-                    )),
+                        tag: 'image',
+                        child: Image(
+                          image: AssetImage(
+                            ThemeProvider.themeOf(context).id.contains('dark')
+                                ? 'assets/images/muserpol-logo.png'
+                                : 'assets/images/muserpol-logo2.png',
+                          ),
+                        )),
                     Expanded(
                       child: Center(
                         child: SingleChildScrollView(
@@ -91,7 +93,7 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                                     ),
                                   ),
                                   'Complemento Económico',
-                                  'Creación de tramites y seguimiento para el pago del Complemento Económico',
+                                  'Creación de trámites y seguimiento para el pago del Complemento Económico',
                                   () => Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -108,7 +110,7 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                                     ),
                                   ),
                                   'Oficina Virtual',
-                                  'Seguimiento de Aportes y Prestamos',
+                                  'Seguimiento de Aportes y Préstamos',
                                   () => Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -182,38 +184,33 @@ class ScreenSwitchState extends State<ScreenSwitch> {
 
   Widget optionTool(Widget child, String title, String description, Function() onPress) {
     return GestureDetector(
-      onTap: onPress,
-      child: Stack(
-        children: [
-          ContainerComponent(
-            width: double.infinity,
-            color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Padding(padding: const EdgeInsets.all(8.0), child: child),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 2,
-                    child: Column(
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        ),
-                        Text(description)
-                      ],
+        onTap: onPress,
+        child: ContainerComponent(
+          width: double.infinity,
+          color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(padding: const EdgeInsets.all(10.0), child: child),
                     ),
-                  )
-                ],
-              ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 1.5,
+                      child: Text(description),
+                    )
+                  ],
+                ),
+              ],
             ),
           ),
-        ],
-      ),
-    );
+        ));
   }
 }

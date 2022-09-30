@@ -74,12 +74,14 @@ class DialogOneFunction extends StatelessWidget {
 class DialogTwoAction extends StatelessWidget {
   final String message;
   final Function() actionCorrect;
+  final Function()? actionCancel;
   final String messageCorrect;
 
   const DialogTwoAction(
       {Key? key,
       required this.message,
       required this.actionCorrect,
+      this.actionCancel,
       required this.messageCorrect})
       : super(key: key);
   @override
@@ -95,7 +97,7 @@ class DialogTwoAction extends StatelessWidget {
       actions: <Widget>[
         ButtonWhiteComponent(
           text: 'Cancelar',
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: actionCancel ?? ()=>Navigator.of(context).pop(),
         ),
         ButtonWhiteComponent(
             text: messageCorrect, onPressed: () => actionCorrect())

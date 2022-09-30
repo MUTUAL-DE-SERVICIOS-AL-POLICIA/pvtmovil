@@ -7,8 +7,9 @@ import 'package:theme_provider/theme_provider.dart';
 
 class CardLoan extends StatelessWidget {
   final InProcess? itemProcess;
+  final Color? color;
   final Current? itemCurrent;
-  const CardLoan({Key? key, this.itemProcess, this.itemCurrent}) : super(key: key);
+  const CardLoan({Key? key, this.itemProcess,this.color, this.itemCurrent}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class CardLoan extends StatelessWidget {
           child: Material(
               type: MaterialType.transparency,
               child: ContainerComponent(
-                  color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                  color: color??ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Center(
@@ -38,8 +39,18 @@ class CardLoan extends StatelessWidget {
                           ),
                           defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                           children: [
-                            tableInfo('Prestamo', itemProcess != null ? itemProcess!.code! : itemCurrent!.code!),
-                            tableInfo('Estado', itemProcess != null ? itemProcess!.stateName! : itemCurrent!.state!),
+                            tableInfo(
+                                'Prestamo',
+                                Text(
+                                  itemProcess != null ? itemProcess!.code! : itemCurrent!.code!,
+                                  style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                )),
+                            tableInfo(
+                                'Estado',
+                                Text(
+                                  itemProcess != null ? itemProcess!.stateName! : itemCurrent!.state!,
+                                  style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                )),
                           ]),
                     ),
                   )))),
@@ -47,11 +58,8 @@ class CardLoan extends StatelessWidget {
         Navigator.of(context).push(
           PageRouteBuilder(
             opaque: false,
-            pageBuilder: (_, __, ___) =>
-                CardExpanded(
-                  tag: itemProcess != null ? itemProcess!.stateName! : itemCurrent!.state!,
-                  inProcess: itemProcess,
-                  itemCurrent: itemCurrent),
+            pageBuilder: (_, __, ___) => CardExpanded(
+                tag: itemProcess != null ? itemProcess!.stateName! : itemCurrent!.state!, inProcess: itemProcess, itemCurrent: itemCurrent),
           ),
         );
       },

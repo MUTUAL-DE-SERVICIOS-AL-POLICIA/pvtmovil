@@ -74,16 +74,62 @@ class _CardExpandedState extends State<CardExpanded> {
                                             ),
                                             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                                             children: [
-                                              if (widget.inProcess != null) tableInfo('Tipo de trámite', widget.inProcess!.procedureTypeName!),
-                                              if (widget.itemCurrent != null) tableInfo('Modalidad', widget.itemCurrent!.procedureModality!),
-                                              if (widget.itemCurrent != null) tableInfo('Monto', '${widget.itemCurrent!.amountRequested!} Bs.'),
-                                              if (widget.itemCurrent != null) tableInfo('Porcentaje de Interés', '${widget.itemCurrent!.interest} %'),
-                                              if (widget.itemCurrent != null) tableInfo('Plazos', '${widget.itemCurrent!.loanTerm} meses'),
-                                              if (widget.itemCurrent != null) tableInfo('Tipo de pago', widget.itemCurrent!.paymentType!),
-                                              if (widget.itemCurrent != null) tableInfo('Destino', widget.itemCurrent!.destinyId!),
+                                              if (widget.inProcess != null)
+                                                tableInfo(
+                                                    'Tipo de trámite',
+                                                    Text(
+                                                      widget.inProcess!.procedureTypeName!,
+                                                      style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                    )),
                                               if (widget.itemCurrent != null)
                                                 tableInfo(
-                                                    'Apertura', DateFormat(' dd, MMMM yyyy ', "es_ES").format(widget.itemCurrent!.requestDate!)),
+                                                    'Modalidad',
+                                                    Text(
+                                                      widget.itemCurrent!.procedureModality!,
+                                                      style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                    )),
+                                              if (widget.itemCurrent != null)
+                                                tableInfo(
+                                                    'Monto',
+                                                    Text(
+                                                      '${widget.itemCurrent!.amountRequested!} Bs.',
+                                                      style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                    )),
+                                              if (widget.itemCurrent != null)
+                                                tableInfo(
+                                                    'Porcentaje de Interés',
+                                                    Text(
+                                                      '${widget.itemCurrent!.interest} %',
+                                                      style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                    )),
+                                              if (widget.itemCurrent != null)
+                                                tableInfo(
+                                                    'Plazos',
+                                                    Text(
+                                                      '${widget.itemCurrent!.loanTerm} meses',
+                                                      style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                    )),
+                                              if (widget.itemCurrent != null)
+                                                tableInfo(
+                                                    'Tipo de pago',
+                                                    Text(
+                                                      widget.itemCurrent!.paymentType!,
+                                                      style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                    )),
+                                              if (widget.itemCurrent != null)
+                                                tableInfo(
+                                                    'Destino',
+                                                    Text(
+                                                      widget.itemCurrent!.destinyId!,
+                                                      style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                    )),
+                                              if (widget.itemCurrent != null)
+                                                tableInfo(
+                                                    'Apertura',
+                                                    Text(
+                                                      DateFormat(' dd, MMMM yyyy ', "es_ES").format(widget.itemCurrent!.requestDate!),
+                                                      style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                    )),
                                             ]),
                                       ),
                                       if (widget.itemCurrent != null)
@@ -106,7 +152,11 @@ class _CardExpandedState extends State<CardExpanded> {
                                                       ),
                                                     ),
                                                   ),
-                                                  const ContainerComponent(
+                                                   GestureDetector(
+                                                    onTap: () {
+                                                      getLoanKardex(context, widget.itemCurrent!.id!);
+                                                    },
+                                                    child: const ContainerComponent(
                                                     color: Color(0xff419388),
                                                     child: Padding(
                                                       padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -115,7 +165,7 @@ class _CardExpandedState extends State<CardExpanded> {
                                                         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                                                       ),
                                                     ),
-                                                  ),
+                                                  )),
                                                 ],
                                               )
                                             : Center(
@@ -147,6 +197,15 @@ class _CardExpandedState extends State<CardExpanded> {
     setState(() => stateLoading = false);
     if (response != null) {
       String pathFile = await saveFile('Lonas', 'plandepagos.pdf', response.bodyBytes);
+      await OpenFile.open(pathFile);
+    }
+  }
+  getLoanKardex(BuildContext context, int loanId) async {
+    setState(() => stateLoading = true);
+    var response = await serviceMethod(mounted, context, 'get', null, servicePrintKadex(loanId), true, true);
+    setState(() => stateLoading = false);
+    if (response != null) {
+      String pathFile = await saveFile('Lonas', 'kardex.pdf', response.bodyBytes);
       await OpenFile.open(pathFile);
     }
   }

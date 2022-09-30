@@ -29,7 +29,7 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
             body: Padding(
                 padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
                 child: Column(children: [
-                  const HedersComponent(title: 'Terminos y Condiciones', stateBack: true),
+                  const HedersComponent(title: 'Términos y Condiciones', stateBack: true),
                   Expanded(
                     child: Center(
                       child: SingleChildScrollView(
@@ -43,13 +43,18 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                                       onTap: () => privacyPolicy(context),
                                       child: RichText(
                                           text: TextSpan(children: [
-                                        TextSpan(text: 'Acepto ', style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark, fontSize: 17.sp)),
                                         TextSpan(
-                                            text: 'Términos y condiciones ',
-                                            style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 17.sp)),
+                                            text: 'Acepto ',
+                                            style: TextStyle(
+                                                color: ThemeProvider.themeOf(context).data.primaryColorDark, fontFamily: 'Poppins', fontSize: 17.sp)),
+                                        TextSpan(
+                                            text: 'Términos y Condiciones ',
+                                            style: TextStyle(
+                                                color: Colors.blue, decoration: TextDecoration.underline, fontFamily: 'Poppins', fontSize: 17.sp)),
                                         TextSpan(
                                             text: 'de uso de la aplicación móvil "MUSERPOL PVT"',
-                                            style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark, fontSize: 17.sp))
+                                            style: TextStyle(
+                                                color: ThemeProvider.themeOf(context).data.primaryColorDark, fontFamily: 'Poppins', fontSize: 17.sp))
                                       ])),
                                     ),
                                   )
@@ -62,7 +67,11 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                             OptionTermCondition(
                               onChanged: (val) => setState(() => stateNotificationsPush = !stateNotificationsPush),
                               state: stateNotificationsPush,
-                              child: const Text('Acepto que me envien notificaciones push'),
+                              child: GestureDetector(
+                                onTap: () => setState(() => stateNotificationsPush = !stateNotificationsPush),
+                                child: Text('Acepto que me envien notificaciones',
+                                    style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark)),
+                              ),
                             )
                           ],
                         ),
@@ -71,9 +80,8 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ButtonComponent(
-                        text: 'INGRESAR',
-                        onPressed: stateTermsConditions && stateNotificationsPush ? () =>  getInto(context): null),
+                    child:
+                        ButtonComponent(text: 'INGRESAR', onPressed: stateTermsConditions && stateNotificationsPush ? () => getInto(context) : null),
                   ),
                 ]))));
   }
@@ -88,6 +96,7 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
       await OpenFile.open(pathFile);
     }
   }
+
   getInto(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     await authService.firstTime(context);
