@@ -66,7 +66,8 @@ class _ScreenInboxState extends State<ScreenInbox> {
                       if (notificationBloc.existNotifications)
                         for (final item in notificationBloc
                             .listNotifications!.reversed
-                            .where((e) => e.idAffiliate == prefs!.getInt('affiliateId')!))
+                            .where((e) => e.idAffiliate == prefs!.getInt('affiliateId')!)
+                            )
                           messageWidget(item)
                     ],
                   ),

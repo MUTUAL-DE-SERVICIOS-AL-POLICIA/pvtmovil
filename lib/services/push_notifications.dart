@@ -32,24 +32,27 @@ class PushNotificationService {
   }
 
   static Future _backgroundHandle(RemoteMessage message) async {
+    debugPrint('HOLA');
     debugPrint('_backgroundHandle ${json.encode(message.data)}');
-    debugPrint('AFFILIATE ID ${prefs!.getInt('affiliateId')!}');
+    final affiliateId = await DBProvider.db.getAffiliateModelById();
     final notification = NotificationModel(
         title: message.data['title'],
-        idAffiliate: prefs!.getInt('affiliateId')!,
+        idAffiliate: affiliateId,
         content: json.encode(message.data),
         read: false,
         date: DateTime.now());
+        
     await DBProvider.db.newNotificationModel(notification);
     debugPrint('REGISTRADO');
   }
 
   static _onMessageHandler(RemoteMessage message) async {
-    debugPrint('data from stream: ${message.data}');
-    debugPrint('AFFILIATE ID ${prefs!.getInt('affiliateId')!}');
+    debugPrint('_onMessageHandler ${message.data}');
+    final affiliateId = await DBProvider.db.getAffiliateModelById();
+    // debugPrint('AFFILIATE ID ${prefs!.getInt('affiliateId')!}');
     final notification = NotificationModel(
         title: message.data['title'],
-        idAffiliate: prefs!.getInt('affiliateId')!,
+        idAffiliate: affiliateId,
         content: json.encode(message.data),
         read: false,
         date: DateTime.now());

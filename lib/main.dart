@@ -45,6 +45,8 @@ void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
+  // ignore: invalid_use_of_visible_for_testing_member
+  SharedPreferences.setMockInitialValues({});
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
