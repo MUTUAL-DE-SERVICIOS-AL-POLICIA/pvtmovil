@@ -16,15 +16,13 @@ class TabInfoEconomicComplement extends StatefulWidget {
 }
 
 class _TabInfoEconomicComplementState extends State<TabInfoEconomicComplement> {
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  // final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final procedureBloc = Provider.of<ProcedureBloc>(context, listen: true).state;
     final appState = Provider.of<AppState>(context, listen: true);
     return procedureBloc.existInfoComplementInfo && appState.stateLoadingProcedure
-        ? Form(
-            key: formKey,
-            child: Column(
+        ? Column(
               children: [
                 const Text('Número telefónico:'),
                 InputComponent(
@@ -61,7 +59,7 @@ class _TabInfoEconomicComplementState extends State<TabInfoEconomicComplement> {
                     ),
                     children: [for (var item in procedureBloc.economicComplementInfo!.data!.display!) tableInfo(item.key!, Text('${item.value}'))]),
               ],
-            ))
+            )
         : Center(
             child: Image.asset(
             'assets/images/load.gif',

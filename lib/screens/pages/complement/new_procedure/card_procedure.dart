@@ -27,7 +27,8 @@ import 'package:theme_provider/theme_provider.dart';
 
 class StepperProcedure extends StatefulWidget {
   final Function(dynamic) endProcedure;
-  const StepperProcedure({Key? key, required this.endProcedure}) : super(key: key);
+  const StepperProcedure({Key? key, required this.endProcedure})
+      : super(key: key);
 
   @override
   State<StepperProcedure> createState() => _StepperProcedureState();
@@ -52,9 +53,11 @@ class _StepperProcedureState extends State<StepperProcedure> {
   Future<void> observationAffiliate() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state;
     final procedureBloc = Provider.of<ProcedureBloc>(context, listen: false);
-    var response = await serviceMethod(mounted, context, 'get', null, serviceEcoComProcedure(userBloc.procedureId!), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null,
+        serviceEcoComProcedure(userBloc.procedureId!), true, true);
     if (response != null) {
-      procedureBloc.add(UpdateEconomicComplement(economicComplementModelFromJson(response.body)));
+      procedureBloc.add(UpdateEconomicComplement(
+          economicComplementModelFromJson(response.body)));
       if (userBloc.phone != null) {
         setState(() => phoneCtrl.text = userBloc.phone!);
       }
@@ -64,7 +67,8 @@ class _StepperProcedureState extends State<StepperProcedure> {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: true);
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: true).state.user;
+    final userBloc =
+        BlocProvider.of<UserBloc>(context, listen: true).state.user;
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
@@ -82,12 +86,19 @@ class _StepperProcedureState extends State<StepperProcedure> {
                       physics: const ScrollPhysics(),
                       currentStep: appState.indexTabProcedure,
                       onStepContinue: nextPage,
-                      controlsBuilder: (BuildContext context, ControlsDetails details) {
-                        return appState.indexTabProcedure > 0 ? buttonStep(context, details) : Container();
+                      controlsBuilder:
+                          (BuildContext context, ControlsDetails details) {
+                        return appState.indexTabProcedure > 0
+                            ? buttonStep(context, details)
+                            : Container();
                       },
                       steps: <Step>[
                         Step(
-                          title: Text('Control de vivencia', style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark)),
+                          title: Text('Control de vivencia',
+                              style: TextStyle(
+                                  color: ThemeProvider.themeOf(context)
+                                      .data
+                                      .primaryColorDark)),
                           content: Stack(
                             children: <Widget>[
                               GestureDetector(
@@ -102,20 +113,35 @@ class _StepperProcedureState extends State<StepperProcedure> {
                                         height: 200,
                                       ))),
                               Positioned(
-                                  bottom: 2, right: 0, child: IconBtnComponent(iconText: 'assets/icons/camera.svg', onPressed: () => initCtrlLive()))
+                                  bottom: 2,
+                                  right: 0,
+                                  child: IconBtnComponent(
+                                      iconText: 'assets/icons/camera.svg',
+                                      onPressed: () => initCtrlLive()))
                             ],
                           ),
                           isActive: appState.indexTabProcedure >= 0,
-                          state: appState.indexTabProcedure >= 0 ? StepState.complete : StepState.disabled,
+                          state: appState.indexTabProcedure >= 0
+                              ? StepState.complete
+                              : StepState.disabled,
                         ),
                         if (!userBloc!.verified!)
                           for (var item in appState.files)
                             Step(
-                              title: Text('Documento:', style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark)),
-                              subtitle: Text(item.title!, style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark)),
+                              title: Text('Documento:',
+                                  style: TextStyle(
+                                      color: ThemeProvider.themeOf(context)
+                                          .data
+                                          .primaryColorDark)),
+                              subtitle: Text(item.title!,
+                                  style: TextStyle(
+                                      color: ThemeProvider.themeOf(context)
+                                          .data
+                                          .primaryColorDark)),
                               content: ImageInput(
                                 sizeImage: 250,
-                                onPressed: (img, file) => detectorText(img, file, item),
+                                onPressed: (img, file) =>
+                                    detectorText(img, file, item),
                                 itemFile: item,
                               ),
                               isActive: appState.indexTabProcedure >= 0,
@@ -126,13 +152,19 @@ class _StepperProcedureState extends State<StepperProcedure> {
                                       : StepState.disabled,
                             ),
                         Step(
-                          title: Text('Mis datos', style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark)),
+                          title: Text('Mis datos',
+                              style: TextStyle(
+                                  color: ThemeProvider.themeOf(context)
+                                      .data
+                                      .primaryColorDark)),
                           content: TabInfoEconomicComplement(
                             onEditingComplete: () => nextPage(),
                             phoneCtrl: phoneCtrl,
                           ),
                           isActive: appState.indexTabProcedure >= 0,
-                          state: appState.indexTabProcedure > 2 ? StepState.complete : StepState.disabled,
+                          state: appState.indexTabProcedure > 2
+                              ? StepState.complete
+                              : StepState.disabled,
                         ),
                       ],
                     ),
@@ -145,13 +177,21 @@ class _StepperProcedureState extends State<StepperProcedure> {
   }
 
   Widget buttonStep(BuildContext context, ControlsDetails details) {
-    final procedureBloc = Provider.of<ProcedureBloc>(context, listen: true).state;
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: true).state.user;
+    final procedureBloc =
+        Provider.of<ProcedureBloc>(context, listen: true).state;
+    final userBloc =
+        BlocProvider.of<UserBloc>(context, listen: true).state.user;
     final appState = Provider.of<AppState>(context, listen: true);
     return ButtonComponent(
       stateLoading: buttonLoading,
-      text: (!userBloc!.verified! ? appState.files.length : 0) + 1 == details.stepIndex ? 'ENVIAR' : 'CONTINUAR',
-      onPressed: procedureBloc.existInfoComplementInfo && appState.stateLoadingProcedure ? details.onStepContinue! : null,
+      text: (!userBloc!.verified! ? appState.files.length : 0) + 1 ==
+              details.stepIndex
+          ? 'ENVIAR'
+          : 'CONTINUAR',
+      onPressed: procedureBloc.existInfoComplementInfo &&
+              appState.stateLoadingProcedure
+          ? details.onStepContinue!
+          : null,
     );
   }
 
@@ -190,9 +230,12 @@ class _StepperProcedureState extends State<StepperProcedure> {
               return showSuccessful(context, message, () async {
                 if (userBloc.user!.verified!) {
                   await appState.updateStateLoadingProcedure(true);
-                  await appState.updateTabProcedure(appState.indexTabProcedure + (!userBloc.user!.verified! ? appState.files.length : 0) + 1);
+                  await appState.updateTabProcedure(appState.indexTabProcedure +
+                      (!userBloc.user!.verified! ? appState.files.length : 0) +
+                      1);
                 } else {
-                  await appState.updateTabProcedure(appState.indexTabProcedure + 1);
+                  await appState
+                      .updateTabProcedure(appState.indexTabProcedure + 1);
                 }
                 if (!mounted) return;
                 Navigator.pop(context);
@@ -202,18 +245,24 @@ class _StepperProcedureState extends State<StepperProcedure> {
 
   nextPage() async {
     final appState = Provider.of<AppState>(context, listen: false);
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state.user;
+    final userBloc =
+        BlocProvider.of<UserBloc>(context, listen: false).state.user;
     FocusScope.of(context).unfocus();
-    if (formKey.currentState!.validate() || appState.indexTabProcedure != (!userBloc!.verified! ? appState.files.length : 0) + 1) {
+    if (formKey.currentState!.validate() ||
+        appState.indexTabProcedure !=
+            (userBloc!.verified! ? 0 : appState.files.length) + 1) {
       await appState.updateStateLoadingProcedure(false);
-      if (appState.indexTabProcedure == (!userBloc!.verified! ? appState.files.length : 0) + 1) {
+
+      if (appState.indexTabProcedure ==
+          (userBloc!.verified! ? 0 : appState.files.length) + 1) {
         if (prefs!.getBool('isDoblePerception')!) {
           return confirmDoblePercetionAlert();
         }
         return prepareDocuments();
       } else {
         appState.updateTabProcedure(appState.indexTabProcedure + 1);
-        if (appState.indexTabProcedure == (!userBloc.verified! ? appState.files.length : 0)) {
+        if (appState.indexTabProcedure ==
+            (!userBloc.verified! ? appState.files.length : 0)) {
           await appState.updateStateLoadingProcedure(true);
         } else {
           if (appState.files[appState.indexTabProcedure].imageFile != null) {
@@ -251,27 +300,32 @@ class _StepperProcedureState extends State<StepperProcedure> {
     //VERIFICAMOS QUE LA IMAGEN COINCIDA CON LAS PALABRAS CLAVES
     final appState = Provider.of<AppState>(context, listen: false);
     appState.updateFile(item.id!, fileImage); //ACTUALIZAMOS LA IMAGEN CAPTURADA
-    final recognizedText = await _textRecognizer.processImage(inputImage); //OBTENEMOS EL TEXTO DE LA IMAGEN
+    final recognizedText = await _textRecognizer
+        .processImage(inputImage); //OBTENEMOS EL TEXTO DE LA IMAGEN
     if (item.wordsKey!.isNotEmpty) {
       //CONTIENE PALABRAS CLAVES
       for (var element in item.wordsKey!) {
         // LOOP POR CADA PALABRA CLAVE
         if (recognizedText.text.contains(element)) {
           // VERIFICAMOS SI LA IMAGEN CONTIENE LAS PALABRAS CLAVES
-          await appState.updateStateFiles(item.id!, true); // CAMBIAMOS DE ESTADO
+          await appState.updateStateFiles(
+              item.id!, true); // CAMBIAMOS DE ESTADO
           await appState.updateStateLoadingProcedure(true);
           setState(() => buttonLoading = false);
         } else {
           debugPrint('NO HAY LA PALABRA $element');
-          await appState.updateStateFiles(item.id!, false); // CAMBIAMOS DE ESTADO
-          await appState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+          await appState.updateStateFiles(
+              item.id!, false); // CAMBIAMOS DE ESTADO
+          await appState.updateStateLoadingProcedure(
+              false); //OCULTAMOS EL BTN DE CONTINUAR
           setState(() => buttonLoading = false);
           return;
         }
       }
     } else {
       //NO CONTIENE PALABRAS CLAVES
-      await appState.updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
+      await appState
+          .updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
       setState(() => buttonLoading = false);
     }
   }
@@ -308,7 +362,8 @@ class _StepperProcedureState extends State<StepperProcedure> {
       'cell_phone_number': phoneCtrl.text.trim(),
       'attachments': info,
     };
-    var response = await serviceMethod(mounted, context, 'post', data, serviceSendImagesProcedure(), true, true);
+    var response = await serviceMethod(mounted, context, 'post', data,
+        serviceSendImagesProcedure(), true, true);
     if (response != null) {
       appState.updateStateProcessing(false);
       if (!mounted) return;
