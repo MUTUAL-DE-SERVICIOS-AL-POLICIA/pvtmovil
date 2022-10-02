@@ -41,7 +41,12 @@ class ScreenLogin extends StatefulWidget {
   final String title;
   final bool stateOfficeVirtual;
   final String deviceId;
-  const ScreenLogin({Key? key, required this.title, this.stateOfficeVirtual = true, required this.deviceId}) : super(key: key);
+  const ScreenLogin(
+      {Key? key,
+      required this.title,
+      this.stateOfficeVirtual = true,
+      required this.deviceId})
+      : super(key: key);
 
   @override
   State<ScreenLogin> createState() => _ScreenLoginState();
@@ -82,13 +87,16 @@ class _ScreenLoginState extends State<ScreenLogin> {
     if (await authService.readBiometric() != "") {
       debugPrint('state ${widget.stateOfficeVirtual}');
       if (widget.stateOfficeVirtual) {
-        if (biometricUserModelFromJson(await authService.readBiometric()).biometricVirtualOfficine!) {
+        if (biometricUserModelFromJson(await authService.readBiometric())
+            .biometricVirtualOfficine!) {
           //BIOMETICO OFICINA VIRTUAL
           _authenticate();
         }
       } else {
-        debugPrint('${biometricUserModelFromJson(await authService.readBiometric()).biometricComplement}');
-        if (biometricUserModelFromJson(await authService.readBiometric()).biometricComplement!) {
+        debugPrint(
+            '${biometricUserModelFromJson(await authService.readBiometric()).biometricComplement}');
+        if (biometricUserModelFromJson(await authService.readBiometric())
+            .biometricComplement!) {
           //BIOMETICO COMPLEMENTO
           _authenticate();
         }
@@ -125,7 +133,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
       return;
     }
     if (authenticated) {
-      final biometric = biometricUserModelFromJson(await authService.readBiometric());
+      final biometric =
+          biometricUserModelFromJson(await authService.readBiometric());
       if (widget.stateOfficeVirtual) {
         setState(() {
           dniCtrl.text = biometric.userVirtualOfficine!.identityCard!;
@@ -159,10 +168,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
                   tag: 'image',
                   child: Image(
                     image: AssetImage(
-                      ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
+                      ThemeProvider.themeOf(context).id.contains('dark')
+                          ? 'assets/images/muserpol-logo.png'
+                          : 'assets/images/muserpol-logo2.png',
                     ),
                   )),
-              Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(widget.title,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(
                 height: 20.h,
               ),
@@ -180,7 +192,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                 child: InputComponent(
                                   textInputAction: TextInputAction.next,
                                   controllerText: dniCtrl,
-                                  onEditingComplete: () => dniComplement ? node.nextFocus() : selectDate(context),
+                                  onEditingComplete: () => dniComplement
+                                      ? node.nextFocus()
+                                      : selectDate(context),
                                   validator: (value) {
                                     if (value.length > 3) {
                                       return null;
@@ -188,9 +202,14 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                       return 'Ingrese su cédula de indentidad';
                                     }
                                   },
-                                  inputFormatters: [LengthLimitingTextInputFormatter(10), FilteringTextInputFormatter.allow(RegExp("[0-9]"))],
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(10),
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp("[0-9]"))
+                                  ],
                                   keyboardType: TextInputType.number,
-                                  textCapitalization: TextCapitalization.characters,
+                                  textCapitalization:
+                                      TextCapitalization.characters,
                                   icon: Icons.person,
                                   labelText: "Cédula de indentidad",
                                 ),
@@ -198,17 +217,25 @@ class _ScreenLoginState extends State<ScreenLogin> {
                               if (dniComplement)
                                 Text(
                                   '  _  ',
-                                  style: TextStyle(fontSize: 15.sp, color: const Color(0xff419388)),
+                                  style: TextStyle(
+                                      fontSize: 15.sp,
+                                      color: const Color(0xff419388)),
                                 ),
                               if (dniComplement)
                                 SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3.4,
+                                  width:
+                                      MediaQuery.of(context).size.width / 3.4,
                                   child: InputComponent(
                                     focusNode: textSecondFocusNode,
                                     textInputAction: TextInputAction.next,
                                     controllerText: dniComCtrl,
-                                    inputFormatters: [LengthLimitingTextInputFormatter(2), FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]"))],
-                                    onEditingComplete: () => selectDate(context),
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(2),
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp("[0-9a-zA-Z]"))
+                                    ],
+                                    onEditingComplete: () =>
+                                        selectDate(context),
                                     validator: (value) {
                                       if (value.isNotEmpty) {
                                         return null;
@@ -217,7 +244,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                       }
                                     },
                                     keyboardType: TextInputType.text,
-                                    textCapitalization: TextCapitalization.characters,
+                                    textCapitalization:
+                                        TextCapitalization.characters,
                                     icon: Icons.person,
                                     labelText: "Complemento",
                                   ),
@@ -232,13 +260,17 @@ class _ScreenLoginState extends State<ScreenLogin> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text('Fecha de nacimiento:'),
-                                ButtonDate(text: dateCtrl, onPressed: () => selectDate(context)),
+                                ButtonDate(
+                                    text: dateCtrl,
+                                    onPressed: () => selectDate(context)),
                                 if (dateState)
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15),
                                     child: Text(
                                       'Ingrese su fecha de nacimiento',
-                                      style: TextStyle(color: Colors.red, fontSize: 15.sp),
+                                      style: TextStyle(
+                                          color: Colors.red, fontSize: 15.sp),
                                     ),
                                   ),
                               ],
@@ -267,8 +299,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                     icon: Icons.lock,
                                     labelText: "Contraseña",
                                     obscureText: hidePassword,
-                                    onTap: () => setState(() => hidePassword = !hidePassword),
-                                    iconOnTap: hidePassword ? Icons.lock_outline : Icons.lock_open_sharp),
+                                    onTap: () => setState(
+                                        () => hidePassword = !hidePassword),
+                                    iconOnTap: hidePassword
+                                        ? Icons.lock_outline
+                                        : Icons.lock_open_sharp),
                                 SizedBox(
                                   height: 20.h,
                                 ),
@@ -277,16 +312,21 @@ class _ScreenLoginState extends State<ScreenLogin> {
                           SizedBox(
                             height: 10.h,
                           ),
-                          ButtonComponent(text: 'INGRESAR', onPressed: () => initSession()),
+                          ButtonComponent(
+                              text: 'INGRESAR', onPressed: () => initSession()),
                           SizedBox(
                             height: 20.h,
                           ),
                           Center(
-                            child:
-                                ButtonWhiteComponent(text: 'Contactos a nivel nacional', onPressed: () => Navigator.pushNamed(context, 'contacts')),
+                            child: ButtonWhiteComponent(
+                                text: 'Contactos a nivel nacional',
+                                onPressed: () =>
+                                    Navigator.pushNamed(context, 'contacts')),
                           ),
                           Center(
-                            child: ButtonWhiteComponent(text: 'Política de privacidad', onPressed: () => privacyPolicy(context)),
+                            child: ButtonWhiteComponent(
+                                text: 'Política de privacidad',
+                                onPressed: () => privacyPolicy(context)),
                           ),
                           SizedBox(
                             height: 10.h,
@@ -327,10 +367,12 @@ class _ScreenLoginState extends State<ScreenLogin> {
   privacyPolicy(BuildContext context) async {
     setState(() => btnAccess = false);
 
-    var response = await serviceMethod(mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, false);
+    var response = await serviceMethod(
+        mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, false);
     setState(() => btnAccess = true);
     if (response != null) {
-      String pathFile = await saveFile('Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
+      String pathFile = await saveFile(
+          'Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
       await OpenFile.open(pathFile);
     }
   }
@@ -344,7 +386,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
             onDateTimeChanged: (DateTime newDataTime) {
               setState(() {
                 currentDate = newDataTime;
-                dateCtrl = DateFormat(' dd, MMMM yyyy ', "es_ES").format(newDataTime);
+                dateCtrl =
+                    DateFormat(' dd, MMMM yyyy ', "es_ES").format(newDataTime);
                 dateState = false;
               });
             }));
@@ -360,7 +403,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
               child: const Text('Elegir'),
               onPressed: () {
                 setState(() {
-                  dateCtrl = DateFormat(' dd, MMMM yyyy ', "es_ES").format(currentDate);
+                  dateCtrl = DateFormat(' dd, MMMM yyyy ', "es_ES")
+                      .format(currentDate);
                   dateCtrlText = DateFormat('dd-MM-yyyy').format(currentDate);
                 });
                 Navigator.of(context, rootNavigator: true).pop("Discard");
@@ -377,7 +421,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
     if (formKey.currentState!.validate()) {
       if (dateCtrlText == null && !widget.stateOfficeVirtual) return;
       setState(() => btnAccess = false);
-      if (await InternetConnectionChecker().connectionStatus == InternetConnectionStatus.disconnected) {
+      if (await InternetConnectionChecker().connectionStatus ==
+          InternetConnectionStatus.disconnected) {
         setState(() => btnAccess = true);
         return callDialogAction(context, 'Verifique su conexión a Internet');
       }
@@ -386,23 +431,40 @@ class _ScreenLoginState extends State<ScreenLogin> {
       body['device_id'] = widget.deviceId;
       body['firebase_token'] = await PushNotificationService.getTokenFirebase();
       if (!widget.stateOfficeVirtual) {
-        body['identity_card'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
+        body['identity_card'] =
+            '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
         body['birth_date'] = dateCtrlText;
         body['is_new_app'] = true;
       } else {
-        body['username'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
+        body['username'] =
+            '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
         body['password'] = passwordCtrl.text.trim();
       }
       if (!mounted) return;
       var response = await serviceMethod(
-          mounted, context, 'post', body, widget.stateOfficeVirtual ? serviceAuthSessionOF() : serviceAuthSession(null), false, true);
+          mounted,
+          context,
+          'post',
+          body,
+          widget.stateOfficeVirtual
+              ? serviceAuthSessionOF()
+              : serviceAuthSession(null),
+          false,
+          true);
       setState(() => btnAccess = true);
       if (response != null) {
         await DBProvider.db.database;
         if (widget.stateOfficeVirtual) {
-          initSessionVirtualOfficine(response, UserVirtualOfficine(identityCard: body['username'], password: body['password']));
+          initSessionVirtualOfficine(
+              response,
+              UserVirtualOfficine(
+                  identityCard: body['username'], password: body['password']));
         } else {
-          intSessionComplement(response, UserComplement(identityCard: body['identity_card'], dateBirth: body['birth_date']));
+          intSessionComplement(
+              response,
+              UserComplement(
+                  identityCard: body['identity_card'],
+                  dateBirth: body['birth_date']));
         }
       }
     }
@@ -412,7 +474,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
     final appState = Provider.of<AppState>(context, listen: false);
-    UserModel user = userModelFromJson(json.encode(json.decode(response.body)['data']));
+    UserModel user =
+        userModelFromJson(json.encode(json.decode(response.body)['data']));
     await authService.auxtoken(user.apiToken!);
     appState.updateStateAuxToken(true);
     userBloc.add(UpdateUser(user.user!));
@@ -420,22 +483,31 @@ class _ScreenLoginState extends State<ScreenLogin> {
     await authService.user(context, userModelToJson(user));
     final biometric = await authService.readBiometric();
     final biometricUserModel = BiometricUserModel(
-        biometricComplement: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricComplement,
-        biometricVirtualOfficine: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
+        biometricComplement: biometric == ''
+            ? false
+            : biometricUserModelFromJson(biometric).biometricComplement,
+        biometricVirtualOfficine: biometric == ''
+            ? false
+            : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
         affiliateId: user.user!.id,
         userComplement: userComplement,
-        userVirtualOfficine: biometric == '' ? UserVirtualOfficine() : biometricUserModelFromJson(biometric).userVirtualOfficine);
+        userVirtualOfficine: biometric == ''
+            ? UserVirtualOfficine()
+            : biometricUserModelFromJson(biometric).userVirtualOfficine);
     prefs!.setInt('affiliateId', user.user!.id!);
-    prefs!.setBool('isDoblePerception', json.decode(response.body)['data']['is_doble_perception']);
+    prefs!.setBool('isDoblePerception',
+        json.decode(response.body)['data']['is_doble_perception']);
     if (!mounted) return;
-    await authService.biometric(context, biometricUserModelToJson(biometricUserModel));
+    await authService.biometric(
+        context, biometricUserModelToJson(biometricUserModel));
     if (response.statusCode == 200) {
-      if (!mounted) return;
-      await authService.stateApp(context, 'complement');
       if (!json.decode(response.body)['data']['user']['enrolled']) {
         //proceso de enrolamiento
-        _showModalInside(user.apiToken!, false, await PushNotificationService.getTokenFirebase());
+        _showModalInside(user.apiToken!, false,
+            await PushNotificationService.getTokenFirebase());
       } else {
+        if (!mounted) return;
+        await authService.writeStateApp(context, 'complement');
         if (!mounted) return;
         await authService.login(context, user.apiToken!, body);
         appState.updateStateAuxToken(false);
@@ -443,12 +515,15 @@ class _ScreenLoginState extends State<ScreenLogin> {
         return Navigator.pushReplacement(
             context,
             PageRouteBuilder(
-                pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
+                pageBuilder: (_, __, ___) =>
+                    const NavigatorBar(stateApp: 'complement'),
+                transitionDuration: const Duration(seconds: 0)));
       }
     } else {
       if (json.decode(response.body)['data']['update_device_id']) {
         //reconocimiento facial
-        return _showModalInside(user.apiToken!, true, await PushNotificationService.getTokenFirebase());
+        return _showModalInside(user.apiToken!, true,
+            await PushNotificationService.getTokenFirebase());
       } else {
         if (!mounted) return;
         return callDialogAction(context, json.decode(response.body)['message']);
@@ -456,7 +531,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
     }
   }
 
-  _showModalInside(String token, bool facialRecognition, String firebaseToken) async {
+  _showModalInside(
+      String token, bool facialRecognition, String firebaseToken) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final appState = Provider.of<AppState>(context, listen: false);
     await Future.delayed(const Duration(milliseconds: 50));
@@ -472,18 +548,23 @@ class _ScreenLoginState extends State<ScreenLogin> {
           nextScreen: (message) {
             return showSuccessful(context, message, () async {
               await authService.login(context, token, body);
+              if (!mounted) return;
+              await authService.writeStateApp(context, 'complement');
               appState.updateStateAuxToken(false);
               if (!mounted) return;
               Navigator.pushReplacement(
                   context,
                   PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
+                      pageBuilder: (_, __, ___) =>
+                          const NavigatorBar(stateApp: 'complement'),
+                      transitionDuration: const Duration(seconds: 0)));
             });
           }),
     );
   }
 
-  initSessionVirtualOfficine(dynamic response, UserVirtualOfficine userVirtualOfficine) async {
+  initSessionVirtualOfficine(
+      dynamic response, UserVirtualOfficine userVirtualOfficine) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final appState = Provider.of<AppState>(context, listen: false);
     appState.updateStateAuxToken(false);
@@ -491,26 +572,39 @@ class _ScreenLoginState extends State<ScreenLogin> {
       case 'Pendiente':
         return virtualOfficineUpdatePwd(json.decode(response.body)['message']);
       case 'Activo':
-      debugPrint('${ json.decode(response.body)['data']['user']['api_token']}');
+        debugPrint(
+            '${json.decode(response.body)['data']['user']['api_token']}');
         if (!mounted) return;
-        await authService.login(context, json.decode(response.body)['data']['user']['api_token'], body);
+        await authService.login(context,
+            json.decode(response.body)['data']['user']['api_token'], body);
         if (!mounted) return;
-        await authService.stateApp(context, 'virtualofficine');
+        await authService.writeStateApp(context, 'virtualofficine');
         final biometric = await authService.readBiometric();
         final biometricUserModel = BiometricUserModel(
-            biometricVirtualOfficine: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
-            biometricComplement: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricComplement,
-            affiliateId: json.decode(response.body)['data']['user']['affiliate_id'],
-            userComplement: biometric == '' ? UserComplement() : biometricUserModelFromJson(biometric).userComplement,
+            biometricVirtualOfficine: biometric == ''
+                ? false
+                : biometricUserModelFromJson(biometric)
+                    .biometricVirtualOfficine,
+            biometricComplement: biometric == ''
+                ? false
+                : biometricUserModelFromJson(biometric).biometricComplement,
+            affiliateId: json.decode(response.body)['data']['user']
+                ['affiliate_id'],
+            userComplement: biometric == ''
+                ? UserComplement()
+                : biometricUserModelFromJson(biometric).userComplement,
             userVirtualOfficine: userVirtualOfficine);
-        prefs!.setInt('affiliateId', json.decode(response.body)['data']['user']['affiliate_id']);
+        prefs!.setInt('affiliateId',
+            json.decode(response.body)['data']['user']['affiliate_id']);
         if (!mounted) return;
-        await authService.biometric(context, biometricUserModelToJson(biometricUserModel));
+        await authService.biometric(
+            context, biometricUserModelToJson(biometricUserModel));
         if (!mounted) return;
         return Navigator.pushReplacement(
             context,
             PageRouteBuilder(
-                pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'virtualofficine'),
+                pageBuilder: (_, __, ___) =>
+                    const NavigatorBar(stateApp: 'virtualofficine'),
                 transitionDuration: const Duration(seconds: 0)));
     }
   }
@@ -525,10 +619,12 @@ class _ScreenLoginState extends State<ScreenLogin> {
           message: message,
           onPressed: (password) async {
             body['new_password'] = password;
-            var response = await serviceMethod(mounted, context, 'patch', body, serviceChangePasswordOF(), false, true);
+            var response = await serviceMethod(mounted, context, 'patch', body,
+                serviceChangePasswordOF(), false, true);
             if (response != null) {
               if (!mounted) return;
-              return showSuccessful(context, json.decode(response.body)['message'], () {
+              return showSuccessful(
+                  context, json.decode(response.body)['message'], () {
                 debugPrint('res ${response.body}');
                 setState(() => passwordCtrl.text = '');
                 Navigator.of(context).pop();

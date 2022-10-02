@@ -53,7 +53,7 @@ class _ScreenNotificationState extends State<ScreenNotification> {
                         .replaceAll(RegExp('{{pension_entity}}'), userBloc.pensionEntity)
                         .replaceAll(RegExp('{{category}}'), userBloc.category),
                     textAlign: TextAlign.justify,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
                 if (args['text'].length > 0)

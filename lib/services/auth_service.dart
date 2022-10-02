@@ -10,7 +10,7 @@ class AuthService extends ChangeNotifier {
     await storage.write(key: 'biometric', value: value);
   }
 
-  Future stateApp(BuildContext context, String value) async {
+  Future writeStateApp(BuildContext context, String value) async {
     await storage.write(key: 'stateApp', value: value);
     return;
   }
