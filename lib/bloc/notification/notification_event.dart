@@ -13,3 +13,8 @@ class UpdateNotifications extends NotificationEvent {
 
   UpdateNotifications(this.listNotification);
 }
+
+class UpdateAffiliateId extends NotificationEvent {
+  final int affiliateId;
+  UpdateAffiliateId(this.affiliateId);
+}

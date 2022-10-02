@@ -200,6 +200,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
   @override
   Widget build(BuildContext context) {
     final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: true).state;
+      
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
@@ -208,7 +209,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
             animationDuration: const Duration(milliseconds: 300),
             animationType: BadgeAnimationType.slide,
             badgeColor: notificationBloc.existNotifications
-                ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == prefs!.getInt('affiliateId')!).isNotEmpty
+                ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId).isNotEmpty
                     ? Colors.red
                     : Colors.transparent
                 : Colors.transparent,
@@ -216,7 +217,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
             badgeContent: notificationBloc.existNotifications && notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
                 ? Text(
                     notificationBloc.listNotifications!
-                        .where((e) => e.read == false && e.idAffiliate == prefs!.getInt('affiliateId')!)
+                        .where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId)
                         .length
                         .toString(),
                     style: const TextStyle(color: Colors.white),

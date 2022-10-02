@@ -11,6 +11,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/input.dart';
@@ -473,6 +474,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   intSessionComplement(dynamic response, UserComplement userComplement) async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    final notificationBloc =
+        BlocProvider.of<NotificationBloc>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
     final appState = Provider.of<AppState>(context, listen: false);
     UserModel user =
@@ -498,6 +501,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
     prefs!.setInt('affiliateId', user.user!.id!);
     final affiliateModel = AffiliateModel(idAffiliate: user.user!.id!);
     await DBProvider.db.newAffiliateModel(affiliateModel);
+    notificationBloc.add(UpdateAffiliateId(user.user!.id!));
     prefs!.setBool('isDoblePerception',
         json.decode(response.body)['data']['is_doble_perception']);
     if (!mounted) return;
@@ -568,6 +572,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   initSessionVirtualOfficine(
       dynamic response, UserVirtualOfficine userVirtualOfficine) async {
+    final notificationBloc =
+        BlocProvider.of<NotificationBloc>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
     final appState = Provider.of<AppState>(context, listen: false);
     appState.updateStateAuxToken(false);
@@ -603,6 +609,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
             idAffiliate: json.decode(response.body)['data']['user']
                 ['affiliate_id']);
         await DBProvider.db.newAffiliateModel(affiliateModel);
+        notificationBloc.add(UpdateAffiliateId(
+            json.decode(response.body)['data']['user']['affiliate_id']));
         if (!mounted) return;
         await authService.biometric(
             context, biometricUserModelToJson(biometricUserModel));

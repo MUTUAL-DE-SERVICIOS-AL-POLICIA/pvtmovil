@@ -97,7 +97,13 @@ class DBProvider {
         ? res.map((c) => NotificationModel.fromJson(c)).toList()
         : [];
   }
-
+  Future<List<AffiliateModel>> getAllAffiliateModel() async {
+    final db = await database;
+    final res = await db.query('affiliate');
+    return res.isNotEmpty
+        ? res.map((c) => AffiliateModel.fromJson(c)).toList()
+        : [];
+  }
   //ACTUALIZAR DATOS SEGUN EL ID
   Future<int> updateNotificationModel(NotificationModel data) async {
     final db = await database;

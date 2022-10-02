@@ -49,7 +49,6 @@ class PushNotificationService {
   static _onMessageHandler(RemoteMessage message) async {
     debugPrint('_onMessageHandler ${message.data}');
     final affiliateId = await DBProvider.db.getAffiliateModelById();
-    // debugPrint('AFFILIATE ID ${prefs!.getInt('affiliateId')!}');
     final notification = NotificationModel(
         title: message.data['title'],
         idAffiliate: affiliateId,
