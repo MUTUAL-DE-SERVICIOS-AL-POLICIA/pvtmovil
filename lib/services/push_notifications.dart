@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
+import 'package:muserpol_pvt/main.dart';
 // import 'package:muserpol_pvt/main.dart';
 
 class PushNotificationService {
@@ -35,9 +36,10 @@ class PushNotificationService {
   static Future<void> _backgroundHandle(RemoteMessage message) async {
     debugPrint('HOLA');
     debugPrint('_backgroundHandle ${json.encode(message.data)}');
+    final affiliateId = await DBProvider.db.getAffiliateModelById();
     final notification = NotificationModel(
         title: message.data['title'],
-        idAffiliate: 1,
+        idAffiliate: affiliateId,
         content: json.encode(message.data),
         read: false,
         date: DateTime.now());
@@ -48,9 +50,10 @@ class PushNotificationService {
 
   static _onMessageHandler(RemoteMessage message) async {
     debugPrint('_onMessageHandler ${message.data}');
+    final affiliateId = await DBProvider.db.getAffiliateModelById();
     final notification = NotificationModel(
         title: message.data['title'],
-        idAffiliate: 1,
+        idAffiliate: affiliateId,
         content: json.encode(message.data),
         read: false,
         date: DateTime.now());

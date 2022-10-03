@@ -16,6 +16,7 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
+import 'package:muserpol_pvt/database/affiliate_model.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/biometric_user_model.dart';
@@ -498,6 +499,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
             ? UserVirtualOfficine()
             : biometricUserModelFromJson(biometric).userVirtualOfficine);
     prefs!.setInt('affiliateId', user.user!.id!);
+        final affiliateModel = AffiliateModel(idAffiliate: user.user!.id!);
+    await DBProvider.db.newAffiliateModel(affiliateModel);
+    notificationBloc.add(UpdateAffiliateId(user.user!.id!));
     prefs!.setBool('isDoblePerception',
         json.decode(response.body)['data']['is_doble_perception']);
     if (!mounted) return;
@@ -601,6 +605,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
             userVirtualOfficine: userVirtualOfficine);
         prefs!.setInt('affiliateId',
             json.decode(response.body)['data']['user']['affiliate_id']);
+            final affiliateModel = AffiliateModel(idAffiliate: json.decode(response.body)['data']['user']['affiliate_id']);
+    await DBProvider.db.newAffiliateModel(affiliateModel);
+    notificationBloc.add(UpdateAffiliateId(json.decode(response.body)['data']['user']['affiliate_id']));
         if (!mounted) return;
         await authService.biometric(
             context, biometricUserModelToJson(biometricUserModel));

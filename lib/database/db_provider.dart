@@ -1,5 +1,6 @@
 import 'dart:io';
 // ignore: depend_on_referenced_packages
+import 'package:muserpol_pvt/database/affiliate_model.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:muserpol_pvt/database/notification_model.dart';
@@ -24,10 +25,16 @@ class DBProvider {
 
   Future<Database> initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = p.join(documentsDirectory.path, 'muserpolpvt.db');
+    final path = p.join(documentsDirectory.path, 'muserpolpvt1.db');
     debugPrint('path $path');
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
+              await db.execute('''
+            CREATE TABLE affiliate(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              idAffiliate INTEGER
+            )
+          ''');
       await db.execute('''
             CREATE TABLE notification(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,7 +47,22 @@ class DBProvider {
           ''');
     });
   }
-
+  //GUARDAR INFO AFFILIADO
+  Future<int> newAffiliateModel(AffiliateModel data) async {
+    final db = await database;
+    await db.execute('''
+        DROP TABLE affiliate
+    ''');
+    await db.execute('''
+            CREATE TABLE affiliate(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              idAffiliate INTEGER
+            )
+          ''');
+    var noti = data.toJson();
+    final res = await db.insert('affiliate', noti);
+    return res;
+  }
   //GUARDAR INFO NOTIFICACION
   Future<int> newNotificationModel(NotificationModel data) async {
     final db = await database;
@@ -57,6 +79,12 @@ class DBProvider {
         await db.query('notification', where: 'id = ?', whereArgs: [id]);
     return NotificationModel.fromJson(res.first);
   }
+  //OBTENER DATOS DEL AFILIADO SEGUN EL ID
+  Future<int> getAffiliateModelById() async {
+    final db = await database;
+    final res = await db.query('affiliate');
+    return AffiliateModel.fromJson(res.first).idAffiliate;
+  }
   //OBTENER TODOS LOS DATOS
   Future<List<NotificationModel>> getAllNotificationModel() async {
     final db = await database;
@@ -65,7 +93,13 @@ class DBProvider {
         ? res.map((c) => NotificationModel.fromJson(c)).toList()
         : [];
   }
-
+  Future<List<AffiliateModel>> getAllAffiliateModel() async {
+    final db = await database;
+    final res = await db.query('affiliate');
+    return res.isNotEmpty
+        ? res.map((c) => AffiliateModel.fromJson(c)).toList()
+        : [];
+  }
   //ACTUALIZAR DATOS SEGUN EL ID
   Future<int> updateNotificationModel(NotificationModel data) async {
     final db = await database;

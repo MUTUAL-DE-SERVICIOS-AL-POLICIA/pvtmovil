@@ -209,7 +209,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
             animationDuration: const Duration(milliseconds: 300),
             animationType: BadgeAnimationType.slide,
             badgeColor: notificationBloc.existNotifications
-                ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == 1).isNotEmpty
+                ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId).isNotEmpty
                     ? Colors.red
                     : Colors.transparent
                 : Colors.transparent,
@@ -217,7 +217,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
             badgeContent: notificationBloc.existNotifications && notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
                 ? Text(
                     notificationBloc.listNotifications!
-                        .where((e) => e.read == false && e.idAffiliate == 1)
+                        .where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId)
                         .length
                         .toString(),
                     style: const TextStyle(color: Colors.white),
@@ -263,7 +263,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
                           isIconBlend: true,
                           icon: SvgPicture.asset(
                             'assets/icons/newProcedure.svg',
-                            height: 30.sp,
+                            height: 25.sp,
                             color: Colors.white,
                           ),
                           title: "Solicitud de Pago"),
@@ -271,7 +271,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
                           isIconBlend: true,
                           icon: SvgPicture.asset(
                             'assets/icons/historyProcedure.svg',
-                            height: 30.sp,
+                            height: 25.sp,
                             color: Colors.white,
                           ),
                           title: "Trámites Históricos"),

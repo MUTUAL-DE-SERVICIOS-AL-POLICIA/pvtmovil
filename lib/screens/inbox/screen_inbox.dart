@@ -38,7 +38,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
             
             if (notificationBloc.existNotifications)
               Text(
-                  '${notificationBloc.listNotifications!.where((e) => e.idAffiliate == 1).isEmpty ? 'Sin' : notificationBloc.listNotifications!.where((e) => e.idAffiliate == 1).length} Notificación(es)',
+                  '${notificationBloc.listNotifications!.where((e) => e.idAffiliate == notificationBloc.affiliateId).isEmpty ? 'Sin' : notificationBloc.listNotifications!.where((e) => e.idAffiliate == notificationBloc.affiliateId).length} Notificación(es)',
                   style: const TextStyle(
                       fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
             Expanded(
@@ -66,7 +66,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
                       if (notificationBloc.existNotifications)
                         for (final item in notificationBloc
                             .listNotifications!.reversed
-                            .where((e) => e.idAffiliate == 1)
+                            .where((e) => e.idAffiliate == notificationBloc.affiliateId)
                             )
                           messageWidget(item)
                     ],
