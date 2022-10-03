@@ -209,7 +209,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
             animationDuration: const Duration(milliseconds: 300),
             animationType: BadgeAnimationType.slide,
             badgeColor: notificationBloc.existNotifications
-                ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId).isNotEmpty
+                ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == 1).isNotEmpty
                     ? Colors.red
                     : Colors.transparent
                 : Colors.transparent,
@@ -217,7 +217,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
             badgeContent: notificationBloc.existNotifications && notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
                 ? Text(
                     notificationBloc.listNotifications!
-                        .where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId)
+                        .where((e) => e.read == false && e.idAffiliate == 1)
                         .length
                         .toString(),
                     style: const TextStyle(color: Colors.white),

@@ -17,6 +17,5 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       emit(state.copyWith(
           existNotifications: true, listNotifications: event.listNotification));
     });
-    on<UpdateAffiliateId>((event, emit)=>emit(state.copyWith(affiliateId: event.affiliateId)));
   }
 }

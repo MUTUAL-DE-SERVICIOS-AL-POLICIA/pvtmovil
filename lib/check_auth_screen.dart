@@ -31,10 +31,6 @@ class CheckAuthScreen extends StatelessWidget {
             } else {
               final notificationBloc = BlocProvider.of<NotificationBloc>(context);
               DBProvider.db.getAllNotificationModel().then((res) => notificationBloc.add(UpdateNotifications(res)));
-
-              DBProvider.db.getAllAffiliateModel().then((res)=>notificationBloc.add(UpdateAffiliateId(res[0].idAffiliate)));
-
-
               Future.microtask(() {
                 return getInfo(context);
               });

@@ -34,10 +34,9 @@ class PushNotificationService {
   static Future _backgroundHandle(RemoteMessage message) async {
     debugPrint('HOLA');
     debugPrint('_backgroundHandle ${json.encode(message.data)}');
-    final affiliateId = await DBProvider.db.getAffiliateModelById();
     final notification = NotificationModel(
         title: message.data['title'],
-        idAffiliate: affiliateId,
+        idAffiliate: 1,
         content: json.encode(message.data),
         read: false,
         date: DateTime.now());
@@ -48,10 +47,9 @@ class PushNotificationService {
 
   static _onMessageHandler(RemoteMessage message) async {
     debugPrint('_onMessageHandler ${message.data}');
-    final affiliateId = await DBProvider.db.getAffiliateModelById();
     final notification = NotificationModel(
         title: message.data['title'],
-        idAffiliate: affiliateId,
+        idAffiliate: 1,
         content: json.encode(message.data),
         read: false,
         date: DateTime.now());
