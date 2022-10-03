@@ -45,12 +45,10 @@ void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
-  // ignore: invalid_use_of_visible_for_testing_member
-  SharedPreferences.setMockInitialValues({});
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+PushNotificationService.initializeapp();
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
@@ -100,7 +98,7 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver{
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    PushNotificationService.initializeapp();
+    
     PushNotificationService.messagesStream.listen((message) {
       debugPrint('NO TI FI CA CION $message');
       final msg = json.decode(message);
