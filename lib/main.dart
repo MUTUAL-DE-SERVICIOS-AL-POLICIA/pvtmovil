@@ -11,6 +11,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:muserpol_pvt/bloc/contribution/contribution_bloc.dart';
 import 'package:muserpol_pvt/bloc/loan/loan_bloc.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
+import 'package:muserpol_pvt/provider/files_state.dart';
+import 'package:muserpol_pvt/provider/token_state.dart';
 import 'package:muserpol_pvt/screens/inbox/notification.dart';
 import 'package:muserpol_pvt/screens/switch.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
@@ -73,6 +75,8 @@ class MyApp extends StatelessWidget {
         child: MultiProvider(providers: [
           ChangeNotifierProvider(create: (_) => AuthService()),
           ChangeNotifierProvider(create: (_) => AppState()),
+          ChangeNotifierProvider(create: (_) => TokenState()),
+          ChangeNotifierProvider(create: (_) => FilesState()),
         ], child: const Muserpol()));
   }
 }

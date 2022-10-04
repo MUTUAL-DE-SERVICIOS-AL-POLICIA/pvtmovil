@@ -69,18 +69,20 @@ class _CardExpandedState extends State<CardExpanded> {
                                                 widget.contribution.quotable!,
                                                 style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
                                               )),
-                                          // tableInfo(
-                                          //     'Fondo de retiro',
-                                          //     Text(
-                                          //       widget.contribution.retirementFund!,
-                                          //       style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
-                                          //     )),
-                                          // tableInfo(
-                                          //     'Cuota mortuoria',
-                                          //     Text(
-                                          //       widget.contribution.mortuaryQuota!,
-                                          //       style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
-                                          //     )),
+                                          if (widget.contribution.state == 'ACTIVO')
+                                            tableInfo(
+                                                'Fondo de retiro',
+                                                Text(
+                                                  widget.contribution.retirementFund!,
+                                                  style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                )),
+                                          if (widget.contribution.state == 'ACTIVO')
+                                            tableInfo(
+                                                'Cuota mortuoria',
+                                                Text(
+                                                  widget.contribution.mortuaryQuota!,
+                                                  style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                )),
                                           tableInfo(
                                               'Total',
                                               Text(

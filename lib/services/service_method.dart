@@ -14,6 +14,8 @@ import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/dialogs/dialog_action.dart';
 import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
+import 'package:muserpol_pvt/provider/files_state.dart';
+import 'package:muserpol_pvt/provider/token_state.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/services.dart';
@@ -21,20 +23,14 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<dynamic> serviceMethod(
-    bool mounted,
-    BuildContext context,
-    String method,
-    Map<String, dynamic>? body,
-    String urlAPI,
-    bool accessToken,
-    bool errorState) async {
+    bool mounted, BuildContext context, String method, Map<String, dynamic>? body, String urlAPI, bool accessToken, bool errorState) async {
   final Map<String, String> headers = {
     "Content-Type": "application/json",
   };
   if (accessToken) {
     final authService = Provider.of<AuthService>(context, listen: false);
-    final appState = Provider.of<AppState>(context, listen: false);
-    if (appState.stateAuxToken) {
+    final tokenState = Provider.of<TokenState>(context, listen: false);
+    if (tokenState.stateAuxToken) {
       headers["Authorization"] = "Bearer ${await authService.readAuxToken()}";
     } else {
       headers["Authorization"] = "Bearer ${await authService.readToken()}";
@@ -47,19 +43,16 @@ Future<dynamic> serviceMethod(
   try {
     var url = Uri.parse(urlAPI);
     final ioc = HttpClient();
-    ioc.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
+    ioc.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
     final http = IOClient(ioc);
+    debugPrint('==========================================');
     debugPrint('url $url');
     debugPrint('body $body');
+    debugPrint('headers $headers');
+    debugPrint('==========================================');
     switch (method) {
       case 'get':
-        debugPrint('headers $headers');
-        debugPrint('url $url');
-        return await http
-            .get(url, headers: headers)
-            .timeout(const Duration(seconds: 40))
-            .then((value) {
+        return await http.get(url, headers: headers).timeout(const Duration(seconds: 40)).then((value) {
           debugPrint('statusCode ${value.statusCode}');
           debugPrint('value ${value.body}');
           switch (value.statusCode) {
@@ -77,23 +70,16 @@ Future<dynamic> serviceMethod(
         }).catchError((err) {
           debugPrint('errA $err');
           if ('$err'.contains('html')) {
-            callDialogAction(context,
-                'Tenemos un problema con nuestro servidor, intente luego');
+            callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
           } else if ('$err' == 'Software caused connection abort') {
             callDialogAction(context, 'Verifique su conexión a Internet');
           } else {
-            callDialogAction(
-                context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+            callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
           }
           return null;
         });
       case 'post':
-        debugPrint('headers $headers');
-        debugPrint('url $url');
-        return await http
-            .post(url, headers: headers, body: json.encode(body))
-            .timeout(const Duration(seconds: 40))
-            .then((value) {
+        return await http.post(url, headers: headers, body: json.encode(body)).timeout(const Duration(seconds: 40)).then((value) {
           debugPrint('statusCode ${value.statusCode}');
           debugPrint('value ${value.body}');
           switch (value.statusCode) {
@@ -108,23 +94,16 @@ Future<dynamic> serviceMethod(
         }).catchError((err) {
           debugPrint('errA $err');
           if ('$err'.contains('html')) {
-            callDialogAction(context,
-                'Tenemos un problema con nuestro servidor, intente luego');
+            callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
           } else if ('$err' == 'Software caused connection abort') {
             callDialogAction(context, 'Verifique su conexión a Internet');
           } else {
-            callDialogAction(
-                context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+            callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
           }
           return null;
         });
       case 'delete':
-        debugPrint('headers $headers');
-        debugPrint('url $url');
-        return await http
-            .delete(url, headers: headers)
-            .timeout(const Duration(seconds: 40))
-            .then((value) {
+        return await http.delete(url, headers: headers).timeout(const Duration(seconds: 40)).then((value) {
           debugPrint('statusCode ${value.statusCode}');
           debugPrint('value ${value.body}');
           switch (value.statusCode) {
@@ -137,21 +116,16 @@ Future<dynamic> serviceMethod(
         }).catchError((err) {
           debugPrint('errA $err');
           if ('$err'.contains('html')) {
-            callDialogAction(context,
-                'Tenemos un problema con nuestro servidor, intente luego');
+            callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
           } else if ('$err' == 'Software caused connection abort') {
             callDialogAction(context, 'Verifique su conexión a Internet');
           } else {
-            callDialogAction(
-                context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+            callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
           }
           return null;
         });
       case 'patch':
-        return await http
-            .patch(url, headers: headers, body: json.encode(body))
-            .timeout(const Duration(seconds: 40))
-            .then((value) {
+        return await http.patch(url, headers: headers, body: json.encode(body)).timeout(const Duration(seconds: 40)).then((value) {
           debugPrint('statusCode ${value.statusCode}');
           debugPrint('value ${value.body}');
           switch (value.statusCode) {
@@ -164,13 +138,11 @@ Future<dynamic> serviceMethod(
         }).catchError((err) {
           debugPrint('errA $err');
           if ('$err'.contains('html')) {
-            callDialogAction(context,
-                'Tenemos un problema con nuestro servidor, intente luego');
+            callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
           } else if ('$err' == 'Software caused connection abort') {
             callDialogAction(context, 'Verifique su conexión a Internet');
           } else {
-            callDialogAction(
-                context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+            callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
           }
           return null;
         });
@@ -179,8 +151,7 @@ Future<dynamic> serviceMethod(
     debugPrint('errB $e');
 
     if (!mounted) return;
-    return callDialogAction(
-        context, 'Tenemos un problema con nuestro servidor, intente luego');
+    return callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
   } on SocketException catch (e) {
     debugPrint('errC $e');
     if (!mounted) return;
@@ -201,10 +172,7 @@ Future<dynamic> serviceMethod(
 }
 
 void callDialogAction(BuildContext context, String message) {
-  showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) => DialogAction(message: message));
+  showDialog(barrierDismissible: false, context: context, builder: (BuildContext context) => DialogAction(message: message));
 }
 
 confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
@@ -212,13 +180,14 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   final authService = Provider.of<AuthService>(context, listen: false);
   final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
   final appState = Provider.of<AppState>(context, listen: false);
+  final filesState = Provider.of<FilesState>(context, listen: false);
   if (voluntary) {
     final biometric = biometricUserModelFromJson(await authService.readBiometric());
     if (!mounted) return;
     await serviceMethod(mounted, context, 'delete', null, serviceAuthSession(biometric.affiliateId!), true, false);
   }
-  for (var element in appState.files) {
-    appState.updateFile(element.id!, null);
+  for (var element in filesState.files) {
+    filesState.updateFile(element.id!, null);
   }
   userBloc.add(UpdateCtrlLive(false));
   // var appDir = (await getTemporaryDirectory()).path;
@@ -231,6 +200,7 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   if (!mounted) return;
   Navigator.pushReplacementNamed(context, 'switch');
 }
+
 checkVersion(bool mounted, BuildContext context) async {
   if (await InternetConnectionChecker().connectionStatus ==
       InternetConnectionStatus.disconnected) {

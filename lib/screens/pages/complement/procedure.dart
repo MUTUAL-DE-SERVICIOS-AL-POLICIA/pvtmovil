@@ -10,6 +10,7 @@ import 'package:muserpol_pvt/components/card_observation.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
+import 'package:muserpol_pvt/provider/files_state.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
 import 'package:muserpol_pvt/screens/pages/complement/card_economic_complement.dart';
 import 'package:muserpol_pvt/components/heders.dart';
@@ -37,9 +38,17 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   bool stateLoad = false;
   bool stateBtn = true;
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    debugPrint('HOLA AQUI ESTOY');
+
+  }
+  @override
   Widget build(BuildContext context) {
     final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: true).state;
     final appState = Provider.of<AppState>(context, listen: true);
+    
     return Scaffold(
         drawer: const MenuDrawer(),
         body: Builder(
@@ -114,9 +123,10 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                 iconText: 'assets/icons/reload.svg',
                 onPressed: () async {
                   final appState = Provider.of<AppState>(context, listen: false);
+                  final filesState = Provider.of<FilesState>(context, listen: false);
                   appState.updateTabProcedure(0);
-                  for (var element in appState.files) {
-                    appState.updateFile(element.id!, null);
+                  for (var element in filesState.files) {
+                    filesState.updateFile(element.id!, null);
                   }
                   appState.updateStateProcessing(false);
                   setState(() => stateLoad = true);
@@ -128,12 +138,13 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
 
   create() async {
     final appState = Provider.of<AppState>(context, listen: false);
+    final filesState = Provider.of<FilesState>(context, listen: false);
     setState(() => stateBtn = false);
     await controleVerified();
     await getProcessingPermit();
     setState(() => stateBtn = true);
-    for (var element in appState.files) {
-      appState.updateFile(element.id!, null);
+    for (var element in filesState.files) {
+      filesState.updateFile(element.id!, null);
     }
     return showBarModalBottomSheet(
       duration: const Duration(milliseconds: 800),
@@ -149,6 +160,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
 
   procedure(dynamic response) {
     final appState = Provider.of<AppState>(context, listen: false);
+    final filesState = Provider.of<FilesState>(context, listen: false);
     final procedureBloc = Provider.of<ProcedureBloc>(context, listen: false);
     return showSuccessful(context, 'Trámite registrado correctamente', () async {
       if (!prefs!.getBool('isDoblePerception')!) {
@@ -158,7 +170,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
 
       setState(() {
         appState.updateTabProcedure(0);
-        appState.clearFiles();
+        filesState.clearFiles();
       });
       await getEconomicComplement();
       await getObservations();

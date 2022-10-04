@@ -11,7 +11,7 @@ class CardObservation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: true);
-    debugPrint('app ${appState.messageObservation}');
+    debugPrint('SOY EL CARD DE OBSEVACIONES ${appState.messageObservation}');
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(

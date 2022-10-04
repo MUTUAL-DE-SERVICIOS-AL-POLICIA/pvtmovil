@@ -67,6 +67,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
   @override
   void initState() {
     super.initState();
+    debugPrint('HOLA AQUI ESTOY');
     generateMenu();
     checkVersion(mounted, context);
     services();

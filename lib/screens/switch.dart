@@ -103,31 +103,31 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                                                   deviceId: deviceId!,
                                                 )),
                                       )),
-                              // optionTool(
-                              //     const Image(
-                              //       image: AssetImage(
-                              //         'assets/images/computer.png',
-                              //       ),
-                              //     ),
-                              //     'Oficina Virtual',
-                              //     'Seguimiento de Aportes y Préstamos',
-                              //     () => Navigator.push(
-                              //           context,
-                              //           MaterialPageRoute(
-                              //               builder: (context) => ScreenLogin(
-                              //                     title: 'Oficina Virtual',
-                              //                     deviceId: deviceId!,
-                              //                   )),
-                              //         )),
-                              // optionTool(
-                              //     SvgPicture.asset(
-                              //       'assets/icons/qr.svg',
-                              //       height: 100.sp,
-                              //       color: const Color(0xff419388),
-                              //     ),
-                              //     'Seguimiento de trámites',
-                              //     'Seguimiento de trámites con QR',
-                              //     () => scan()),
+                              optionTool(
+                                  const Image(
+                                    image: AssetImage(
+                                      'assets/images/computer.png',
+                                    ),
+                                  ),
+                                  'Oficina Virtual',
+                                  'Seguimiento de Aportes y Préstamos',
+                                  () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ScreenLogin(
+                                                  title: 'Oficina Virtual',
+                                                  deviceId: deviceId!,
+                                                )),
+                                      )),
+                              optionTool(
+                                  SvgPicture.asset(
+                                    'assets/icons/qr.svg',
+                                    height: 100.sp,
+                                    color: const Color(0xff419388),
+                                  ),
+                                  'Seguimiento de trámites',
+                                  'Seguimiento de trámites con QR',
+                                  () => scan()),
                             ],
                           ),
                         ),

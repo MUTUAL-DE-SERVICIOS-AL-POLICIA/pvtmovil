@@ -196,7 +196,7 @@ class _CardExpandedState extends State<CardExpanded> {
     var response = await serviceMethod(mounted, context, 'get', null, servicePrintLoans(loanId), true, true);
     setState(() => stateLoading = false);
     if (response != null) {
-      String pathFile = await saveFile('Lonas', 'plandepagos.pdf', response.bodyBytes);
+      String pathFile = await saveFile('Loans', 'plandepagos.pdf', response.bodyBytes);
       await OpenFile.open(pathFile);
     }
   }
@@ -205,7 +205,7 @@ class _CardExpandedState extends State<CardExpanded> {
     var response = await serviceMethod(mounted, context, 'get', null, servicePrintKadex(loanId), true, true);
     setState(() => stateLoading = false);
     if (response != null) {
-      String pathFile = await saveFile('Lonas', 'kardex.pdf', response.bodyBytes);
+      String pathFile = await saveFile('Loans', 'kardex.pdf', response.bodyBytes);
       await OpenFile.open(pathFile);
     }
   }

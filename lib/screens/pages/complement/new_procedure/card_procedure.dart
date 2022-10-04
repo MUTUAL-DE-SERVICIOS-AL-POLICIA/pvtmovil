@@ -18,6 +18,7 @@ import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/economic_complement_model.dart';
 import 'package:muserpol_pvt/model/files_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
+import 'package:muserpol_pvt/provider/files_state.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
 import 'package:muserpol_pvt/screens/pages/complement/new_procedure/tab_info.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
@@ -67,6 +68,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: true);
+    final filesState = Provider.of<FilesState>(context, listen: true);
     final userBloc =
         BlocProvider.of<UserBloc>(context, listen: true).state.user;
     return WillPopScope(
@@ -126,7 +128,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
                               : StepState.disabled,
                         ),
                         if (!userBloc!.verified!)
-                          for (var item in appState.files)
+                          for (var item in filesState.files)
                             Step(
                               title: Text('Documento:',
                                   style: TextStyle(
@@ -182,9 +184,10 @@ class _StepperProcedureState extends State<StepperProcedure> {
     final userBloc =
         BlocProvider.of<UserBloc>(context, listen: true).state.user;
     final appState = Provider.of<AppState>(context, listen: true);
+    final filesState = Provider.of<FilesState>(context, listen: true);
     return ButtonComponent(
       stateLoading: buttonLoading,
-      text: (!userBloc!.verified! ? appState.files.length : 0) + 1 ==
+      text: (!userBloc!.verified! ? filesState.files.length : 0) + 1 ==
               details.stepIndex
           ? 'ENVIAR'
           : 'CONTINUAR',
@@ -221,6 +224,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
   initCtrlLive() async {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state;
     final appState = Provider.of<AppState>(context, listen: false);
+    final filesState = Provider.of<FilesState>(context, listen: false);
     return showBarModalBottomSheet(
         enableDrag: false,
         isDismissible: false,
@@ -231,7 +235,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
                 if (userBloc.user!.verified!) {
                   await appState.updateStateLoadingProcedure(true);
                   await appState.updateTabProcedure(appState.indexTabProcedure +
-                      (!userBloc.user!.verified! ? appState.files.length : 0) +
+                      (!userBloc.user!.verified! ? filesState.files.length : 0) +
                       1);
                 } else {
                   await appState
@@ -244,17 +248,18 @@ class _StepperProcedureState extends State<StepperProcedure> {
   }
 
   nextPage() async {
+    final filesState = Provider.of<FilesState>(context, listen: false);
     final appState = Provider.of<AppState>(context, listen: false);
     final userBloc =
         BlocProvider.of<UserBloc>(context, listen: false).state.user;
     FocusScope.of(context).unfocus();
     if (formKey.currentState!.validate() ||
         appState.indexTabProcedure !=
-            (userBloc!.verified! ? 0 : appState.files.length) + 1) {
+            (userBloc!.verified! ? 0 : filesState.files.length) + 1) {
       await appState.updateStateLoadingProcedure(false);
 
       if (appState.indexTabProcedure ==
-          (userBloc!.verified! ? 0 : appState.files.length) + 1) {
+          (userBloc!.verified! ? 0 : filesState.files.length) + 1) {
         if (prefs!.getBool('isDoblePerception')!) {
           return confirmDoblePercetionAlert();
         }
@@ -262,10 +267,10 @@ class _StepperProcedureState extends State<StepperProcedure> {
       } else {
         appState.updateTabProcedure(appState.indexTabProcedure + 1);
         if (appState.indexTabProcedure ==
-            (!userBloc.verified! ? appState.files.length : 0)) {
+            (!userBloc.verified! ? filesState.files.length : 0)) {
           await appState.updateStateLoadingProcedure(true);
         } else {
-          if (appState.files[appState.indexTabProcedure].imageFile != null) {
+          if (filesState.files[appState.indexTabProcedure].imageFile != null) {
             await appState.updateStateLoadingProcedure(true);
           } else {
             await appState.updateStateLoadingProcedure(false);
@@ -299,7 +304,8 @@ class _StepperProcedureState extends State<StepperProcedure> {
     setState(() => buttonLoading = true);
     //VERIFICAMOS QUE LA IMAGEN COINCIDA CON LAS PALABRAS CLAVES
     final appState = Provider.of<AppState>(context, listen: false);
-    appState.updateFile(item.id!, fileImage); //ACTUALIZAMOS LA IMAGEN CAPTURADA
+    final filesState = Provider.of<FilesState>(context, listen: false);
+    filesState.updateFile(item.id!, fileImage); //ACTUALIZAMOS LA IMAGEN CAPTURADA
     final recognizedText = await _textRecognizer
         .processImage(inputImage); //OBTENEMOS EL TEXTO DE LA IMAGEN
     if (item.wordsKey!.isNotEmpty) {
@@ -308,13 +314,13 @@ class _StepperProcedureState extends State<StepperProcedure> {
         // LOOP POR CADA PALABRA CLAVE
         if (recognizedText.text.contains(element)) {
           // VERIFICAMOS SI LA IMAGEN CONTIENE LAS PALABRAS CLAVES
-          await appState.updateStateFiles(
+          await filesState.updateStateFiles(
               item.id!, true); // CAMBIAMOS DE ESTADO
           await appState.updateStateLoadingProcedure(true);
           setState(() => buttonLoading = false);
         } else {
           debugPrint('NO HAY LA PALABRA $element');
-          await appState.updateStateFiles(
+          await filesState.updateStateFiles(
               item.id!, false); // CAMBIAMOS DE ESTADO
           await appState.updateStateLoadingProcedure(
               false); //OCULTAMOS EL BTN DE CONTINUAR
@@ -333,7 +339,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
   prepareDocuments() async {
     //PREPARAMOS LOS DOCUMENTOS SOLICITADOS
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false).state;
-    final files = Provider.of<AppState>(context, listen: false).files;
+    final files = Provider.of<FilesState>(context, listen: false).files;
     List<Map<String, String>> data = [];
     var countFiles = 0;
     if (!userBloc.user!.verified!) {

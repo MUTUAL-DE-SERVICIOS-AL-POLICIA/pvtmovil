@@ -48,7 +48,7 @@ class _ScreenPageLoansState extends State<ScreenPageLoans> {
                               if (loanBloc.state.loan!.payload!.liquited!.isNotEmpty) const Text('Prestamos Liquidados:'),
                               if (loanBloc.state.loan!.payload!.liquited!.isNotEmpty)
                                 for (var item in loanBloc.state.loan!.payload!.liquited!) CardLoan(itemCurrent: item),
-                              if (loanBloc.state.loan!.error!) Text(loanBloc.state.loan!.message!)
+                              if (loanBloc.state.loan!.error=='true') Text(loanBloc.state.loan!.message!)
                             ]),
                           )
                         : Container()))),

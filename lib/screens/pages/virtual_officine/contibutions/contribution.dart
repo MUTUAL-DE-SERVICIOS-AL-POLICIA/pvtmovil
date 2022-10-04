@@ -41,21 +41,19 @@ class _ScreenContributionsState extends State<ScreenContributions> {
                 key: widget.keyBottomHeader,
                 icon: const Icon(Icons.library_books_outlined),
                 onSelected: (newValue) {
-                  // add this property
-                  debugPrint('asd $newValue');
-                  if (newValue == 1) {
-                    getContributionPasive(context);
-                  }
+                  if (newValue == 0) getContributionActive(context);
+                  if (newValue == 1) getContributionPasive(context);
                 },
-                itemBuilder: (context) => const [
-                  PopupMenuItem(
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
                     value: 0,
                     child: Text("Descargar mis aportes como Activo"),
                   ),
-                  PopupMenuItem(
-                    value: 1,
-                    child: Text("Descargar mis aportes como Pasivo"),
-                  ),
+                  if (contributionBloc.contribution!.payload!.affiliatePassive!)
+                    const PopupMenuItem(
+                      value: 1,
+                      child: Text("Descargar mis aportes como Pasivo"),
+                    ),
                 ],
               )),
         ),
@@ -72,7 +70,20 @@ class _ScreenContributionsState extends State<ScreenContributions> {
     var response = await serviceMethod(mounted, context, 'get', null, servicePrintLoans(biometric.affiliateId!), true, true);
     setState(() => stateLoading = false);
     if (response != null) {
-      String pathFile = await saveFile('Lonas', 'contribucionesPasivo.pdf', response.bodyBytes);
+      String pathFile = await saveFile('Contributions', 'contribucionesPasivo.pdf', response.bodyBytes);
+      await OpenFile.open(pathFile);
+    }
+  }
+
+  getContributionActive(BuildContext context) async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final biometric = biometricUserModelFromJson(await authService.readBiometric());
+    setState(() => stateLoading = true);
+    if (!mounted) return;
+    var response = await serviceMethod(mounted, context, 'get', null, servicePrintContributionActive(biometric.affiliateId!), true, true);
+    setState(() => stateLoading = false);
+    if (response != null) {
+      String pathFile = await saveFile('Contributions', 'contribucionesActivo.pdf', response.bodyBytes);
       await OpenFile.open(pathFile);
     }
   }
