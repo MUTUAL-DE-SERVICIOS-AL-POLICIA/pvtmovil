@@ -5,6 +5,7 @@ import 'package:theme_provider/theme_provider.dart';
 
 //  widget que se ajusta en la parte superior
 class HedersComponent extends StatelessWidget {
+  final String? titleHeader;
   final String title;
   final String? titleExtra;
   final bool stateBack;
@@ -15,6 +16,7 @@ class HedersComponent extends StatelessWidget {
   final Widget? option;
   const HedersComponent(
       {Key? key,
+      this.titleHeader = 'MUSERPOL',
       required this.title,
       this.titleExtra,
       this.stateBack = false,
@@ -59,7 +61,7 @@ class HedersComponent extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('MUSERPOL'),
+                    Text('$titleHeader'),
                     Text(title,
                         textAlign: center ? TextAlign.center : TextAlign.start, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp)),
                     if (titleExtra != null) Text(titleExtra!, style: const TextStyle(fontWeight: FontWeight.w500))

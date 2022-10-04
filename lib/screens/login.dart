@@ -388,9 +388,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
             onDateTimeChanged: (DateTime newDataTime) {
               setState(() {
                 currentDate = newDataTime;
-                dateCtrl =
-                    DateFormat(' dd, MMMM yyyy ', "es_ES").format(newDataTime);
+                dateCtrl = DateFormat(' dd, MMMM yyyy ', "es_ES").format(newDataTime);
                 dateState = false;
+                dateCtrlText = DateFormat('dd-MM-yyyy').format(currentDate);
               });
             }));
   }
@@ -423,8 +423,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
     if (formKey.currentState!.validate()) {
       if (dateCtrlText == null && !widget.stateOfficeVirtual) return;
       setState(() => btnAccess = false);
-      if (await InternetConnectionChecker().connectionStatus ==
-          InternetConnectionStatus.disconnected) {
+      if (await InternetConnectionChecker().connectionStatus == InternetConnectionStatus.disconnected) {
         setState(() => btnAccess = true);
         return callDialogAction(context, 'Verifique su conexión a Internet');
       }

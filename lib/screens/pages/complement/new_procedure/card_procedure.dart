@@ -210,7 +210,7 @@ class _StepperProcedureState extends State<StepperProcedure> {
         context: context,
         builder: (context) => ComponentAnimate(
             child: DialogTwoAction(
-                message: '¿DESEAS CANCELAR EL PROCESO?',
+                message: '¿DESEAS SALIR DEL PROCESO?',
                 actionCorrect: () {
                   Navigator.pop(context);
                   Navigator.pop(context);

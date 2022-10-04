@@ -31,6 +31,7 @@ class _ModalInsideModalState extends State<ModalInsideModal> with TickerProvider
   String message = '';
   LivenesData? infoLivenes;
   String titleback = '';
+  String titleHeader= 'MUSERPOL';
 
   @override
   void initState() {
@@ -61,7 +62,7 @@ class _ModalInsideModalState extends State<ModalInsideModal> with TickerProvider
         child: Scaffold(
             body: SizedBox(
                 child: Column(children: [
-          Padding(padding: const EdgeInsets.fromLTRB(10, 15, 10, 0), child: HedersComponent(title: title, center: true)),
+          Padding(padding: const EdgeInsets.fromLTRB(10, 15, 10, 0), child: HedersComponent(titleHeader:titleHeader, title: title, center: true)),
           Expanded(
             child: DefaultTabController(
                 length: 2,
@@ -72,7 +73,10 @@ class _ModalInsideModalState extends State<ModalInsideModal> with TickerProvider
                     TabInfo(
                         text: textContent,
                         nextScreen: () {
-                          setState(() => title = message);
+                          setState(() {
+                            title = message;
+                            titleHeader = titleback;
+                          });
                           tabController!.animateTo(tabController!.index + 1);
                         }),
                     ImageCtrlLive(sendImage: (image) => sendImage(image))
@@ -88,7 +92,7 @@ class _ModalInsideModalState extends State<ModalInsideModal> with TickerProvider
         context: context,
         builder: (context) => ComponentAnimate(
             child: DialogTwoAction(
-                message: '¿DESEAS CANCELAR EL $titleback?',
+                message: '¿DESEAS SALIR DEL $titleback?',
                 actionCorrect: () {
                   Navigator.pop(context);
                   Navigator.pop(context);

@@ -128,7 +128,7 @@ class _ModalUpdatePwdState extends State<ModalUpdatePwd>
         context: context,
         builder: (context) => ComponentAnimate(
             child: DialogTwoAction(
-                message: '¿Desas salir de la actualización de contraseña?',
+                message: '¿Deseas salir de la actualización de contraseña?',
                 actionCorrect: () {
                   Navigator.pop(context);
                   Navigator.pop(context);

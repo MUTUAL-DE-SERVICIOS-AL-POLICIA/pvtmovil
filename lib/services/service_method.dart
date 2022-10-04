@@ -40,8 +40,7 @@ Future<dynamic> serviceMethod(
       headers["Authorization"] = "Bearer ${await authService.readToken()}";
     }
   }
-  if (await InternetConnectionChecker().connectionStatus ==
-      InternetConnectionStatus.disconnected) {
+  if (await InternetConnectionChecker().connectionStatus == InternetConnectionStatus.disconnected) {
     if (!mounted) return;
     callDialogAction(context, 'Verifique su conexión a Internet');
   }

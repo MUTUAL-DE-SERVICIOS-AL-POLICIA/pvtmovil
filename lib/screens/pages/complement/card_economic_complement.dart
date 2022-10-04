@@ -92,7 +92,7 @@ class _CardEcState extends State<CardEc> {
                                       )),
                           if (widget.item!.printable!)
                             tableInfo(
-                                'Comprovante del trámite',
+                                'Solicitud de pago',
                                 btnAccess
                                     ? Row(
                                         children: [
