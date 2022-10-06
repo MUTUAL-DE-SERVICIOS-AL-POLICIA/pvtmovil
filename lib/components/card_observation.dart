@@ -10,8 +10,7 @@ class CardObservation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context, listen: true);
-    debugPrint('SOY EL CARD DE OBSEVACIONES ${appState.messageObservation}');
+    final observationState = Provider.of<ObservationState>(context, listen: true);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
@@ -21,14 +20,14 @@ class CardObservation extends StatelessWidget {
             children: [
               Flexible(
                   child: Text(
-                json.decode(appState.messageObservation)['message'],
+                json.decode(observationState.messageObservation)['message'],
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontFamily: 'Manrope'),
               ))
             ],
           ),
           if (json
-                  .decode(appState.messageObservation)['data']['display']
+                  .decode(observationState.messageObservation)['data']['display']
                   .length >
               0)
             Table(
@@ -47,7 +46,7 @@ class CardObservation extends StatelessWidget {
                 defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                 children: [
                   for (var itemx in json
-                      .decode(appState.messageObservation)['data']['display'])
+                      .decode(observationState.messageObservation)['data']['display'])
                     tableInfo(
                       '${itemx['key']!}',
                       itemx['value'] is List

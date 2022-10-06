@@ -1,11 +1,11 @@
 import 'dart:io';
 // ignore: depend_on_referenced_packages
-import 'package:muserpol_pvt/database/affiliate_model.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:muserpol_pvt/database/notification_model.dart';
+import 'package:muserpol_pvt/database/affiliate_model.dart';
 export 'package:muserpol_pvt/database/notification_model.dart';
-
+export 'package:muserpol_pvt/database/affiliate_model.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:sqflite/sqflite.dart';

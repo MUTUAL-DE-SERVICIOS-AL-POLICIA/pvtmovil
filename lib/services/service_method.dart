@@ -11,11 +11,10 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
-import 'package:muserpol_pvt/dialogs/dialog_action.dart';
+import 'package:muserpol_pvt/components/dialog_action.dart';
 import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/provider/files_state.dart';
-import 'package:muserpol_pvt/provider/token_state.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/services.dart';
@@ -46,9 +45,9 @@ Future<dynamic> serviceMethod(
     ioc.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
     final http = IOClient(ioc);
     debugPrint('==========================================');
-    debugPrint('url $url');
-    debugPrint('body $body');
-    debugPrint('headers $headers');
+    debugPrint('== url $url');
+    debugPrint('== body $body');
+    debugPrint('== headers $headers');
     debugPrint('==========================================');
     switch (method) {
       case 'get':
@@ -179,8 +178,10 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: false);
   final authService = Provider.of<AuthService>(context, listen: false);
   final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-  final appState = Provider.of<AppState>(context, listen: false);
   final filesState = Provider.of<FilesState>(context, listen: false);
+  final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
+  final processingState = Provider.of<ProcessingState>(context, listen: false);
+  
   if (voluntary) {
     final biometric = biometricUserModelFromJson(await authService.readBiometric());
     if (!mounted) return;
@@ -195,10 +196,11 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   await PushNotificationService.closeStreams();
   authService.logout();
   procedureBloc.add(ClearProcedures());
-  appState.updateTabProcedure(0);
-  appState.updateStateProcessing(false);
-  if (!mounted) return;
+  tabProcedureState.updateTabProcedure(0);
+  processingState.updateStateProcessing(false);
+    if (!mounted) return;
   Navigator.pushReplacementNamed(context, 'switch');
+  // return true;
 }
 
 checkVersion(bool mounted, BuildContext context) async {

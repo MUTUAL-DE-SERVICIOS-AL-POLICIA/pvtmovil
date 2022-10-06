@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:badges/badges.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,8 +15,7 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/target.dart';
-import 'package:muserpol_pvt/dialogs/dialog_back.dart';
-import 'package:muserpol_pvt/main.dart';
+import 'package:muserpol_pvt/components/dialog_action.dart';
 import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/model/contribution_model.dart';
 import 'package:muserpol_pvt/model/loan_model.dart';
@@ -67,7 +67,6 @@ class _NavigatorBarState extends State<NavigatorBar> {
   @override
   void initState() {
     super.initState();
-    debugPrint('HOLA AQUI ESTOY');
     generateMenu();
     checkVersion(mounted, context);
     services();
@@ -137,37 +136,39 @@ class _NavigatorBarState extends State<NavigatorBar> {
   }
 
   getObservations() async {
-    final appState = Provider.of<AppState>(context, listen: false);
+    final observationState = Provider.of<ObservationState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    final processingState = Provider.of<ProcessingState>(context, listen: false);
     if (!mounted) return;
     var response = await serviceMethod(mounted, context, 'get', null, serviceGetObservation(userBloc.state.user!.id!), true, true);
     if (response != null) {
-      appState.updateObservation(response.body);
+      observationState.updateObservation(response.body);
       if (json.decode(response.body)['data']['enabled']) {
-        appState.updateStateProcessing(true);
+        processingState.updateStateProcessing(true);
       }
     }
   }
 
   getProcessingPermit() async {
-    final appState = Provider.of<AppState>(context, listen: false);
+    final loadingState = Provider.of<LoadingState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
     if (!mounted) return;
     var response = await serviceMethod(mounted, context, 'get', null, serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
     if (response != null) {
       userBloc.add(UpdateCtrlLive(json.decode(response.body)['data']['liveness_success']));
       if (json.decode(response.body)['data']['liveness_success']) {
-        appState.updateTabProcedure(1);
+        tabProcedureState.updateTabProcedure(1);
         if (userBloc.state.user!.verified!) {
-          appState.updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
+          loadingState.updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
           setState(() {});
         } else {
-          appState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+          loadingState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
           setState(() {});
         }
       } else {
-        appState.updateTabProcedure(0);
-        appState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+        tabProcedureState.updateTabProcedure(0);
+        loadingState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
       }
       userBloc.add(UpdateProcedureId(json.decode(response.body)['data']['procedure_id']));
       if (json.decode(response.body)['data']['cell_phone_number'].length > 0) {
@@ -201,7 +202,6 @@ class _NavigatorBarState extends State<NavigatorBar> {
   @override
   Widget build(BuildContext context) {
     final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: true).state;
-      
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
@@ -316,7 +316,16 @@ class _NavigatorBarState extends State<NavigatorBar> {
   }
 
   Future<bool> _onBackPressed() async {
-    return await showDialog(barrierDismissible: false, context: context, builder: (context) => const ComponentAnimate(child: DialogBack()));
+    return await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return ComponentAnimate(
+              child: DialogTwoAction(
+                  message: '¿Estás seguro de salir de la aplicación MUSERPOL PVT?',
+                  actionCorrect: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+                  messageCorrect: 'Salir'));
+        });
   }
 
   void showTutorial() {
@@ -392,10 +401,10 @@ class _NavigatorBarState extends State<NavigatorBar> {
           keyBottomHeader,
           ContentAlign.bottom,
           null,
-          "Para crear su trámite debe presionar el botón CREAR TRÁMITE, cuando se encuentre en color verde",
+          "Aquí puedes ver la certificación de tus aportes como titular o pasivo",
           Transform(
               alignment: Alignment.center,
-              transform: Matrix4.rotationY(45),
+              transform: Matrix4.rotationY(90),
               child: RotationTransition(
                   turns: const AlwaysStoppedAnimation(130 / 180),
                   child: Padding(

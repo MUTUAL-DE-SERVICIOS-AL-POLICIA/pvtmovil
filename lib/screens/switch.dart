@@ -7,8 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/containers.dart';
-import 'package:muserpol_pvt/components/headers.dart';
-import 'package:muserpol_pvt/dialogs/dialog_back.dart';
+import 'package:muserpol_pvt/components/paint.dart';
+import 'package:muserpol_pvt/components/dialog_action.dart';
 import 'package:muserpol_pvt/model/qr_model.dart';
 import 'package:muserpol_pvt/screens/flowQR/flow.dart';
 import 'package:muserpol_pvt/screens/login.dart';
@@ -179,7 +179,16 @@ class ScreenSwitchState extends State<ScreenSwitch> {
   }
 
   Future<bool> _onBackPressed() async {
-    return await showDialog(barrierDismissible: false, context: context, builder: (context) => const ComponentAnimate(child: DialogBack()));
+    return await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return ComponentAnimate(
+              child: DialogTwoAction(
+                  message: '¿Estás seguro de salir de la aplicación MUSERPOL PVT?',
+                  actionCorrect: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+                  messageCorrect: 'Salir'));
+        });
   }
 
   Widget optionTool(Widget child, String title, String description, Function() onPress) {

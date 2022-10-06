@@ -71,7 +71,7 @@ class DialogOneFunction extends StatelessWidget {
   }
 }
 
-class DialogTwoAction extends StatelessWidget {
+class DialogTwoAction extends StatefulWidget {
   final String message;
   final Function() actionCorrect;
   final Function()? actionCancel;
@@ -84,6 +84,14 @@ class DialogTwoAction extends StatelessWidget {
       this.actionCancel,
       required this.messageCorrect})
       : super(key: key);
+
+  @override
+  State<DialogTwoAction> createState() => _DialogTwoActionState();
+}
+
+class _DialogTwoActionState extends State<DialogTwoAction> {
+
+  bool stateBottons = true;
   @override
   Widget build(BuildContext context) {
     return ComponentAnimate(
@@ -91,16 +99,20 @@ class DialogTwoAction extends StatelessWidget {
       actionsAlignment: MainAxisAlignment.spaceAround,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       title: Text(
-        message,
+        widget.message,
         textAlign: TextAlign.center,
       ),
       actions: <Widget>[
         ButtonWhiteComponent(
           text: 'Cancelar',
-          onPressed: actionCancel ?? ()=>Navigator.of(context).pop(),
+          onPressed: stateBottons? widget.actionCancel ?? ()=>Navigator.of(context).pop() : (){},
         ),
         ButtonWhiteComponent(
-            text: messageCorrect, onPressed: () => actionCorrect())
+            text: widget.messageCorrect, onPressed: () async {
+              setState(() => stateBottons = !stateBottons);
+              await widget.actionCorrect();
+              setState(() => stateBottons = !stateBottons);
+            })
       ],
     ));
   }

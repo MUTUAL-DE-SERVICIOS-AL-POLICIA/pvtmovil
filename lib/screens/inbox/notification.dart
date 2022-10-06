@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
+import 'package:muserpol_pvt/components/paint.dart';
 import 'package:muserpol_pvt/components/headers.dart';
-import 'package:muserpol_pvt/components/heders.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 
 class ScreenNotification extends StatefulWidget {

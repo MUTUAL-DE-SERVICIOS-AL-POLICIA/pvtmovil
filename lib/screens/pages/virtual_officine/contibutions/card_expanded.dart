@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:muserpol_pvt/components/containers.dart';
+import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/components/table_row.dart';
 import 'package:muserpol_pvt/model/contribution_model.dart';
 import 'package:theme_provider/theme_provider.dart';
@@ -40,13 +41,13 @@ class _CardExpandedState extends State<CardExpanded> {
                               child: Padding(
                                   padding: const EdgeInsets.all(15),
                                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(DateFormat(' dd, MMMM yyyy ', "es_ES").format(widget.contribution.monthYear!),
-                                            style: const TextStyle(fontWeight: FontWeight.bold)),
-                                        Text(widget.contribution.state!, style: const TextStyle(fontWeight: FontWeight.bold))
-                                      ],
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      child: HedersComponent(
+                                        titleHeader: widget.contribution.state!,
+                                        title: DateFormat(' dd, MMMM yyyy ', "es_ES").format(widget.contribution.monthYear!),
+                                        stateBack: true,
+                                      ),
                                     ),
                                     Table(
                                         columnWidths: const {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:muserpol_pvt/components/containers.dart';
-import 'package:muserpol_pvt/components/heders.dart';
+import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/components/table_row.dart';
 import 'package:muserpol_pvt/model/loan_model.dart';
 import 'package:muserpol_pvt/services/service_method.dart';

@@ -13,7 +13,7 @@ import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/provider/files_state.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
 import 'package:muserpol_pvt/screens/pages/complement/card_economic_complement.dart';
-import 'package:muserpol_pvt/components/heders.dart';
+import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/pages/complement/new_procedure/card_procedure.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
@@ -38,17 +38,10 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   bool stateLoad = false;
   bool stateBtn = true;
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    debugPrint('HOLA AQUI ESTOY');
-
-  }
-  @override
   Widget build(BuildContext context) {
     final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: true).state;
-    final appState = Provider.of<AppState>(context, listen: true);
-    
+    final observationState = Provider.of<ObservationState>(context, listen: true);
+    final processingState = Provider.of<ProcessingState>(context, listen: true);
     return Scaffold(
         drawer: const MenuDrawer(),
         body: Builder(
@@ -58,13 +51,13 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                     child: HedersComponent(
                         title: 'Complemento Económico', menu: true, keyMenu: widget.keyMenu, onPressMenu: () => Scaffold.of(context).openDrawer()),
                   ),
-                  if (appState.messageObservation != "")
-                    if (json.decode(appState.messageObservation)['message'] != "") const CardObservation(),
+                  if (observationState.messageObservation != "")
+                    if (json.decode(observationState.messageObservation)['message'] != "") const CardObservation(),
                   if (widget.current && stateBtn)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: ButtonComponent(
-                          key: widget.keyProcedure, text: 'CREAR TRÁMITE', onPressed: stateBtn && appState.stateProcessing ? () => create() : null),
+                          key: widget.keyProcedure, text: 'CREAR TRÁMITE', onPressed: stateBtn && processingState.stateProcessing ? () => create() : null),
                     ),
                   if (!stateBtn)
                     Image.asset(
@@ -76,7 +69,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                     Expanded(
                         child: procedureBloc.existCurrentProcedures
                             ? procedureBloc.currentProcedures!.isEmpty
-                                ? (appState.stateProcessing && widget.current)
+                                ? (processingState.stateProcessing && widget.current)
                                     ? stateInfo()
                                     : Center(
                                         child: Column(
@@ -122,13 +115,14 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                 key: widget.keyRefresh,
                 iconText: 'assets/icons/reload.svg',
                 onPressed: () async {
-                  final appState = Provider.of<AppState>(context, listen: false);
                   final filesState = Provider.of<FilesState>(context, listen: false);
-                  appState.updateTabProcedure(0);
+                  final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
+                  final processingState = Provider.of<ProcessingState>(context, listen: false);
+                  tabProcedureState.updateTabProcedure(0);
                   for (var element in filesState.files) {
                     filesState.updateFile(element.id!, null);
                   }
-                  appState.updateStateProcessing(false);
+                  processingState.updateStateProcessing(false);
                   setState(() => stateLoad = true);
                   await getEconomicComplement();
                   await getObservations();
@@ -137,7 +131,6 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   }
 
   create() async {
-    final appState = Provider.of<AppState>(context, listen: false);
     final filesState = Provider.of<FilesState>(context, listen: false);
     setState(() => stateBtn = false);
     await controleVerified();
@@ -159,9 +152,9 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   }
 
   procedure(dynamic response) {
-    final appState = Provider.of<AppState>(context, listen: false);
     final filesState = Provider.of<FilesState>(context, listen: false);
     final procedureBloc = Provider.of<ProcedureBloc>(context, listen: false);
+    final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
     return showSuccessful(context, 'Trámite registrado correctamente', () async {
       if (!prefs!.getBool('isDoblePerception')!) {
         String pathFile = await saveFile('Documents', 'sol_eco_com_${DateTime.now().millisecondsSinceEpoch}.pdf', response.bodyBytes);
@@ -169,7 +162,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
       }
 
       setState(() {
-        appState.updateTabProcedure(0);
+        tabProcedureState.updateTabProcedure(0);
         filesState.clearFiles();
       });
       await getEconomicComplement();
@@ -190,13 +183,14 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   }
 
   getObservations() async {
-    final appState = Provider.of<AppState>(context, listen: false);
+    final observationState = Provider.of<ObservationState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    final processingState = Provider.of<ProcessingState>(context, listen: false);
     var response = await serviceMethod(mounted, context, 'get', null, serviceGetObservation(userBloc.state.user!.id!), true, true);
     if (response != null) {
-      appState.updateObservation(response.body);
+      observationState.updateObservation(response.body);
       if (json.decode(response.body)['data']['enabled']) {
-        appState.updateStateProcessing(true);
+        processingState.updateStateProcessing(true);
       }
     } else {
       return setState(() => stateLoad = false);
@@ -212,23 +206,24 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   }
 
   getProcessingPermit() async {
-    final appState = Provider.of<AppState>(context, listen: false);
+    final loadingState = Provider.of<LoadingState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
     var response = await serviceMethod(mounted, context, 'get', null, serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
     if (response != null) {
       userBloc.add(UpdateCtrlLive(json.decode(response.body)['data']['liveness_success']));
       if (json.decode(response.body)['data']['liveness_success']) {
-        appState.updateTabProcedure(1);
+        tabProcedureState.updateTabProcedure(1);
         if (userBloc.state.user!.verified!) {
-          appState.updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
+          loadingState.updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
           setState(() {});
         } else {
-          appState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+          loadingState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
           setState(() {});
         }
       } else {
-        appState.updateTabProcedure(0);
-        appState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+        tabProcedureState.updateTabProcedure(0);
+        loadingState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
         setState(() {});
       }
       userBloc.add(UpdateProcedureId(json.decode(response.body)['data']['procedure_id']));

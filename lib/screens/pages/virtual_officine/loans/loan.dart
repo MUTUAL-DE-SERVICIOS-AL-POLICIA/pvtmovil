@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muserpol_pvt/bloc/loan/loan_bloc.dart';
-import 'package:muserpol_pvt/components/heders.dart';
+import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
 import 'package:muserpol_pvt/screens/pages/virtual_officine/loans/card_loan.dart';
 
@@ -26,10 +26,7 @@ class _ScreenPageLoansState extends State<ScreenPageLoans> {
               title: 'Mis Prestamos',
               menu: true,
               keyMenu: widget.keyMenu,
-              onPressMenu: () {
-                debugPrint('hola');
-                Scaffold.of(context).openDrawer();
-              }),
+              onPressMenu: () => Scaffold.of(context).openDrawer()),
         ),
         Expanded(
             child: Center(

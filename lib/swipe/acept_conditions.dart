@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/components/button.dart';
-import 'package:muserpol_pvt/components/heders.dart';
+import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
@@ -99,7 +99,7 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
 
   getInto(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);
-    await authService.firstTime(context);
+    await authService.writeFirstTime(context);
     if (!mounted) return;
     Navigator.pushReplacementNamed(context, 'switch');
   }

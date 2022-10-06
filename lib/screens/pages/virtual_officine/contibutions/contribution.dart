@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muserpol_pvt/bloc/contribution/contribution_bloc.dart';
-import 'package:muserpol_pvt/components/heders.dart';
+import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
 import 'package:muserpol_pvt/screens/pages/virtual_officine/contibutions/tabs_contributions.dart';
@@ -29,7 +29,8 @@ class _ScreenContributionsState extends State<ScreenContributions> {
 
     return Scaffold(
       drawer: const MenuDrawer(),
-      body: Column(children: [
+      body: Builder(
+            builder: (context) => Column(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
           child: HedersComponent(
@@ -58,7 +59,7 @@ class _ScreenContributionsState extends State<ScreenContributions> {
               )),
         ),
         !contributionBloc.existContribution ? Container() : const TabsContributions(),
-      ]),
+      ])),
     );
   }
 

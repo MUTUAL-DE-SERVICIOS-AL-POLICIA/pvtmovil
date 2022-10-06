@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -16,13 +18,11 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
-import 'package:muserpol_pvt/database/affiliate_model.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
-import 'package:muserpol_pvt/provider/token_state.dart';
 import 'package:muserpol_pvt/screens/model_update_pwd.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
 import 'package:muserpol_pvt/screens/navigator_bar.dart';
@@ -138,6 +138,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
         setState(() {
           dniCtrl.text = biometric.userComplement!.identityCard!;
           dateCtrlText = biometric.userComplement!.dateBirth!;
+          dateCtrl = biometric.userComplement!.dateBirth!;
         });
       }
       initSession();
@@ -376,6 +377,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
   }
 
   initSession() async {
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+    final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final tokenState = Provider.of<TokenState>(context, listen: false);
     FocusScope.of(context).unfocus();
     if (!widget.stateOfficeVirtual) validateDate();
     if (formKey.currentState!.validate()) {
@@ -403,26 +408,27 @@ class _ScreenLoginState extends State<ScreenLogin> {
       setState(() => btnAccess = true);
       if (response != null) {
         await DBProvider.db.database;
+        UserModel user = userModelFromJson(json.encode(json.decode(response.body)['data']));
+        await authService.writeAuxtoken(user.apiToken!);
+        tokenState.updateStateAuxToken(true);
+        if (!mounted) return;
+        await authService.writeUser(context, userModelToJson(user));
+        userBloc.add(UpdateUser(user.user!));
+        final affiliateModel = AffiliateModel(idAffiliate: user.user!.id!);
+        await DBProvider.db.newAffiliateModel(affiliateModel);
+        notificationBloc.add(UpdateAffiliateId(user.user!.id!));
         if (widget.stateOfficeVirtual) {
-          initSessionVirtualOfficine(response, UserVirtualOfficine(identityCard: body['username'], password: body['password']));
+          initSessionVirtualOfficine(response, UserVirtualOfficine(identityCard: body['username'], password: body['password']), user);
         } else {
-          intSessionComplement(response, UserComplement(identityCard: body['identity_card'], dateBirth: body['birth_date']));
+          intSessionComplement(response, UserComplement(identityCard: body['identity_card'], dateBirth: body['birth_date']), user);
         }
       }
     }
   }
 
-  intSessionComplement(dynamic response, UserComplement userComplement) async {
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: false);
+  intSessionComplement(dynamic response, UserComplement userComplement, UserModel user) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final tokenState = Provider.of<TokenState>(context, listen: false);
-    UserModel user = userModelFromJson(json.encode(json.decode(response.body)['data']));
-    await authService.auxtoken(user.apiToken!);
-    tokenState.updateStateAuxToken(true);
-    userBloc.add(UpdateUser(user.user!));
-    if (!mounted) return;
-    await authService.user(context, userModelToJson(user));
     final biometric = await authService.readBiometric();
     final biometricUserModel = BiometricUserModel(
         biometricComplement: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricComplement,
@@ -430,22 +436,18 @@ class _ScreenLoginState extends State<ScreenLogin> {
         affiliateId: user.user!.id,
         userComplement: userComplement,
         userVirtualOfficine: biometric == '' ? UserVirtualOfficine() : biometricUserModelFromJson(biometric).userVirtualOfficine);
-    prefs!.setInt('affiliateId', user.user!.id!);
-    final affiliateModel = AffiliateModel(idAffiliate: user.user!.id!);
-    await DBProvider.db.newAffiliateModel(affiliateModel);
-    notificationBloc.add(UpdateAffiliateId(user.user!.id!));
-    prefs!.setBool('isDoblePerception', json.decode(response.body)['data']['is_doble_perception']);
     if (!mounted) return;
-    await authService.biometric(context, biometricUserModelToJson(biometricUserModel));
+    await authService.writeBiometric(context, biometricUserModelToJson(biometricUserModel));
+    prefs!.setBool('isDoblePerception', json.decode(response.body)['data']['is_doble_perception']);
     if (response.statusCode == 200) {
-      if (!json.decode(response.body)['data']['user']['enrolled']) {
+      if (!user.user!.enrolled!) {
         //proceso de enrolamiento
         _showModalInside(user.apiToken!, false, await PushNotificationService.getTokenFirebase());
       } else {
         if (!mounted) return;
         await authService.writeStateApp(context, 'complement');
         if (!mounted) return;
-        await authService.login(context, user.apiToken!, body);
+        await authService.writeToken(context, user.apiToken!);
         tokenState.updateStateAuxToken(false);
         if (!mounted) return;
         return Navigator.pushReplacement(
@@ -479,9 +481,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
           stateFacialRecognition: facialRecognition,
           nextScreen: (message) {
             return showSuccessful(context, message, () async {
-              await authService.login(context, token, body);
               if (!mounted) return;
               await authService.writeStateApp(context, 'complement');
+              if (!mounted) return;
+              await authService.writeToken(context, token);
               tokenState.updateStateAuxToken(false);
               if (!mounted) return;
               Navigator.pushReplacement(
@@ -493,8 +496,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
     );
   }
 
-  initSessionVirtualOfficine(dynamic response, UserVirtualOfficine userVirtualOfficine) async {
-    final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: false);
+  initSessionVirtualOfficine(dynamic response, UserVirtualOfficine userVirtualOfficine, UserModel user) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final tokenState = Provider.of<TokenState>(context, listen: false);
     tokenState.updateStateAuxToken(false);
@@ -502,11 +504,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
       case 'Pendiente':
         return virtualOfficineUpdatePwd(json.decode(response.body)['message']);
       case 'Activo':
-        debugPrint('${json.decode(response.body)['data']['api_token']}');
-        if (!mounted) return;
-        await authService.login(context, json.decode(response.body)['data']['api_token'], body);
-        if (!mounted) return;
-        await authService.writeStateApp(context, 'virtualofficine');
         final biometric = await authService.readBiometric();
         final biometricUserModel = BiometricUserModel(
             biometricVirtualOfficine: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
@@ -514,12 +511,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
             affiliateId: json.decode(response.body)['data']['user']['id'],
             userComplement: biometric == '' ? UserComplement() : biometricUserModelFromJson(biometric).userComplement,
             userVirtualOfficine: userVirtualOfficine);
-        prefs!.setInt('affiliateId', json.decode(response.body)['data']['user']['id']);
-        final affiliateModel = AffiliateModel(idAffiliate: json.decode(response.body)['data']['user']['id']);
-        await DBProvider.db.newAffiliateModel(affiliateModel);
-        notificationBloc.add(UpdateAffiliateId(json.decode(response.body)['data']['user']['id']));
         if (!mounted) return;
-        await authService.biometric(context, biometricUserModelToJson(biometricUserModel));
+        await authService.writeBiometric(context, biometricUserModelToJson(biometricUserModel));
+        if (!mounted) return;
+        await authService.writeStateApp(context, 'virtualofficine');
+        if (!mounted) return;
+        await authService.writeToken(context, user.apiToken!);
+        tokenState.updateStateAuxToken(false);
         if (!mounted) return;
         return Navigator.pushReplacement(
             context,

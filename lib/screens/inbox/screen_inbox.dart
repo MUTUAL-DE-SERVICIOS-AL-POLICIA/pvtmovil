@@ -10,7 +10,7 @@ import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
-import 'package:muserpol_pvt/dialogs/dialog_action.dart';
+import 'package:muserpol_pvt/components/dialog_action.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class ScreenInbox extends StatefulWidget {

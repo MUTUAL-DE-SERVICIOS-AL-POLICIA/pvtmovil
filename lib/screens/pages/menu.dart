@@ -6,7 +6,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/section_title.dart';
-import 'package:muserpol_pvt/dialogs/dialog_action.dart';
+import 'package:muserpol_pvt/components/dialog_action.dart';
 import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
@@ -33,9 +33,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      if (ThemeProvider.themeOf(context).id.contains('dark')) {
-        setState(() => colorValue = true);
-      }
+      if (ThemeProvider.themeOf(context).id.contains('dark')) setState(() => colorValue = true);
     });
     verifyBiometric();
   }
@@ -46,11 +44,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
     if (await authService.readBiometric() != "") {
       final biometric = await authService.readBiometric();
       if (await authService.readStateApp() == 'complement') {
-        setState(() => biometricValue =
-            biometricUserModelFromJson(biometric).biometricComplement!);
+        setState(() => biometricValue = biometricUserModelFromJson(biometric).biometricComplement!);
       } else {
-        setState(() => biometricValue =
-            biometricUserModelFromJson(biometric).biometricVirtualOfficine!);
+        setState(() => biometricValue = biometricUserModelFromJson(biometric).biometricVirtualOfficine!);
       }
     }
   }
@@ -61,9 +57,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   bool stateLoading = false;
   @override
   Widget build(BuildContext context) {
-    final userBloc =
-        BlocProvider.of<UserBloc>(context, listen: true).state.user;
-    final authService = Provider.of<AuthService>(context, listen: false);
+    final userBloc = BlocProvider.of<UserBloc>(context, listen: true).state.user;
     return Drawer(
       width: MediaQuery.of(context).size.width / 1.5,
       child: Padding(
@@ -74,49 +68,39 @@ class _MenuDrawerState extends State<MenuDrawer> {
             children: <Widget>[
               Image(
                 image: AssetImage(
-                  ThemeProvider.themeOf(context).id.contains('dark')
-                      ? 'assets/images/muserpol-logo.png'
-                      : 'assets/images/muserpol-logo2.png',
+                  ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
                 ),
               ),
               const Text(
                 'Mis datos',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              FutureBuilder(
-                  future: authService.readStateApp(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.data == 'complement') {
-                      return Column(
-                        children: [
-                          IconName(
-                            icon: Icons.person_outline,
-                            text: userBloc!.fullName!,
-                          ),
-                          if (userBloc.degree != null)
-                            IconName(
-                              icon: Icons.local_police_outlined,
-                              text: 'GRADO: ${userBloc.degree!}',
-                            ),
-                          IconName(
-                            icon: Icons.contact_page_outlined,
-                            text: 'C.I.: ${userBloc.identityCard!}',
-                          ),
-                          if (userBloc.category != null)
-                            IconName(
-                              icon: Icons.av_timer,
-                              text: 'CATEGORÍA: ${userBloc.category!}',
-                            ),
-                          IconName(
-                            icon: Icons.account_balance,
-                            text: 'GESTORA: ${userBloc.pensionEntity!}',
-                          ),
-                        ],
-                      );
-                    }
-                    return Container();
-                  }),
+              Column(
+                children: [
+                  IconName(
+                    icon: Icons.person_outline,
+                    text: userBloc!.fullName!,
+                  ),
+                  if (userBloc.degree != null)
+                    IconName(
+                      icon: Icons.local_police_outlined,
+                      text: 'GRADO: ${userBloc.degree!}',
+                    ),
+                  IconName(
+                    icon: Icons.contact_page_outlined,
+                    text: 'C.I.: ${userBloc.identityCard!}',
+                  ),
+                  if (userBloc.category != null)
+                    IconName(
+                      icon: Icons.av_timer,
+                      text: 'CATEGORÍA: ${userBloc.category!}',
+                    ),
+                  // IconName(
+                  //   icon: Icons.account_balance,
+                  //   text: 'GESTORA: ${userBloc.pensionEntity!}',
+                  // ),
+                ],
+              ),
               Divider(height: 0.03.sh),
               const Text(
                 'Configuración de preferencias',
@@ -138,18 +122,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SectiontitleComponent(
-                  title: 'Contactos a nivel nacional',
-                  icon: Icons.contact_phone_rounded,
-                  onTap: () => Navigator.pushNamed(context, 'contacts')),
+                  title: 'Contactos a nivel nacional', icon: Icons.contact_phone_rounded, onTap: () => Navigator.pushNamed(context, 'contacts')),
               SectiontitleComponent(
-                  title: 'Políticas de Privacidad',
-                  icon: Icons.privacy_tip,
-                  stateLoading: stateLoading,
-                  onTap: () => privacyPolicy(context)),
-              SectiontitleComponent(
-                  title: 'Cerrar Sesión',
-                  icon: Icons.info_outline,
-                  onTap: () => closeSession(context)),
+                  title: 'Políticas de Privacidad', icon: Icons.privacy_tip, stateLoading: stateLoading, onTap: () => privacyPolicy(context)),
+              SectiontitleComponent(title: 'Cerrar Sesión', icon: Icons.info_outline, onTap: () => closeSession(context)),
               Center(
                 child: Text('Versión ${dotenv.env['version']}'),
               ),
@@ -163,12 +139,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   privacyPolicy(BuildContext context) async {
     setState(() => stateLoading = true);
-    var response = await serviceMethod(
-        mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, true);
+    var response = await serviceMethod(mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, true);
     setState(() => stateLoading = false);
     if (response != null) {
-      String pathFile = await saveFile(
-          'Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
+      String pathFile = await saveFile('Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
       await OpenFile.open(pathFile);
     }
   }
@@ -186,12 +160,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
     final LocalAuthentication auth = LocalAuthentication();
     // ···
     final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
-    final bool canAuthenticate =
-        canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+    final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
     debugPrint('puede $canAuthenticate');
 
-    final List<BiometricType> availableBiometrics =
-        await auth.getAvailableBiometrics();
+    final List<BiometricType> availableBiometrics = await auth.getAvailableBiometrics();
     debugPrint('availableBiometrics $availableBiometrics');
 
     if (availableBiometrics.isNotEmpty) {
@@ -199,12 +171,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
       debugPrint('Algunos datos biométricos están inscritos.');
     }
 
-    if (availableBiometrics.contains(BiometricType.strong) ||
-        availableBiometrics.contains(BiometricType.face)) {
+    if (availableBiometrics.contains(BiometricType.strong) || availableBiometrics.contains(BiometricType.face)) {
       debugPrint('Hay tipos específicos de datos biométricos disponibles.');
     }
-    final biometric =
-        biometricUserModelFromJson(await authService.readBiometric());
+    final biometric = biometricUserModelFromJson(await authService.readBiometric());
     var biometricUserModel = BiometricUserModel();
     debugPrint('ESTADO DE LA APP ${await authService.readStateApp()}');
     if (await authService.readStateApp() == 'complement') {
@@ -223,12 +193,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
           userVirtualOfficine: biometric.userVirtualOfficine);
     }
     if (!mounted) return;
-
-    // debugPrint('${biometricUserModelFromJson(await authService.readBiometric()).biometricComplement}');
     debugPrint(biometricUserModelToJson(biometricUserModel));
     if (!mounted) return;
-    await authService.biometric(
-        context, biometricUserModelToJson(biometricUserModel));
+    await authService.writeBiometric(context, biometricUserModelToJson(biometricUserModel));
   }
 
   closeSession(BuildContext context) async {
@@ -239,8 +206,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
           return ComponentAnimate(
               child: DialogTwoAction(
                   message: '¿Estás seguro que quieres cerrar sesión?',
-                  actionCorrect: () =>
-                      confirmDeleteSession(mounted, context, true),
+                  actionCorrect: () => confirmDeleteSession(mounted, context, true),
                   messageCorrect: 'Salir'));
         });
   }
@@ -249,8 +215,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
 class IconName extends StatelessWidget {
   final IconData icon;
   final String text;
-  const IconName({Key? key, required this.icon, required this.text})
-      : super(key: key);
+  const IconName({Key? key, required this.icon, required this.text}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

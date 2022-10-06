@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
-import 'package:muserpol_pvt/components/heders.dart';
+import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/components/image_ctrl_live.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
-import 'package:muserpol_pvt/dialogs/dialog_action.dart';
+import 'package:muserpol_pvt/components/dialog_action.dart';
 import 'package:muserpol_pvt/model/liveness_data_model.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/tab_info.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
@@ -15,8 +15,8 @@ import 'package:muserpol_pvt/services/services.dart';
 
 class ModalInsideModal extends StatefulWidget {
   final Function(String) nextScreen;
-  final String? deviceId;
   final bool stateFacialRecognition;
+  final String? deviceId;
   final String? firebaseToken;
   const ModalInsideModal({Key? key, required this.nextScreen, this.deviceId, this.stateFacialRecognition = false, this.firebaseToken}) : super(key: key);
 
@@ -117,10 +117,6 @@ class _ModalInsideModalState extends State<ModalInsideModal> with TickerProvider
             builder: (BuildContext context) => DialogAction(message: json.decode(response.body)['message']));
       } else {
         if (json.decode(response.body)['data']['completed']) {
-          debugPrint('==============HOLA========');
-          // User user = userBloc.state.user!;
-          // user.enrolled = true;
-          // userBloc.add(UpdateUser(user));
           return widget.nextScreen(json.decode(response.body)['message']);
         } else {
           setState(() => title = json.decode(response.body)['data']['action']['message']);

@@ -20,8 +20,8 @@ class _TabInfoEconomicComplementState extends State<TabInfoEconomicComplement> {
   @override
   Widget build(BuildContext context) {
     final procedureBloc = Provider.of<ProcedureBloc>(context, listen: true).state;
-    final appState = Provider.of<AppState>(context, listen: true);
-    return procedureBloc.existInfoComplementInfo && appState.stateLoadingProcedure
+    final loadingState = Provider.of<LoadingState>(context, listen: true);
+    return procedureBloc.existInfoComplementInfo && loadingState.stateLoadingProcedure
         ? Column(
               children: [
                 const Text('Número telefónico:'),

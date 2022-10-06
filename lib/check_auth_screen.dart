@@ -29,9 +29,6 @@ class CheckAuthScreen extends StatelessWidget {
                 return goFirstInto(context);
               });
             } else {
-              final notificationBloc = BlocProvider.of<NotificationBloc>(context);
-              DBProvider.db.getAllNotificationModel().then((res) => notificationBloc.add(UpdateNotifications(res)));
-              DBProvider.db.getAllAffiliateModel().then((res)=>notificationBloc.add(UpdateAffiliateId(res[0].idAffiliate)));
               Future.microtask(() {
                 return getInfo(context);
               });
@@ -61,10 +58,15 @@ class CheckAuthScreen extends StatelessWidget {
   getInfo(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    if (await authService.readStateApp() == 'complement') {
-      UserModel user = userModelFromJson(await authService.readUser());
-      userBloc.add(UpdateUser(user.user!));
+    if (await authService.readUser() == '') {
+      return Future.microtask(() {
+        Navigator.pushReplacement(
+            context, PageRouteBuilder(pageBuilder: (_, __, ___) => const ScreenSwitch(), transitionDuration: const Duration(seconds: 0)));
+      });
     }
+    getNotifications(context);
+    UserModel user = userModelFromJson(await authService.readUser());
+    userBloc.add(UpdateUser(user.user!));
     final stateApp = await authService.readStateApp();
     Future.microtask(() {
       Navigator.pushReplacement(
@@ -72,5 +74,11 @@ class CheckAuthScreen extends StatelessWidget {
           PageRouteBuilder(
               pageBuilder: (_, __, ___) => NavigatorBar(tutorial: false, stateApp: stateApp), transitionDuration: const Duration(seconds: 0)));
     });
+  }
+
+  getNotifications(BuildContext context) async {
+    final notificationBloc = BlocProvider.of<NotificationBloc>(context);
+    await DBProvider.db.getAllNotificationModel().then((res) => notificationBloc.add(UpdateNotifications(res)));
+    await DBProvider.db.getAllAffiliateModel().then((res) => notificationBloc.add(UpdateAffiliateId(res[0].idAffiliate)));
   }
 }
