@@ -398,6 +398,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
         body['identity_card'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
         body['birth_date'] = dateCtrlText;
         body['is_new_app'] = true;
+        body['is_new_version'] = true;
       } else {
         body['username'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
         body['password'] = passwordCtrl.text.trim();
