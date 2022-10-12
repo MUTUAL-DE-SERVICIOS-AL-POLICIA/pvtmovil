@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -36,11 +35,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+    return super.createHttpClient(context)..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
 }
+
 SharedPreferences? prefs;
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -49,7 +47,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-PushNotificationService.initializeapp();
+  PushNotificationService.initializeapp();
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
@@ -71,16 +69,46 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (_) => ContributionBloc()),
           BlocProvider(create: (_) => LoanBloc()),
         ],
-        child: MultiProvider(providers: [
-          ChangeNotifierProvider(create: (_) => AuthService()),
-          ChangeNotifierProvider(create: (_) => LoadingState()),
-          ChangeNotifierProvider(create: (_) => TokenState()),
-          ChangeNotifierProvider(create: (_) => FilesState()),
-          ChangeNotifierProvider(create: (_) => ObservationState()),
-          ChangeNotifierProvider(create: (_) => TabProcedureState()),
-          ChangeNotifierProvider(create: (_) => ProcessingState()),
-          
-        ], child: const Muserpol()));
+        child: MultiProvider(
+            providers: [
+              ChangeNotifierProvider(create: (_) => AuthService()),
+              ChangeNotifierProvider(create: (_) => LoadingState()),
+              ChangeNotifierProvider(create: (_) => TokenState()),
+              ChangeNotifierProvider(create: (_) => FilesState()),
+              ChangeNotifierProvider(create: (_) => ObservationState()),
+              ChangeNotifierProvider(create: (_) => TabProcedureState()),
+              ChangeNotifierProvider(create: (_) => ProcessingState()),
+            ],
+            child: ScreenUtilInit(
+                designSize: const Size(360, 690),
+                minTextAdapt: true,
+                splitScreenMode: true,
+                builder: (context, child) => ThemeProvider(
+                    saveThemesOnChange: true, // Auto save any theme change we do
+                    loadThemeOnInit: false, // Do not load the saved theme(use onInitCallback callback)
+                    onInitCallback: (controller, previouslySavedThemeFuture) async {
+                      String? savedTheme = await previouslySavedThemeFuture;
+
+                      if (savedTheme != null) {
+                        // If previous theme saved, use saved theme
+                        controller.setTheme(savedTheme);
+                      } else {
+                        // If previous theme not found, use platform default
+                        Brightness platformBrightness = SchedulerBinding.instance.window.platformBrightness;
+                        if (platformBrightness == Brightness.dark) {
+                          controller.setTheme('dark');
+                        } else {
+                          controller.setTheme('light');
+                        }
+                        // Forget the saved theme(which were saved just now by previous lines)
+                        controller.forgetSavedTheme();
+                      }
+                    },
+                    themes: [
+                      styleLigth2(),
+                      styleDark2(),
+                    ],
+                    child: const ThemeConsumer(child: Muserpol())))));
   }
 }
 
@@ -91,21 +119,34 @@ class Muserpol extends StatefulWidget {
   State<Muserpol> createState() => _MuserpolState();
 }
 
-class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver{
+class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  final GlobalKey<ScaffoldMessengerState> messengerKey =
-      GlobalKey<ScaffoldMessengerState>();
+  final GlobalKey<ScaffoldMessengerState> messengerKey = GlobalKey<ScaffoldMessengerState>();
   @override
   didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _updatebd();
     }
   }
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    
+    final window = WidgetsBinding.instance.window;
+
+    // This callback is called every time the brightness changes.
+    window.onPlatformBrightnessChanged = () {
+      final brightness = window.platformBrightness;
+      debugPrint('brightness ${brightness.name}');
+      debugPrint('ThemeProvider.themeOf(context).id. ${ThemeProvider.themeOf(context).id}');
+      if (brightness.name == 'dark' && ThemeProvider.themeOf(context).id.contains('light')) {
+        ThemeProvider.controllerOf(context).nextTheme();
+      }
+      if (brightness.name == 'light' && ThemeProvider.themeOf(context).id.contains('dark')) {
+        ThemeProvider.controllerOf(context).nextTheme();
+      }
+    };
     PushNotificationService.messagesStream.listen((message) {
       debugPrint('NO TI FI CA CION $message');
       final msg = json.decode(message);
@@ -117,76 +158,43 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver{
       }
     });
   }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+
   _updatebd() {
     Future.delayed(Duration.zero, () {
       final notificationBloc = BlocProvider.of<NotificationBloc>(context);
-      DBProvider.db
-          .getAllNotificationModel()
-          .then((res) => notificationBloc.add(UpdateNotifications(res)));
+      DBProvider.db.getAllNotificationModel().then((res) => notificationBloc.add(UpdateNotifications(res)));
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-        designSize: const Size(360, 690),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (context, child) => ThemeProvider(
-            saveThemesOnChange: true, // Auto save any theme change we do
-            loadThemeOnInit:
-                false, // Do not load the saved theme(use onInitCallback callback)
-            onInitCallback: (controller, previouslySavedThemeFuture) async {
-              String? savedTheme = await previouslySavedThemeFuture;
-
-              if (savedTheme != null) {
-                // If previous theme saved, use saved theme
-                controller.setTheme(savedTheme);
-              } else {
-                // If previous theme not found, use platform default
-                Brightness platformBrightness =
-                    SchedulerBinding.instance.window.platformBrightness;
-                if (platformBrightness == Brightness.dark) {
-                  controller.setTheme('dark');
-                } else {
-                  controller.setTheme('light');
-                }
-                // Forget the saved theme(which were saved just now by previous lines)
-                controller.forgetSavedTheme();
-              }
-            },
-            themes: [
-              styleLigth2(),
-              styleDark2(),
-            ],
-            child: ThemeConsumer(
-              child: Builder(
-                  builder: (themeContext) => MaterialApp(
-                      localizationsDelegates: const [
-                        GlobalMaterialLocalizations.delegate,
-                        GlobalWidgetsLocalizations.delegate,
-                        GlobalCupertinoLocalizations.delegate,
-                      ],
-                      supportedLocales: const [
-                        Locale('es', 'ES'), // Spanish
-                        Locale('en', 'US'), // English
-                      ],
-                      debugShowCheckedModeBanner: false,
-                      navigatorKey: navigatorKey,
-                      theme: ThemeProvider.themeOf(themeContext).data,
-                      title: 'MUSERPOL PVT',
-                      initialRoute: 'check_auth',
-                      routes: {
-                        'check_auth': (_) => const CheckAuthScreen(),
-                        'slider': (_) => const PageSlider(),
-                        'switch': (_) => const ScreenSwitch(),
-                        'contacts': (_) => const ScreenContact(),
-                        'message': (_) => const ScreenNotification()
-                      })),
-            )));
+    return MaterialApp(
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('es', 'ES'), // Spanish
+          Locale('en', 'US'), // English
+        ],
+        debugShowCheckedModeBanner: false,
+        navigatorKey: navigatorKey,
+        theme: ThemeProvider.themeOf(context).data,
+        title: 'MUSERPOL PVT',
+        initialRoute: 'check_auth',
+        routes: {
+          'check_auth': (_) => const CheckAuthScreen(),
+          'slider': (_) => const PageSlider(),
+          'switch': (_) => const ScreenSwitch(),
+          'contacts': (_) => const ScreenContact(),
+          'message': (_) => const ScreenNotification()
+        });
   }
 }

@@ -56,10 +56,10 @@ class _ScreenNotificationState extends State<ScreenNotification> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                if (args['text'].length > 0)
-                  const Divider(
-                    color: Colors.blueGrey,
-                  ),
+                // if (args['text'].length > 0)
+                //   const Divider(
+                //     color: Colors.blueGrey,
+                //   ),
                 if (args['image'].length > 0) InteractiveViewer(minScale: 1, maxScale: 4, child: Image.network(args['image'])),
               ])),
             )),

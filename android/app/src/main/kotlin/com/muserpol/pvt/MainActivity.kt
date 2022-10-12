@@ -4,7 +4,8 @@ import android.content.Context
 import io.flutter.embedding.android.FlutterFragmentActivity
 
 class MainActivity: FlutterFragmentActivity() {
-        override fun onResume() {
+    
+    override fun onResume() {
         super.onResume()
         closeAllNotifications();
     }

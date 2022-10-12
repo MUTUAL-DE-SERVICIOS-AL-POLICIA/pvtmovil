@@ -17,6 +17,7 @@ class PushNotificationService {
     await Firebase.initializeApp();
 
     await requestPermission();
+    await FirebaseMessaging.instance.setAutoInitEnabled(true);
     await FirebaseMessaging.instance.getToken().then((v) {}).catchError((err) {
       debugPrint('error $err');
     });

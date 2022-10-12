@@ -29,6 +29,7 @@ import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
+import 'package:theme_provider/theme_provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import 'dart:math' as math;
@@ -70,6 +71,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
     generateMenu();
     checkVersion(mounted, context);
     services();
+
   }
 
   generateMenu() {
