@@ -24,7 +24,7 @@ class PushNotificationService {
     debugPrint('tokenNotification $token');
 
     //cuando esta en segundo plano la app
-    FirebaseMessaging. onBackgroundMessage(_backgroundHandle);
+    FirebaseMessaging.onBackgroundMessage(_backgroundHandle);
     //cuando esta en primer plano la app
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {}).onData((data) => _onMessageHandler(data));
     //cuando se abre la app desde la notificacion y la app esta en segundo plano pero no esta cerrado del todo
@@ -32,6 +32,7 @@ class PushNotificationService {
   }
 @pragma('vm:entry-point')
   static Future<void> _backgroundHandle(RemoteMessage message) async {
+    await Firebase.initializeApp();
     debugPrint('HOLA');
     debugPrint('_backgroundHandle ${json.encode(message.data)}');
     final affiliateId = await DBProvider.db.getAffiliateModelById();

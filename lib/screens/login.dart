@@ -117,6 +117,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
         ],
         options: const AuthenticationOptions(
           stickyAuth: true,
+          biometricOnly:true
         ),
       );
       debugPrint('HECHO');

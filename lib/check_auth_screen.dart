@@ -64,7 +64,7 @@ class CheckAuthScreen extends StatelessWidget {
             context, PageRouteBuilder(pageBuilder: (_, __, ___) => const ScreenSwitch(), transitionDuration: const Duration(seconds: 0)));
       });
     }
-    getNotifications(context);
+    await getNotifications(context);
     UserModel user = userModelFromJson(await authService.readUser());
     userBloc.add(UpdateUser(user.user!));
     final stateApp = await authService.readStateApp();
