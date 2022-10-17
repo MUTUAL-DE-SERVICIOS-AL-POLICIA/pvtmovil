@@ -41,7 +41,7 @@ class HedersComponent extends StatelessWidget {
                       padding: const EdgeInsets.all(10.0),
                       child: SvgPicture.asset(
                         'assets/icons/back.svg',
-                        height: 17.sp,
+                        height: 20.sp,
                         color: ThemeProvider.themeOf(context).data.hintColor,
                       ),
                     )),
@@ -53,7 +53,7 @@ class HedersComponent extends StatelessWidget {
                       padding: const EdgeInsets.all(10.0),
                       child: SvgPicture.asset(
                         'assets/icons/menu.svg',
-                        height: 17.sp,
+                        height: 20.sp,
                         color: ThemeProvider.themeOf(context).data.hintColor,
                       ),
                     )),

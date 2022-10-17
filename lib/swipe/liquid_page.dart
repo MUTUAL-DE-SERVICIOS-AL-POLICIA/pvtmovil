@@ -12,9 +12,9 @@ final liquidPages = [
   const LiquidPage(
       imageBackground: 'assets/images/002.jpg',
       imageFront: "assets/icons/7.png",
-      titleText: "EVITA HACER FILAS",
+      titleText: "EVITE HACER FILAS",
       subtitleText: "COMPLEMENTO ECONÓMICO",
-      text: "Podras realizar la solicitud y seguimiento del pago del Beneficio del Complemento Económico",
+      text: "Realice la solicitud y seguimiento del pago del Beneficio del Complemento Económico",
       step: 1),
   const LiquidPage(
       imageBackground: 'assets/images/003.jpg',

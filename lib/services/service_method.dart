@@ -210,10 +210,10 @@ checkVersion(bool mounted, BuildContext context) async {
   }
   final Map<String, dynamic> data = {'version': dotenv.env['versions']};
   if (Platform.isIOS) {
-    data['store'] = 'appstore';
+    data['store'] = dotenv.env['storeIOS'];
   }
   if (Platform.isAndroid) {
-    data['store'] = 'playstore';
+    data['store'] = dotenv.env['storeAndroid'];
   }
   var response = await serviceMethod(
       mounted, context, 'post', data, servicePostVersion(), false, false);

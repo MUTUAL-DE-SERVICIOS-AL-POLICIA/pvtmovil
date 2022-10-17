@@ -19,7 +19,7 @@ class AuthService extends ChangeNotifier {
   }
 
   Future writeToken(BuildContext context, String token) async {
-    await storage.write(key: 'token', value: token);
+    await storage.write(key: 'tokenv2.2.0', value: token);
     return;
   }
 
@@ -35,7 +35,7 @@ class AuthService extends ChangeNotifier {
 
   Future logout() async {
     await storage.delete(key: 'user');
-    await storage.delete(key: 'token');
+    await storage.delete(key: 'tokenRegister');
     await storage.delete(key: 'auxToken');
     await storage.delete(key: 'stateApp');
 
@@ -55,7 +55,7 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<String> readToken() async {
-    return await storage.read(key: 'token') ?? '';
+    return await storage.read(key: 'tokenv2.2.0') ?? '';
   }
 
   Future<String> readAuxToken() async {
