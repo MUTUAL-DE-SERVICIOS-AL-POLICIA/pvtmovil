@@ -191,8 +191,6 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
     filesState.updateFile(element.id!, null);
   }
   userBloc.add(UpdateCtrlLive(false));
-  // var appDir = (await getTemporaryDirectory()).path;
-  // Directory(appDir).delete(recursive: true);
   await PushNotificationService.closeStreams();
   authService.logout();
   procedureBloc.add(ClearProcedures());
@@ -208,7 +206,7 @@ checkVersion(bool mounted, BuildContext context) async {
       InternetConnectionStatus.disconnected) {
     return callDialogAction(context, 'Verifique su conexión a Internet');
   }
-  final Map<String, dynamic> data = {'version': dotenv.env['versions']};
+  final Map<String, dynamic> data = {'version': dotenv.env['version']};
   if (Platform.isIOS) {
     data['store'] = dotenv.env['storeIOS'];
   }

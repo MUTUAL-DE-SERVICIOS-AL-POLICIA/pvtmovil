@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService extends ChangeNotifier {
@@ -19,7 +20,7 @@ class AuthService extends ChangeNotifier {
   }
 
   Future writeToken(BuildContext context, String token) async {
-    await storage.write(key: 'tokenv2.2.0', value: token);
+    await storage.write(key: 'tokenv${dotenv.env['version']}', value: token);
     return;
   }
 
@@ -35,13 +36,13 @@ class AuthService extends ChangeNotifier {
 
   Future logout() async {
     await storage.delete(key: 'user');
-    await storage.delete(key: 'tokenRegister');
+    await storage.delete(key: 'tokenv${dotenv.env['version']}');
     await storage.delete(key: 'auxToken');
     await storage.delete(key: 'stateApp');
 
     return;
   }
-
+  
   Future<String> readBiometric() async {
     return await storage.read(key: 'biometric') ?? '';
   }
@@ -55,7 +56,7 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<String> readToken() async {
-    return await storage.read(key: 'tokenv2.2.0') ?? '';
+    return await storage.read(key: 'tokenv${dotenv.env['version']}') ?? '';
   }
 
   Future<String> readAuxToken() async {
