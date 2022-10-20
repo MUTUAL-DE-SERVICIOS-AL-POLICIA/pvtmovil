@@ -35,6 +35,7 @@ Future<dynamic> serviceMethod(
       headers["Authorization"] = "Bearer ${await authService.readToken()}";
     }
   }
+  debugPrint('asdasd ${await InternetConnectionChecker().connectionStatus}');
   if (await InternetConnectionChecker().connectionStatus == InternetConnectionStatus.disconnected) {
     if (!mounted) return;
     callDialogAction(context, 'Verifique su conexión a Internet');
@@ -70,7 +71,7 @@ Future<dynamic> serviceMethod(
           debugPrint('errA $err');
           if ('$err'.contains('html')) {
             callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
-          } else if ('$err' == 'Software caused connection abort') {
+          } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
             callDialogAction(context, 'Verifique su conexión a Internet');
           } else {
             callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
@@ -94,7 +95,7 @@ Future<dynamic> serviceMethod(
           debugPrint('errA $err');
           if ('$err'.contains('html')) {
             callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
-          } else if ('$err' == 'Software caused connection abort') {
+          } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
             callDialogAction(context, 'Verifique su conexión a Internet');
           } else {
             callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');

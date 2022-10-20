@@ -255,7 +255,9 @@ class _NavigatorBarState extends State<NavigatorBar> {
                 ),
               ),
               if (widget.stateApp == 'complement')
-                ConvexAppBar(
+                StyleProvider(    
+  style: Style(),
+  child: ConvexAppBar(
                     height: 65,
                     elevation: 0,
                     backgroundColor: const Color(0xff419388),
@@ -280,7 +282,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
                           title: "Trámites Históricos"),
                     ],
                     initialActiveIndex: 0,
-                    onTap: (int i) => {setState(() => _currentIndex = i)}),
+                    onTap: (int i) => {setState(() => _currentIndex = i)})),
               if (widget.stateApp == 'virtualofficine')
                 ConvexAppBar(
                     height: 65,
@@ -521,5 +523,21 @@ class _NavigatorBarState extends State<NavigatorBar> {
         null,
         null,
         null));
+  }
+  
+}
+class Style extends StyleHook {
+  @override
+  double get activeIconSize => 40;
+
+  @override
+  double get activeIconMargin => 10;
+
+  @override
+  double get iconSize => 20;
+
+  @override
+  TextStyle textStyle(Color color, String? s) {
+    return TextStyle(fontSize: 15.sp, color: color);
   }
 }
