@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -12,6 +14,30 @@ class PageSlider extends StatefulWidget {
 }
 
 class _PageSliderState extends State<PageSlider> {
+  int page = 0;
+  Widget _buildDot(int index) {
+    double selectedness = Curves.easeOut.transform(
+      max(
+        0.0,
+        1.0 - ((page ?? 0) - index).abs(),
+      ),
+    );
+    double zoom = 1.0 + (2.0 - 1.0) * selectedness;
+    return new Container(
+      width: 25.0,
+      child: new Center(
+        child: new Material(
+          color: Colors.white,
+          type: MaterialType.circle,
+          child: new Container(
+            width: 8.0 * zoom,
+            height: 8.0 * zoom,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -19,12 +45,32 @@ class _PageSliderState extends State<PageSlider> {
           return false;
         },
         child: Scaffold(
-          body: LiquidSwipe(
-            pages: liquidPages,
-            enableLoop: true,
-            fullTransitionValue: 500,
-            waveType: WaveType.liquidReveal,
-            positionSlideIcon: 0.25,
+          body: Stack(
+            children: [
+              LiquidSwipe(
+                pages: liquidPages,
+                positionSlideIcon: 0.8,
+              slideIconWidget: Icon(Icons.arrow_back_ios,color: Colors.white,),
+              onPageChangeCallback: pageChangeCallback,
+              waveType: WaveType.liquidReveal,
+              fullTransitionValue: 880,
+              // enableSideReveal: true,
+              enableLoop: true,
+              ignoreUserGestureWhileAnimating: true,
+              ),
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(child: SizedBox()),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List<Widget>.generate(liquidPages.length, _buildDot),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => _showModalInside(),
@@ -35,6 +81,12 @@ class _PageSliderState extends State<PageSlider> {
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         ));
+  }
+
+  pageChangeCallback(int lpage) {
+    setState(() {
+      page = lpage;
+    });
   }
 
   _showModalInside() async {

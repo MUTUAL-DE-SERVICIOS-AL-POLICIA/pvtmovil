@@ -29,7 +29,6 @@ import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
-// import 'package:theme_provider/theme_provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import 'dart:math' as math;
@@ -69,9 +68,8 @@ class _NavigatorBarState extends State<NavigatorBar> {
   void initState() {
     super.initState();
     generateMenu();
-    checkVersion(mounted, context);
-    services();
 
+    services();
   }
 
   generateMenu() {
@@ -86,30 +84,32 @@ class _NavigatorBarState extends State<NavigatorBar> {
   }
 
   services() async {
-    if (widget.stateApp == 'complement') {
-      getProcessingPermit();
-      getObservations();
-      _scrollController.addListener(() {
-        if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-          if (_currentIndex == 0 && procedureCurrent!.data!.nextPageUrl != null) {
-            getEconomicComplement(true);
-          }
-          if (_currentIndex == 1 && procedureHistory!.data!.nextPageUrl != null) {
-            getEconomicComplement(false);
-          }
-        }
-      });
-    }
-    if (widget.tutorial) {
-      Future.delayed(const Duration(milliseconds: 500), showTutorial);
-    } else {
+    if (await checkVersion(mounted, context)) {
       if (widget.stateApp == 'complement') {
-        getEconomicComplement(true);
-        getEconomicComplement(false);
+        getProcessingPermit();
+        getObservations();
+        _scrollController.addListener(() {
+          if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+            if (_currentIndex == 0 && procedureCurrent!.data!.nextPageUrl != null) {
+              getEconomicComplement(true);
+            }
+            if (_currentIndex == 1 && procedureHistory!.data!.nextPageUrl != null) {
+              getEconomicComplement(false);
+            }
+          }
+        });
+      }
+      if (widget.tutorial) {
+        Future.delayed(const Duration(milliseconds: 500), showTutorial);
       } else {
-        debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
-        getContributions();
-        getLoans();
+        if (widget.stateApp == 'complement') {
+          getEconomicComplement(true);
+          getEconomicComplement(false);
+        } else {
+          debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
+          getContributions();
+          getLoans();
+        }
       }
     }
   }
@@ -255,34 +255,34 @@ class _NavigatorBarState extends State<NavigatorBar> {
                 ),
               ),
               if (widget.stateApp == 'complement')
-                StyleProvider(    
-  style: Style(),
-  child: ConvexAppBar(
-                    height: 65,
-                    elevation: 0,
-                    backgroundColor: const Color(0xff419388),
-                    // color: Color(0xff419388),
-                    style: TabStyle.react,
-                    items: [
-                      TabItem(
-                          isIconBlend: true,
-                          icon: SvgPicture.asset(
-                            'assets/icons/newProcedure.svg',
-                            height: 25.sp,
-                            color: Colors.white,
-                          ),
-                          title: "Solicitud de Pago"),
-                      TabItem(
-                          isIconBlend: true,
-                          icon: SvgPicture.asset(
-                            'assets/icons/historyProcedure.svg',
-                            height: 25.sp,
-                            color: Colors.white,
-                          ),
-                          title: "Trámites Históricos"),
-                    ],
-                    initialActiveIndex: 0,
-                    onTap: (int i) => {setState(() => _currentIndex = i)})),
+                StyleProvider(
+                    style: Style(),
+                    child: ConvexAppBar(
+                        height: 65,
+                        elevation: 0,
+                        backgroundColor: const Color(0xff419388),
+                        // color: Color(0xff419388),
+                        style: TabStyle.react,
+                        items: [
+                          TabItem(
+                              isIconBlend: true,
+                              icon: SvgPicture.asset(
+                                'assets/icons/newProcedure.svg',
+                                height: 25.sp,
+                                color: Colors.white,
+                              ),
+                              title: "Solicitud de Pago"),
+                          TabItem(
+                              isIconBlend: true,
+                              icon: SvgPicture.asset(
+                                'assets/icons/historyProcedure.svg',
+                                height: 25.sp,
+                                color: Colors.white,
+                              ),
+                              title: "Trámites Históricos"),
+                        ],
+                        initialActiveIndex: 0,
+                        onTap: (int i) => {setState(() => _currentIndex = i)})),
               if (widget.stateApp == 'virtualofficine')
                 ConvexAppBar(
                     height: 65,
@@ -524,8 +524,8 @@ class _NavigatorBarState extends State<NavigatorBar> {
         null,
         null));
   }
-  
 }
+
 class Style extends StyleHook {
   @override
   double get activeIconSize => 40;
@@ -538,6 +538,6 @@ class Style extends StyleHook {
 
   @override
   TextStyle textStyle(Color color, String? s) {
-    return TextStyle(fontSize: 15.sp, color: color);
+    return TextStyle(fontSize: 13.sp, color: color);
   }
 }

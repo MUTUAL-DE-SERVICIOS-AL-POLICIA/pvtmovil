@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/model/contribution_model.dart';
@@ -21,6 +22,7 @@ class ContributionsYear extends StatelessWidget {
     return contributions.isNotEmpty
         ? GridView.count(
             padding: const EdgeInsets.only(bottom: 50),
+            // childAspectRatio: 0.,
             crossAxisCount: 3,
             children: List.generate(contributions.length, (index) {
               return GestureDetector(
@@ -31,16 +33,19 @@ class ContributionsYear extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ContainerComponent(
-                              color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                              color: contributions[index].reimbursementTotal != '0,00' && contributions[index].reimbursementTotal != null
+                                  ? const Color(0xffffdead)
+                                  : ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
                               child: Center(
-                                  child: Column(
+                                  child: SingleChildScrollView(
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('${contributions[index].state}',style: const TextStyle(fontWeight: FontWeight.bold)),
-                                  Text(DateFormat('MMMM', "es_ES").format(contributions[index].monthYear!).toUpperCase()),
+                                  Text('${contributions[index].state}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  Text(DateFormat('MMMM', "es_ES").format(contributions[index].monthYear!).toUpperCase(),style: TextStyle(fontSize: 15.sp),),
                                   Text('${contributions[index].total} Bs.'),
                                 ],
-                              ))),
+                              )))),
                         ))),
                 onTap: () {
                   Navigator.of(context).push(

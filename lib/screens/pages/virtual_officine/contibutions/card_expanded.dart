@@ -90,6 +90,13 @@ class _CardExpandedState extends State<CardExpanded> {
                                                 widget.contribution.total!,
                                                 style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
                                               )),
+                                          if (widget.contribution.state == 'ACTIVO')
+                                          tableInfo(
+                                              'Total con reintegro',
+                                              Text(
+                                                '${widget.contribution.reimbursementTotal!} Bs',
+                                                style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                              )),
                                         ])
                                   ]))),
                         ),

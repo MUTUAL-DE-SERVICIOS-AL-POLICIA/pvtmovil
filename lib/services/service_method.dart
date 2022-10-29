@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
@@ -35,121 +34,116 @@ Future<dynamic> serviceMethod(
       headers["Authorization"] = "Bearer ${await authService.readToken()}";
     }
   }
-  debugPrint('asdasd ${await InternetConnectionChecker().connectionStatus}');
-  if (await InternetConnectionChecker().connectionStatus == InternetConnectionStatus.disconnected) {
-    if (!mounted) return;
-    callDialogAction(context, 'Verifique su conexión a Internet');
-  }
   try {
-    var url = Uri.parse(urlAPI);
-    final ioc = HttpClient();
-    ioc.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-    final http = IOClient(ioc);
-    debugPrint('==========================================');
-    debugPrint('== url $url');
-    debugPrint('== body $body');
-    debugPrint('== headers $headers');
-    debugPrint('==========================================');
-    switch (method) {
-      case 'get':
-        return await http.get(url, headers: headers).timeout(const Duration(seconds: 40)).then((value) {
-          debugPrint('statusCode ${value.statusCode}');
-          debugPrint('value ${value.body}');
-          switch (value.statusCode) {
-            case 200:
-              return value;
-            default:
-              if (errorState) {
-                return confirmDeleteSession(mounted, context, false);
-              }
-              // else {
-              //   callDialogAction(context, json.decode(value.body)['message']);
-              // }
-              return null;
-          }
-        }).catchError((err) {
-          debugPrint('errA $err');
-          if ('$err'.contains('html')) {
-            callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
-          } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
-            callDialogAction(context, 'Verifique su conexión a Internet');
-          } else {
-            callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
-          }
-          return null;
-        });
-      case 'post':
-        return await http.post(url, headers: headers, body: json.encode(body)).timeout(const Duration(seconds: 40)).then((value) {
-          debugPrint('statusCode ${value.statusCode}');
-          debugPrint('value ${value.body}');
-          switch (value.statusCode) {
-            case 200:
-              return value;
-            case 201:
-              return value;
-            default:
-              callDialogAction(context, json.decode(value.body)['message']);
-              return null;
-          }
-        }).catchError((err) {
-          debugPrint('errA $err');
-          if ('$err'.contains('html')) {
-            callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
-          } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
-            callDialogAction(context, 'Verifique su conexión a Internet');
-          } else {
-            callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
-          }
-          return null;
-        });
-      case 'delete':
-        return await http.delete(url, headers: headers).timeout(const Duration(seconds: 40)).then((value) {
-          debugPrint('statusCode ${value.statusCode}');
-          debugPrint('value ${value.body}');
-          switch (value.statusCode) {
-            case 200:
-              return value;
-            default:
-              callDialogAction(context, json.decode(value.body)['message']);
-              return null;
-          }
-        }).catchError((err) {
-          debugPrint('errA $err');
-          if ('$err'.contains('html')) {
-            callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
-          } else if ('$err' == 'Software caused connection abort') {
-            callDialogAction(context, 'Verifique su conexión a Internet');
-          } else {
-            callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
-          }
-          return null;
-        });
-      case 'patch':
-        return await http.patch(url, headers: headers, body: json.encode(body)).timeout(const Duration(seconds: 40)).then((value) {
-          debugPrint('statusCode ${value.statusCode}');
-          debugPrint('value ${value.body}');
-          switch (value.statusCode) {
-            case 200:
-              return value;
-            default:
-              callDialogAction(context, json.decode(value.body)['message']);
-              return null;
-          }
-        }).catchError((err) {
-          debugPrint('errA $err');
-          if ('$err'.contains('html')) {
-            callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
-          } else if ('$err' == 'Software caused connection abort') {
-            callDialogAction(context, 'Verifique su conexión a Internet');
-          } else {
-            callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
-          }
-          return null;
-        });
+    final result = await InternetAddress.lookup('pvt.muserpol.gob.bo');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      var url = Uri.parse(urlAPI);
+      final ioc = HttpClient();
+      ioc.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+      final http = IOClient(ioc);
+      debugPrint('==========================================');
+      debugPrint('== method $method');
+      debugPrint('== url $url');
+      debugPrint('== body $body');
+      debugPrint('== headers $headers');
+      debugPrint('==========================================');
+      switch (method) {
+        case 'get':
+          return await http.get(url, headers: headers).timeout(const Duration(seconds: 40)).then((value) {
+            debugPrint('statusCode ${value.statusCode}');
+            debugPrint('value ${value.body}');
+            switch (value.statusCode) {
+              case 200:
+                return value;
+              default:
+                if (errorState) {
+                  return confirmDeleteSession(mounted, context, false);
+                }
+                return null;
+            }
+          }).catchError((err) {
+            debugPrint('errA $err');
+            if ('$err'.contains('html')) {
+              callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
+            } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
+              callDialogAction(context, 'Verifique su conexión a Internet');
+            } else {
+              callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+            }
+            return null;
+          });
+        case 'post':
+          return await http.post(url, headers: headers, body: json.encode(body)).timeout(const Duration(seconds: 40)).then((value) {
+            debugPrint('statusCode ${value.statusCode}');
+            debugPrint('value ${value.body}');
+            switch (value.statusCode) {
+              case 200:
+                return value;
+              case 201:
+                return value;
+              default:
+                callDialogAction(context, json.decode(value.body)['message']);
+                return null;
+            }
+          }).catchError((err) {
+            debugPrint('errA $err');
+            if ('$err'.contains('html')) {
+              callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
+            } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
+              callDialogAction(context, 'Verifique su conexión a Internet');
+            } else {
+              callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+            }
+            return null;
+          });
+        case 'delete':
+          return await http.delete(url, headers: headers).timeout(const Duration(seconds: 40)).then((value) {
+            debugPrint('statusCode ${value.statusCode}');
+            debugPrint('value ${value.body}');
+            switch (value.statusCode) {
+              case 200:
+                return value;
+              default:
+                callDialogAction(context, json.decode(value.body)['message']);
+                return null;
+            }
+          }).catchError((err) {
+            debugPrint('errA $err');
+            if ('$err'.contains('html')) {
+              callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
+            } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
+              callDialogAction(context, 'Verifique su conexión a Internet');
+            } else {
+              callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+            }
+            return null;
+          });
+        case 'patch':
+          return await http.patch(url, headers: headers, body: json.encode(body)).timeout(const Duration(seconds: 40)).then((value) {
+            debugPrint('statusCode ${value.statusCode}');
+            debugPrint('value ${value.body}');
+            switch (value.statusCode) {
+              case 200:
+                return value;
+              default:
+                callDialogAction(context, json.decode(value.body)['message']);
+                return null;
+            }
+          }).catchError((err) {
+            debugPrint('errA $err');
+            if ('$err'.contains('html')) {
+              callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
+            } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
+              callDialogAction(context, 'Verifique su conexión a Internet');
+            } else {
+              callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+            }
+            return null;
+          });
+      }
     }
   } on TimeoutException catch (e) {
     debugPrint('errB $e');
-
     if (!mounted) return;
     return callDialogAction(context, 'Tenemos un problema con nuestro servidor, intente luego');
   } on SocketException catch (e) {
@@ -182,7 +176,7 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   final filesState = Provider.of<FilesState>(context, listen: false);
   final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
   final processingState = Provider.of<ProcessingState>(context, listen: false);
-  
+
   if (voluntary) {
     final biometric = biometricUserModelFromJson(await authService.readBiometric());
     if (!mounted) return;
@@ -197,43 +191,48 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   procedureBloc.add(ClearProcedures());
   tabProcedureState.updateTabProcedure(0);
   processingState.updateStateProcessing(false);
-    if (!mounted) return;
+  if (!mounted) return;
   Navigator.pushReplacementNamed(context, 'switch');
-  // return true;
 }
 
-checkVersion(bool mounted, BuildContext context) async {
-  if (await InternetConnectionChecker().connectionStatus ==
-      InternetConnectionStatus.disconnected) {
-    return callDialogAction(context, 'Verifique su conexión a Internet');
-  }
-  final Map<String, dynamic> data = {'version': dotenv.env['version']};
-  if (Platform.isIOS) {
-    data['store'] = dotenv.env['storeIOS'];
-  }
-  if (Platform.isAndroid) {
-    data['store'] = dotenv.env['storeAndroid'];
-  }
-  var response = await serviceMethod(
-      mounted, context, 'post', data, servicePostVersion(), false, false);
-  if (response != null) {
-    if (!json.decode(response.body)['error']) {
-      return await showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) => ComponentAnimate(
-              child: DialogOneFunction(
-                  title: json.decode(response.body)['message'],
-                  message:
-                      'Para mejorar la experiencia, Porfavor actualiza la nueva versión',
-                  textButton: 'Actualizar',
-                  onPressed: () async {
-                    launchUrl(
-                        Uri.parse(
-                            json.decode(response.body)['data']['url_store']),
-                        mode: LaunchMode.externalApplication);
-                  })));
+Future<bool> checkVersion(bool mounted, BuildContext context) async {
+  try {
+    final result = await InternetAddress.lookup('pvt.muserpol.gob.bo');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      final Map<String, dynamic> data = {'version': dotenv.env['version']};
+      if (Platform.isIOS) {
+        data['store'] = dotenv.env['storeIOS'];
+      }
+      if (Platform.isAndroid) {
+        data['store'] = dotenv.env['storeAndroid'];
+      }
+      // if (!mounted) return;
+      // ignore: use_build_context_synchronously
+      var response = await serviceMethod(mounted, context, 'post', data, servicePostVersion(), false, false);
+      if (response != null) {
+        if (!json.decode(response.body)['error']) {
+          return await showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) => ComponentAnimate(
+                  child: DialogOneFunction(
+                      title: json.decode(response.body)['message'],
+                      message: 'Para mejorar la experiencia, Porfavor actualiza la nueva versión',
+                      textButton: 'Actualizar',
+                      onPressed: () async {
+                        launchUrl(Uri.parse(json.decode(response.body)['data']['url_store']), mode: LaunchMode.externalApplication);
+                      })));
+        }
+      }
     }
-    return;
+    return true;
+  } on SocketException catch (e) {
+    debugPrint('errC $e');
+    callDialogAction(context, 'Verifique su conexión a Internet');
+    return false;
+  } catch (e) {
+    debugPrint('errG $e');
+    callDialogAction(context, '$e');
+    return false;
   }
 }
