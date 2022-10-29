@@ -56,7 +56,9 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: ButtonComponent(
-                          key: widget.keyProcedure, text: 'CREAR TRÁMITE', onPressed: stateBtn && processingState.stateProcessing ? () => create() : null),
+                          key: widget.keyProcedure,
+                          text: 'CREAR TRÁMITE',
+                          onPressed: stateBtn && processingState.stateProcessing ? () => create() : null),
                     ),
                   if (!stateBtn)
                     Image.asset(
@@ -114,18 +116,20 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                 key: widget.keyRefresh,
                 iconText: 'assets/icons/reload.svg',
                 onPressed: () async {
-                  final filesState = Provider.of<FilesState>(context, listen: false);
-                  final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
-                  final processingState = Provider.of<ProcessingState>(context, listen: false);
-                  tabProcedureState.updateTabProcedure(0);
-                  for (var element in filesState.files) {
-                    filesState.updateFile(element.id!, null);
+                  if (await checkVersion(mounted, context)) {
+                    final filesState = Provider.of<FilesState>(context, listen: false);
+                    final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
+                    final processingState = Provider.of<ProcessingState>(context, listen: false);
+                    tabProcedureState.updateTabProcedure(0);
+                    for (var element in filesState.files) {
+                      filesState.updateFile(element.id!, null);
+                    }
+                    processingState.updateStateProcessing(false);
+                    setState(() => stateLoad = true);
+                    await getEconomicComplement();
+                    await getObservations();
+                    setState(() => stateLoad = false);
                   }
-                  processingState.updateStateProcessing(false);
-                  setState(() => stateLoad = true);
-                  await getEconomicComplement();
-                  await getObservations();
-                  setState(() => stateLoad = false);
                 }));
   }
 

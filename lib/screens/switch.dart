@@ -193,7 +193,7 @@ class ScreenSwitchState extends State<ScreenSwitch> {
 
   Widget optionTool(Widget child, String title, String description, Function() onPress) {
     return GestureDetector(
-        onTap: onPress,
+        onTap: ()=> verifiedConnection(onPress),
         child: ContainerComponent(
           width: double.infinity,
           color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
@@ -221,5 +221,18 @@ class ScreenSwitchState extends State<ScreenSwitch> {
             ),
           ),
         ));
+  }
+
+  verifiedConnection(Function() onPress) async {
+    try {
+      final result = await InternetAddress.lookup('pvt.muserpol.gob.bo');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return onPress();
+      }
+    } on SocketException catch (e) {
+      debugPrint('errC $e');
+      if (!mounted) return;
+      return callDialogAction(context, 'Verifique su conexión a Internet');
+    }
   }
 }

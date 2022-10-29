@@ -158,6 +158,8 @@ class Contribution {
         this.quotable,
         this.retirementFund,
         this.mortuaryQuota,
+        this.contributionTotal,
+        this.reimbursementTotal,
         this.total,
         this.type,
     });
@@ -169,6 +171,8 @@ class Contribution {
     String? quotable;
     String? retirementFund;
     String? mortuaryQuota;
+    String? contributionTotal;
+    String? reimbursementTotal;
     String? total;
     String? type;
 
@@ -180,6 +184,8 @@ class Contribution {
         String? quotable,
         String? retirementFund,
         String? mortuaryQuota,
+        String? contributionTotal,
+        String? reimbursementTotal,
         String? total,
         String? type,
     }) => 
@@ -191,6 +197,8 @@ class Contribution {
             quotable: quotable ?? this.quotable,
             retirementFund: retirementFund ?? this.retirementFund,
             mortuaryQuota: mortuaryQuota ?? this.mortuaryQuota,
+            contributionTotal: contributionTotal ?? this.contributionTotal,
+            reimbursementTotal: reimbursementTotal ?? this.reimbursementTotal,
             total: total ?? this.total,
             type: type ?? this.type,
         );
@@ -203,6 +211,8 @@ class Contribution {
         quotable: json["quotable"],
         retirementFund: json["retirement_fund"],
         mortuaryQuota: json["mortuary_quota"],
+        contributionTotal: json["contribution_total"],
+        reimbursementTotal: json["reimbursement_total"],
         total: json["total"],
         type: json["type"],
     );
@@ -215,6 +225,8 @@ class Contribution {
         "quotable": quotable,
         "retirement_fund": retirementFund,
         "mortuary_quota": mortuaryQuota,
+        "contribution_total": contributionTotal,
+        "reimbursement_total": reimbursementTotal,
         "total": total,
         "type": type,
     };

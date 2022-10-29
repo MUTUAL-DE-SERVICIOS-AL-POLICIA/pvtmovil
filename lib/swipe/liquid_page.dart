@@ -7,29 +7,25 @@ final liquidPages = [
       imageFront: "assets/icons/6.png",
       titleText: "BIENVENIDO",
       subtitleText: "MUTUAL DE SERVICIOS AL POLICÍA",
-      text: "",
-      step: 0),
+      text: ""),
   const LiquidPage(
       imageBackground: 'assets/images/002.jpg',
       imageFront: "assets/icons/7.png",
       titleText: "EVITE HACER FILAS",
       subtitleText: "COMPLEMENTO ECONÓMICO",
-      text: "Realice la solicitud y seguimiento del pago del Beneficio del Complemento Económico",
-      step: 1),
+      text: "Realice la solicitud y seguimiento del pago del Beneficio del Complemento Económico"),
   const LiquidPage(
       imageBackground: 'assets/images/003.jpg',
       imageFront: "assets/icons/003.png",
       titleText: "SEGUIMIENTO\nDE",
       subtitleText: "APORTES",
-      text: "Realiza seguimiento de tus aportes",
-      step: 2),
+      text: "Realiza seguimiento de tus aportes"),
   const LiquidPage(
       imageBackground: 'assets/images/004.jpg',
       imageFront: "assets/icons/9.png",
       titleText: "SEGUIMIENTO\nDE",
       subtitleText: "PRESTAMOS",
-      text: "Realiza seguimiento de tus prestamos",
-      step: 3),
+      text: "Realiza seguimiento de tus prestamos"),
 ];
 
 class LiquidPage extends StatelessWidget {
@@ -38,15 +34,13 @@ class LiquidPage extends StatelessWidget {
   final String titleText;
   final String subtitleText;
   final String text;
-  final int step;
   const LiquidPage(
       {Key? key,
       required this.imageBackground,
       required this.imageFront,
       required this.titleText,
       required this.subtitleText,
-      required this.text,
-      required this.step})
+      required this.text})
       : super(key: key);
 
   @override
@@ -64,7 +58,6 @@ class LiquidPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              const Spacer(),
               Text(titleText, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w400)),
               Text(subtitleText, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
               SizedBox(
@@ -74,19 +67,6 @@ class LiquidPage extends StatelessWidget {
                 text,
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w400),
-              ),
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(step == 0 ? Icons.brightness_1_rounded : Icons.brightness_1_outlined, color: Colors.white,size:15.sp),SizedBox(width: 15.h),
-                  Icon(step == 1 ? Icons.brightness_1_rounded : Icons.brightness_1_outlined, color: Colors.white,size:15.sp),SizedBox(width: 15.h),
-                  Icon(step == 2 ? Icons.brightness_1_rounded : Icons.brightness_1_outlined, color: Colors.white,size:15.sp),SizedBox(width: 15.h),
-                  Icon(step == 3 ? Icons.brightness_1_rounded : Icons.brightness_1_outlined, color: Colors.white,size:15.sp),
-                ],
-              ),
-              SizedBox(
-                height: 10.h,
               ),
             ],
           ),

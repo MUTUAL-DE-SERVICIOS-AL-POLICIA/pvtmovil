@@ -96,10 +96,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
                       icon: Icons.av_timer,
                       text: 'CATEGORÍA: ${userBloc.category!}',
                     ),
-                  IconName(
-                    icon: Icons.account_balance,
-                    text: 'GESTORA: ${userBloc.pensionEntity!}',
-                  ),
+                  // IconName(
+                  //   icon: Icons.account_balance,
+                  //   text: 'GESTORA: ${userBloc.pensionEntity!}',
+                  // ),
                 ],
               ),
               Divider(height: 0.03.sh),

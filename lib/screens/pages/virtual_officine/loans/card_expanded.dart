@@ -82,6 +82,20 @@ class _CardExpandedState extends State<CardExpanded> {
                                                       widget.inProcess!.procedureTypeName!,
                                                       style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
                                                     )),
+                                              if (widget.inProcess != null)
+                                                tableInfo(
+                                                    'Ubicación del trámite',
+                                                    Text(
+                                                      widget.inProcess!.location!,
+                                                      style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                    )),
+                                              if (widget.inProcess != null)
+                                                tableInfo(
+                                                    'Modalidad',
+                                                    Text(
+                                                      widget.inProcess!.procedureModalityName!,
+                                                      style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                                    )),
                                               if (widget.itemCurrent != null)
                                                 tableInfo(
                                                     'Modalidad',

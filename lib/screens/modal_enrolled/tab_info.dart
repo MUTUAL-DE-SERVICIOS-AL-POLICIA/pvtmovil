@@ -6,8 +6,7 @@ import 'package:muserpol_pvt/components/button.dart';
 class TabInfo extends StatelessWidget {
   final String text;
   final Function() nextScreen;
-  const TabInfo({Key? key, required this.text, required this.nextScreen})
-      : super(key: key);
+  const TabInfo({Key? key, required this.text, required this.nextScreen}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,19 +15,25 @@ class TabInfo extends StatelessWidget {
       child: text != ''
           ? Center(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Flexible(
-                    child: Text(
+                Expanded(
+                    child: Center(
+                      child: SingleChildScrollView(
+                          child: Text(
                   text,
                   textAlign: TextAlign.justify,
                   style: TextStyle(fontSize: 20.sp),
                 )),
+                    )),
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
                 ButtonComponent(
                   text: 'INICIAR',
                   onPressed: () => nextScreen(),
-                )
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
               ]),
             )
           : Center(

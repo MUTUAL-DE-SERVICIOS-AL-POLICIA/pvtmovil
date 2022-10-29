@@ -9,13 +9,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
+import 'package:muserpol_pvt/components/identity_card.dart';
 import 'package:muserpol_pvt/components/input.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
@@ -28,6 +28,7 @@ import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
 import 'package:muserpol_pvt/screens/navigator_bar.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/push_notifications.dart';
+// import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:intl/intl.dart';
@@ -115,10 +116,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
             cancelButton: 'No Gracias',
           ),
         ],
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly:true
-        ),
+        options: const AuthenticationOptions(stickyAuth: true, biometricOnly: true),
       );
       debugPrint('HECHO');
     } on PlatformException catch (e) {
@@ -179,56 +177,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text('Cédula de identidad:'),
-                          Row(
-                            children: <Widget>[
-                              Flexible(
-                                child: InputComponent(
-                                  textInputAction: TextInputAction.next,
-                                  controllerText: dniCtrl,
-                                  onEditingComplete: () => dniComplement ? node.nextFocus() : selectDate(context),
-                                  validator: (value) {
-                                    if (value.length > 3) {
-                                      return null;
-                                    } else {
-                                      return 'Ingrese su cédula de indentidad';
-                                    }
-                                  },
-                                  inputFormatters: [LengthLimitingTextInputFormatter(10), FilteringTextInputFormatter.allow(RegExp("[0-9]"))],
-                                  keyboardType: TextInputType.number,
-                                  textCapitalization: TextCapitalization.characters,
-                                  icon: Icons.person,
-                                  labelText: "Cédula de indentidad",
-                                ),
-                              ),
-                              if (dniComplement)
-                                Text(
-                                  '  _  ',
-                                  style: TextStyle(fontSize: 15.sp, color: const Color(0xff419388)),
-                                ),
-                              if (dniComplement)
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3.4,
-                                  child: InputComponent(
-                                    focusNode: textSecondFocusNode,
-                                    textInputAction: TextInputAction.next,
-                                    controllerText: dniComCtrl,
-                                    inputFormatters: [LengthLimitingTextInputFormatter(2), FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]"))],
-                                    onEditingComplete: () => selectDate(context),
-                                    validator: (value) {
-                                      if (value.isNotEmpty) {
-                                        return null;
-                                      } else {
-                                        return 'complemento';
-                                      }
-                                    },
-                                    keyboardType: TextInputType.text,
-                                    textCapitalization: TextCapitalization.characters,
-                                    icon: Icons.person,
-                                    labelText: "Complemento",
-                                  ),
-                                ), //container
-                            ], //widget
-                          ),
+                          IdentityCard(
+                              dniComplement: dniComplement,
+                              dniCtrl: dniCtrl,
+                              dniComCtrl: dniComCtrl,
+                              node: node,
+                              selectDate: (context) => selectDate(context),
+                              textSecondFocusNode: textSecondFocusNode),
                           SizedBox(
                             height: 10.h,
                           ),
@@ -287,9 +242,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                             height: 20.h,
                           ),
                           Center(
-                            child:
-                                ButtonWhiteComponent(text: 'Contactos a nivel nacional', onPressed: () => Navigator.pushNamed(context, 'contacts')),
-                          ),
+                              child: ButtonWhiteComponent(
+                                  text: 'Contactos a nivel nacional', onPressed: () => Navigator.pushNamed(context, 'contacts'))),
                           Center(
                             child: ButtonWhiteComponent(text: 'Política de privacidad', onPressed: () => privacyPolicy(context)),
                           ),
@@ -387,43 +341,45 @@ class _ScreenLoginState extends State<ScreenLogin> {
     if (formKey.currentState!.validate()) {
       if (dateCtrlText == null && !widget.stateOfficeVirtual) return;
       setState(() => btnAccess = false);
-      if (await InternetConnectionChecker().connectionStatus == InternetConnectionStatus.disconnected) {
-        setState(() => btnAccess = true);
-        return callDialogAction(context, 'Verifique su conexión a Internet');
-      }
-      await checkVersion(mounted, context);
-
-      body['device_id'] = widget.deviceId;
-      body['firebase_token'] = await PushNotificationService.getTokenFirebase();
-      if (!widget.stateOfficeVirtual) {
-        body['identity_card'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
-        body['birth_date'] = dateCtrlText;
-        body['is_new_app'] = true;
-        body['is_new_version'] = true;
-      } else {
-        body['username'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
-        body['password'] = passwordCtrl.text.trim();
-      }
-      if (!mounted) return;
-      var response = await serviceMethod(
-          mounted, context, 'post', body, widget.stateOfficeVirtual ? serviceAuthSessionOF() : serviceAuthSession(null), false, true);
-      setState(() => btnAccess = true);
-      if (response != null) {
-        await DBProvider.db.database;
-        UserModel user = userModelFromJson(json.encode(json.decode(response.body)['data']));
-        await authService.writeAuxtoken(user.apiToken!);
-        tokenState.updateStateAuxToken(true);
-        if (!mounted) return;
-        await authService.writeUser(context, userModelToJson(user));
-        userBloc.add(UpdateUser(user.user!));
-        final affiliateModel = AffiliateModel(idAffiliate: user.user!.id!);
-        await DBProvider.db.newAffiliateModel(affiliateModel);
-        notificationBloc.add(UpdateAffiliateId(user.user!.id!));
-        if (widget.stateOfficeVirtual) {
-          initSessionVirtualOfficine(response, UserVirtualOfficine(identityCard: body['username'], password: body['password']), user);
+      if (await checkVersion(mounted, context)) {
+        body['device_id'] = widget.deviceId;
+        // body['firebase_token'] = await PushNotificationService.getTokenFirebase();
+        body['firebase_token'] = '';
+        if (!widget.stateOfficeVirtual) {
+          body['identity_card'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
+          body['birth_date'] = dateCtrlText;
+          body['is_new_app'] = true;
+          body['is_new_version'] = true;
         } else {
-          intSessionComplement(response, UserComplement(identityCard: body['identity_card'], dateBirth: body['birth_date']), user);
+          body['username'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
+          body['password'] = passwordCtrl.text.trim();
         }
+        if (!mounted) return;
+        var response = await serviceMethod(
+            mounted, context, 'post', body, widget.stateOfficeVirtual ? serviceAuthSessionOF() : serviceAuthSession(null), false, true);
+        setState(() => btnAccess = true);
+        if (response != null) {
+          await DBProvider.db.database;
+          if (json.decode(response.body)['data']['status'] != null && json.decode(response.body)['data']['status'] == 'Pendiente') {
+            return virtualOfficineUpdatePwd(json.decode(response.body)['message']);
+          }
+          UserModel user = userModelFromJson(json.encode(json.decode(response.body)['data']));
+          await authService.writeAuxtoken(user.apiToken!);
+          tokenState.updateStateAuxToken(true);
+          if (!mounted) return;
+          await authService.writeUser(context, userModelToJson(user));
+          userBloc.add(UpdateUser(user.user!));
+          final affiliateModel = AffiliateModel(idAffiliate: user.user!.id!);
+          await DBProvider.db.newAffiliateModel(affiliateModel);
+          notificationBloc.add(UpdateAffiliateId(user.user!.id!));
+          if (widget.stateOfficeVirtual) {
+            initSessionVirtualOfficine(response, UserVirtualOfficine(identityCard: body['username'], password: body['password']), user);
+          } else {
+            intSessionComplement(response, UserComplement(identityCard: body['identity_card'], dateBirth: body['birth_date']), user);
+          }
+        }
+      }else{
+        setState(() => btnAccess = true);
       }
     }
   }
@@ -444,7 +400,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
     if (response.statusCode == 200) {
       if (!user.user!.enrolled!) {
         //proceso de enrolamiento
-        _showModalInside(user.apiToken!, false, await PushNotificationService.getTokenFirebase());
+        // _showModalInside(user.apiToken!, false, await PushNotificationService.getTokenFirebase());
+        _showModalInside(user.apiToken!, false, '');
       } else {
         if (!mounted) return;
         await authService.writeStateApp(context, 'complement');
@@ -460,7 +417,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
     } else {
       if (json.decode(response.body)['data']['update_device_id']) {
         //reconocimiento facial
-        return _showModalInside(user.apiToken!, true, await PushNotificationService.getTokenFirebase());
+        // return _showModalInside(user.apiToken!, true, await PushNotificationService.getTokenFirebase());
+        return _showModalInside(user.apiToken!, true, '');
       } else {
         if (!mounted) return;
         return callDialogAction(context, json.decode(response.body)['message']);
@@ -502,30 +460,25 @@ class _ScreenLoginState extends State<ScreenLogin> {
     final authService = Provider.of<AuthService>(context, listen: false);
     final tokenState = Provider.of<TokenState>(context, listen: false);
     tokenState.updateStateAuxToken(false);
-    switch (json.decode(response.body)['data']['status']) {
-      case 'Pendiente':
-        return virtualOfficineUpdatePwd(json.decode(response.body)['message']);
-      case 'Activo':
-        final biometric = await authService.readBiometric();
-        final biometricUserModel = BiometricUserModel(
-            biometricVirtualOfficine: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
-            biometricComplement: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricComplement,
-            affiliateId: json.decode(response.body)['data']['user']['id'],
-            userComplement: biometric == '' ? UserComplement() : biometricUserModelFromJson(biometric).userComplement,
-            userVirtualOfficine: userVirtualOfficine);
-        if (!mounted) return;
-        await authService.writeBiometric(context, biometricUserModelToJson(biometricUserModel));
-        if (!mounted) return;
-        await authService.writeStateApp(context, 'virtualofficine');
-        if (!mounted) return;
-        await authService.writeToken(context, user.apiToken!);
-        tokenState.updateStateAuxToken(false);
-        if (!mounted) return;
-        return Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-                pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'virtualofficine'), transitionDuration: const Duration(seconds: 0)));
-    }
+    final biometric = await authService.readBiometric();
+    final biometricUserModel = BiometricUserModel(
+        biometricVirtualOfficine: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
+        biometricComplement: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricComplement,
+        affiliateId: json.decode(response.body)['data']['user']['id'],
+        userComplement: biometric == '' ? UserComplement() : biometricUserModelFromJson(biometric).userComplement,
+        userVirtualOfficine: userVirtualOfficine);
+    if (!mounted) return;
+    await authService.writeBiometric(context, biometricUserModelToJson(biometricUserModel));
+    if (!mounted) return;
+    await authService.writeStateApp(context, 'virtualofficine');
+    if (!mounted) return;
+    await authService.writeToken(context, user.apiToken!);
+    tokenState.updateStateAuxToken(false);
+    if (!mounted) return;
+    return Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+            pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'virtualofficine'), transitionDuration: const Duration(seconds: 0)));
   }
 
   virtualOfficineUpdatePwd(String message) {

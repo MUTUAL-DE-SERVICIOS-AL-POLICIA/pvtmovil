@@ -55,6 +55,7 @@ class ButtonWhiteComponent extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           text,
+          textAlign: TextAlign.center,
         ));
   }
 }
