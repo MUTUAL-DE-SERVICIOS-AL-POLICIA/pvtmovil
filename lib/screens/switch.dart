@@ -36,7 +36,8 @@ class ScreenSwitchState extends State<ScreenSwitch> {
   final _flashOffController = TextEditingController(text: 'SIN FLASH');
   final _cancelController = TextEditingController(text: 'ATRAS');
 
-  static final _possibleFormats = BarcodeFormat.values.toList()..removeWhere((e) => e == BarcodeFormat.unknown);
+  static final _possibleFormats = BarcodeFormat.values.toList()
+    ..removeWhere((e) => e == BarcodeFormat.unknown);
   List<BarcodeFormat> selectedFormats = [..._possibleFormats];
 
   @override
@@ -98,7 +99,8 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => ScreenLogin(
-                                                  title: 'Complemento Económico',
+                                                  title:
+                                                      'Complemento Económico',
                                                   stateOfficeVirtual: false,
                                                   deviceId: deviceId!,
                                                 )),
@@ -160,12 +162,15 @@ class ScreenSwitchState extends State<ScreenSwitch> {
       if (scanResult!.rawContent != '') {
         debugPrint('scanResult!.rawContent ${scanResult!.rawContent}');
         if (!mounted) return;
-        var response = await serviceMethod(mounted, context, 'get', null, serviceGetQr(scanResult!.rawContent), false, false);
+        var response = await serviceMethod(mounted, context, 'get', null,
+            serviceGetQr(scanResult!.rawContent), false, false);
         if (response != null) {
           if (!mounted) return;
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ScreenWorkFlow(qrModel: qrModelFromJson(response.body))),
+            MaterialPageRoute(
+                builder: (context) =>
+                    ScreenWorkFlow(qrModel: qrModelFromJson(response.body))),
           );
         } else {
           if (!mounted) return;
@@ -185,15 +190,19 @@ class ScreenSwitchState extends State<ScreenSwitch> {
         builder: (BuildContext context) {
           return ComponentAnimate(
               child: DialogTwoAction(
-                  message: '¿Estás seguro de salir de la aplicación MUSERPOL PVT?',
-                  actionCorrect: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+                  message:
+                      '¿Estás seguro de salir de la aplicación MUSERPOL PVT?',
+                  actionCorrect: () => SystemChannels.platform
+                      .invokeMethod('SystemNavigator.pop'),
                   messageCorrect: 'Salir'));
         });
   }
 
-  Widget optionTool(Widget child, String title, String description, Function() onPress) {
+  Widget optionTool(
+      Widget child, String title, String description, Function() onPress) {
     return GestureDetector(
-        onTap: ()=> verifiedConnection(onPress),
+        onTap: () async =>
+            {if (await checkVersion(mounted, context)) onPress()},
         child: ContainerComponent(
           width: double.infinity,
           color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
@@ -209,7 +218,8 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                 Row(
                   children: [
                     Expanded(
-                      child: Padding(padding: const EdgeInsets.all(10.0), child: child),
+                      child: Padding(
+                          padding: const EdgeInsets.all(10.0), child: child),
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width / 1.5,
@@ -221,18 +231,5 @@ class ScreenSwitchState extends State<ScreenSwitch> {
             ),
           ),
         ));
-  }
-
-  verifiedConnection(Function() onPress) async {
-    try {
-      final result = await InternetAddress.lookup('pvt.muserpol.gob.bo');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        return onPress();
-      }
-    } on SocketException catch (e) {
-      debugPrint('errC $e');
-      if (!mounted) return;
-      return callDialogAction(context, 'Verifique su conexión a Internet');
-    }
   }
 }

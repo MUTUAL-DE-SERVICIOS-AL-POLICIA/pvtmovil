@@ -27,7 +27,6 @@ import 'package:muserpol_pvt/screens/model_update_pwd.dart';
 import 'package:muserpol_pvt/screens/modal_enrolled/modal.dart';
 import 'package:muserpol_pvt/screens/navigator_bar.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
-import 'package:muserpol_pvt/services/push_notifications.dart';
 // import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
@@ -285,7 +284,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   privacyPolicy(BuildContext context) async {
     setState(() => btnAccess = false);
-
     var response = await serviceMethod(mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, false);
     setState(() => btnAccess = true);
     if (response != null) {
@@ -358,6 +356,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
         var response = await serviceMethod(
             mounted, context, 'post', body, widget.stateOfficeVirtual ? serviceAuthSessionOF() : serviceAuthSession(null), false, true);
         setState(() => btnAccess = true);
+        debugPrint('response $response');
         if (response != null) {
           await DBProvider.db.database;
           if (json.decode(response.body)['data']['status'] != null && json.decode(response.body)['data']['status'] == 'Pendiente') {

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/components/button.dart';
@@ -28,13 +27,15 @@ class _CardEcState extends State<CardEc> {
       child: ContainerComponent(
           color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
           child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+              padding: const EdgeInsets.all(5),
               child: Row(children: [
                 Expanded(
                     child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: (widget.item!.subtitle! != '') ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+                      mainAxisAlignment: (widget.item!.subtitle! != '')
+                          ? MainAxisAlignment.spaceBetween
+                          : MainAxisAlignment.center,
                       children: [
                         Flexible(
                           child: Text(
@@ -42,7 +43,9 @@ class _CardEcState extends State<CardEc> {
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
-                            textAlign: widget.item!.subtitle! != '' ? TextAlign.center : TextAlign.left,
+                            textAlign: widget.item!.subtitle! != ''
+                                ? TextAlign.center
+                                : TextAlign.left,
                           ),
                         ),
                         if (widget.item!.subtitle! != '')
@@ -71,56 +74,42 @@ class _CardEcState extends State<CardEc> {
                             style: BorderStyle.solid,
                           ),
                         ),
-                        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                        defaultVerticalAlignment:
+                            TableCellVerticalAlignment.middle,
                         children: [
                           for (var itemx in widget.item!.display!)
                             tableInfo(
                                 itemx.key!,
                                 itemx.value is List
                                     ? Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           for (var itemy in itemx.value)
                                             Text(
                                               '• $itemy',
-                                              style: const TextStyle(fontFamily: 'Manrope'),
+                                              style: const TextStyle(
+                                                  fontFamily: 'Manrope'),
                                             )
                                         ],
                                       )
                                     : Text(
                                         '${itemx.value}',
-                                        style: const TextStyle(fontFamily: 'Manrope'),
+                                        style: const TextStyle(
+                                            fontFamily: 'Manrope'),
                                       )),
-                          if (widget.item!.printable!)
-                            tableInfo(
-                                'Solicitud de pago',
-                                btnAccess
-                                    ? Row(
-                                        children: [
-                                          Center(
-                                              child: SvgPicture.asset(
-                                            'assets/icons/printer.svg',
-                                            height: 30.0,
-                                            color: ThemeProvider.themeOf(context).data.hintColor,
-                                          )),
-                                          const SizedBox(
-                                            width: 8,
-                                          ),
-                                          Flexible(
-                                            child: ButtonWhiteComponent(
-                                              text: 'Documento PDF',
-                                              onPressed: () => printDocument(context),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Center(
-                                        child: Image.asset(
-                                        'assets/images/load.gif',
-                                        fit: BoxFit.cover,
-                                        height: 20,
-                                      )))
                         ]),
+                    if (widget.item!.printable!)
+                      ButtonIconComponent(
+                        stateLoading: !btnAccess,
+                        text: 'Solicitud de pago',
+                        icon: SvgPicture.asset(
+                          'assets/icons/printer.svg',
+                          height: 30.0,
+                          color: Colors.white,
+                        ),
+                        onPressed: () => printDocument(context),
+                      )
                   ],
                 ))
               ]))),
@@ -129,11 +118,14 @@ class _CardEcState extends State<CardEc> {
 
   printDocument(BuildContext context) async {
     setState(() => btnAccess = false);
-    var response = await serviceMethod(mounted, context, 'get', null, serviceGetPDFEC(widget.item!.id!), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null,
+        serviceGetPDFEC(widget.item!.id!), true, true);
     setState(() => btnAccess = true);
     if (response != null) {
       String pathFile = await saveFile(
-          'Documents', 'eco_com_${widget.item!.title!.replaceAll(' ', '_').replaceAll('/', '_').toLowerCase()}.pdf', response.bodyBytes);
+          'Documents',
+          'eco_com_${widget.item!.title!.replaceAll(' ', '_').replaceAll('/', '_').toLowerCase()}.pdf',
+          response.bodyBytes);
       await OpenFile.open(pathFile);
     }
   }

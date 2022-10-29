@@ -60,11 +60,13 @@ class CheckAuthScreen extends StatelessWidget {
     final authService = Provider.of<AuthService>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
     if (await authService.readUser() == '') {
+      debugPrint('no hay usuario');
       return Future.microtask(() {
         Navigator.pushReplacement(
             context, PageRouteBuilder(pageBuilder: (_, __, ___) => const ScreenSwitch(), transitionDuration: const Duration(seconds: 0)));
       });
     }
+    debugPrint('hay usuario');
     await getNotifications(context);
     UserModel user = userModelFromJson(await authService.readUser());
     userBloc.add(UpdateUser(user.user!));

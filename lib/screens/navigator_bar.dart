@@ -36,7 +36,8 @@ import 'dart:math' as math;
 class NavigatorBar extends StatefulWidget {
   final bool tutorial;
   final String stateApp;
-  const NavigatorBar({Key? key, this.tutorial = true, required this.stateApp}) : super(key: key);
+  const NavigatorBar({Key? key, this.tutorial = true, required this.stateApp})
+      : super(key: key);
 
   @override
   State<NavigatorBar> createState() => _NavigatorBarState();
@@ -68,18 +69,27 @@ class _NavigatorBarState extends State<NavigatorBar> {
   void initState() {
     super.initState();
     generateMenu();
-
     services();
   }
 
   generateMenu() {
     if (widget.stateApp == 'complement') {
       setState(() => pageList = [
-            ScreenProcedures(current: true, scroll: _scrollController, keyProcedure: keyCreateProcedure, keyMenu: keyMenu, keyRefresh: keyRefresh),
-            ScreenProcedures(current: false, scroll: _scrollController, keyMenu: keyMenu),
+            ScreenProcedures(
+                current: true,
+                scroll: _scrollController,
+                keyProcedure: keyCreateProcedure,
+                keyMenu: keyMenu,
+                keyRefresh: keyRefresh),
+            ScreenProcedures(
+                current: false, scroll: _scrollController, keyMenu: keyMenu),
           ]);
     } else {
-      setState(() => pageList = [ScreenContributions(keyMenu: keyMenu, keyBottomHeader: keyBottomHeader), ScreenPageLoans(keyMenu: keyMenu)]);
+      setState(() => pageList = [
+            ScreenContributions(
+                keyMenu: keyMenu, keyBottomHeader: keyBottomHeader),
+            ScreenPageLoans(keyMenu: keyMenu)
+          ]);
     }
   }
 
@@ -89,11 +99,14 @@ class _NavigatorBarState extends State<NavigatorBar> {
         getProcessingPermit();
         getObservations();
         _scrollController.addListener(() {
-          if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-            if (_currentIndex == 0 && procedureCurrent!.data!.nextPageUrl != null) {
+          if (_scrollController.position.pixels ==
+              _scrollController.position.maxScrollExtent) {
+            if (_currentIndex == 0 &&
+                procedureCurrent!.data!.nextPageUrl != null) {
               getEconomicComplement(true);
             }
-            if (_currentIndex == 1 && procedureHistory!.data!.nextPageUrl != null) {
+            if (_currentIndex == 1 &&
+                procedureHistory!.data!.nextPageUrl != null) {
               getEconomicComplement(false);
             }
           }
@@ -115,18 +128,28 @@ class _NavigatorBarState extends State<NavigatorBar> {
   }
 
   getEconomicComplement(bool current) async {
-    final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: false);
+    final procedureBloc =
+        BlocProvider.of<ProcedureBloc>(context, listen: false);
 
-    var response =
-        await serviceMethod(mounted, context, 'get', null, serviceGetEconomicComplements(current ? pageCurrent : pageHistory, current), true, true);
+    var response = await serviceMethod(
+        mounted,
+        context,
+        'get',
+        null,
+        serviceGetEconomicComplements(
+            current ? pageCurrent : pageHistory, current),
+        true,
+        true);
     if (response != null) {
       setState(() {
         if (current) {
           procedureCurrent = procedureModelFromJson(response.body);
-          procedureBloc.add(AddCurrentProcedures(procedureCurrent!.data!.data!));
+          procedureBloc
+              .add(AddCurrentProcedures(procedureCurrent!.data!.data!));
         } else {
           procedureHistory = procedureModelFromJson(response.body);
-          procedureBloc.add(AddHistoryProcedures(procedureHistory!.data!.data!));
+          procedureBloc
+              .add(AddHistoryProcedures(procedureHistory!.data!.data!));
         }
         if (current) {
           pageCurrent++;
@@ -138,11 +161,14 @@ class _NavigatorBarState extends State<NavigatorBar> {
   }
 
   getObservations() async {
-    final observationState = Provider.of<ObservationState>(context, listen: false);
+    final observationState =
+        Provider.of<ObservationState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    final processingState = Provider.of<ProcessingState>(context, listen: false);
+    final processingState =
+        Provider.of<ProcessingState>(context, listen: false);
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null, serviceGetObservation(userBloc.state.user!.id!), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null,
+        serviceGetObservation(userBloc.state.user!.id!), true, true);
     if (response != null) {
       observationState.updateObservation(response.body);
       if (json.decode(response.body)['data']['enabled']) {
@@ -154,48 +180,62 @@ class _NavigatorBarState extends State<NavigatorBar> {
   getProcessingPermit() async {
     final loadingState = Provider.of<LoadingState>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
+    final tabProcedureState =
+        Provider.of<TabProcedureState>(context, listen: false);
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null, serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
+    var response = await serviceMethod(mounted, context, 'get', null,
+        serviceGetProcessingPermit(userBloc.state.user!.id!), true, false);
     if (response != null) {
-      userBloc.add(UpdateCtrlLive(json.decode(response.body)['data']['liveness_success']));
+      userBloc.add(UpdateCtrlLive(
+          json.decode(response.body)['data']['liveness_success']));
       if (json.decode(response.body)['data']['liveness_success']) {
         tabProcedureState.updateTabProcedure(1);
         if (userBloc.state.user!.verified!) {
-          loadingState.updateStateLoadingProcedure(true); //MOSTRAMOS EL BTN DE CONTINUAR
+          loadingState.updateStateLoadingProcedure(
+              true); //MOSTRAMOS EL BTN DE CONTINUAR
           setState(() {});
         } else {
-          loadingState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+          loadingState.updateStateLoadingProcedure(
+              false); //OCULTAMOS EL BTN DE CONTINUAR
           setState(() {});
         }
       } else {
         tabProcedureState.updateTabProcedure(0);
-        loadingState.updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
+        loadingState
+            .updateStateLoadingProcedure(false); //OCULTAMOS EL BTN DE CONTINUAR
       }
-      userBloc.add(UpdateProcedureId(json.decode(response.body)['data']['procedure_id']));
+      userBloc.add(UpdateProcedureId(
+          json.decode(response.body)['data']['procedure_id']));
       if (json.decode(response.body)['data']['cell_phone_number'].length > 0) {
-        userBloc.add(UpdatePhone(json.decode(response.body)['data']['cell_phone_number'][0]));
+        userBloc.add(UpdatePhone(
+            json.decode(response.body)['data']['cell_phone_number'][0]));
       }
     }
   }
 
   getContributions() async {
-    final contributionBloc = BlocProvider.of<ContributionBloc>(context, listen: false);
+    final contributionBloc =
+        BlocProvider.of<ContributionBloc>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
-    final biometric = biometricUserModelFromJson(await authService.readBiometric());
+    final biometric =
+        biometricUserModelFromJson(await authService.readBiometric());
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null, serviceContributions(biometric.affiliateId!), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null,
+        serviceContributions(biometric.affiliateId!), true, true);
     if (response != null) {
-      contributionBloc.add(UpdateContributions(contributionModelFromJson(response.body)));
+      contributionBloc
+          .add(UpdateContributions(contributionModelFromJson(response.body)));
     }
   }
 
   getLoans() async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final loanBloc = BlocProvider.of<LoanBloc>(context, listen: false);
-    final biometric = biometricUserModelFromJson(await authService.readBiometric());
+    final biometric =
+        biometricUserModelFromJson(await authService.readBiometric());
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null, serviceLoans(biometric.affiliateId!), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null,
+        serviceLoans(biometric.affiliateId!), true, true);
     if (response != null) {
       loanBloc.add(UpdateLoan(loanModelFromJson(response.body)));
     }
@@ -203,7 +243,8 @@ class _NavigatorBarState extends State<NavigatorBar> {
 
   @override
   Widget build(BuildContext context) {
-    final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: true).state;
+    final notificationBloc =
+        BlocProvider.of<NotificationBloc>(context, listen: true).state;
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
@@ -212,21 +253,32 @@ class _NavigatorBarState extends State<NavigatorBar> {
             animationDuration: const Duration(milliseconds: 300),
             animationType: BadgeAnimationType.slide,
             badgeColor: notificationBloc.existNotifications
-                ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId).isNotEmpty
+                ? notificationBloc.listNotifications!
+                        .where((e) =>
+                            e.read == false &&
+                            e.idAffiliate == notificationBloc.affiliateId)
+                        .isNotEmpty
                     ? Colors.red
                     : Colors.transparent
                 : Colors.transparent,
             elevation: 0,
-            badgeContent: notificationBloc.existNotifications && notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
+            badgeContent: notificationBloc.existNotifications &&
+                    notificationBloc.listNotifications!
+                        .where((e) => e.read == false)
+                        .isNotEmpty
                 ? Text(
                     notificationBloc.listNotifications!
-                        .where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId)
+                        .where((e) =>
+                            e.read == false &&
+                            e.idAffiliate == notificationBloc.affiliateId)
                         .length
                         .toString(),
                     style: const TextStyle(color: Colors.white),
                   )
                 : Container(),
-            child: IconBtnComponent(iconText: 'assets/icons/email.svg', onPressed: () => dialogInbox(context)),
+            child: IconBtnComponent(
+                iconText: 'assets/icons/email.svg',
+                onPressed: () => dialogInbox(context)),
           ),
           body: pageList.elementAt(_currentIndex),
           bottomNavigationBar: Stack(
@@ -316,7 +368,10 @@ class _NavigatorBarState extends State<NavigatorBar> {
   }
 
   dialogInbox(BuildContext context) {
-    showDialog(barrierDismissible: false, context: context, builder: (BuildContext context) => const ScreenInbox());
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) => const ScreenInbox());
   }
 
   Future<bool> _onBackPressed() async {
@@ -326,8 +381,10 @@ class _NavigatorBarState extends State<NavigatorBar> {
         builder: (BuildContext context) {
           return ComponentAnimate(
               child: DialogTwoAction(
-                  message: '¿Estás seguro de salir de la aplicación MUSERPOL PVT?',
-                  actionCorrect: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+                  message:
+                      '¿Estás seguro de salir de la aplicación MUSERPOL PVT?',
+                  actionCorrect: () => SystemChannels.platform
+                      .invokeMethod('SystemNavigator.pop'),
                   messageCorrect: 'Salir'));
         });
   }
@@ -338,17 +395,20 @@ class _NavigatorBarState extends State<NavigatorBar> {
       targets: targets,
       colorShadow: const Color(0xff419388),
       textSkip: "OMITIR",
-      textStyleSkip: const TextStyle(color: Color(0xffffdead), fontWeight: FontWeight.bold),
+      textStyleSkip: const TextStyle(
+          color: Color(0xffffdead), fontWeight: FontWeight.bold),
       paddingFocus: 10,
       opacityShadow: 0.8,
-      onFinish: () {
-        if (widget.stateApp == 'complement') {
-          getEconomicComplement(true);
-          getEconomicComplement(false);
-        } else {
-          debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
-          getContributions();
-          getLoans();
+      onFinish: () async {
+        if (await checkVersion(mounted, context)) {
+          if (widget.stateApp == 'complement') {
+            getEconomicComplement(true);
+            getEconomicComplement(false);
+          } else {
+            debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
+            getContributions();
+            getLoans();
+          }
         }
       },
       onClickTarget: (target) {
@@ -356,13 +416,15 @@ class _NavigatorBarState extends State<NavigatorBar> {
       },
       onClickTargetWithTapPosition: (target, tapDetails) {
         debugPrint("target: $target");
-        debugPrint("clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
+        debugPrint(
+            "clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
       },
       onClickOverlay: (target) {
         debugPrint('onClickOverlay: $target');
       },
-      onSkip: () {
+      onSkip: () async {
         debugPrint("skip");
+        if (await checkVersion(mounted, context)) {
         if (widget.stateApp == 'complement') {
           getEconomicComplement(true);
           getEconomicComplement(false);
@@ -370,7 +432,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
           debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
           getContributions();
           getLoans();
-        }
+        }}
       },
     )..show(context: context);
   }
@@ -382,7 +444,9 @@ class _NavigatorBarState extends State<NavigatorBar> {
         keyBottomNavigation1,
         ContentAlign.top,
         Alignment.topRight,
-        widget.stateApp == 'complement' ? "Aquí podrá ver su trámite solicitado" : "Aquí podrá ver sus aportes",
+        widget.stateApp == 'complement'
+            ? "Aquí podrá ver su trámite solicitado"
+            : "Aquí podrá ver sus aportes",
         Transform(
             alignment: Alignment.center,
             transform: Matrix4.rotationY(180),
@@ -428,7 +492,9 @@ class _NavigatorBarState extends State<NavigatorBar> {
         keyBottomNavigation2,
         ContentAlign.top,
         Alignment.topRight,
-        widget.stateApp == 'complement' ? "Aquí podrá ver el historial de sus trámites" : "Aquí podrá ver sus prestamos",
+        widget.stateApp == 'complement'
+            ? "Aquí podrá ver el historial de sus trámites"
+            : "Aquí podrá ver sus prestamos",
         Transform.rotate(
           angle: math.pi / 7,
           child: Image.asset(

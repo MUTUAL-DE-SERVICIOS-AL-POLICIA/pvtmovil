@@ -206,7 +206,6 @@ Future<bool> checkVersion(bool mounted, BuildContext context) async {
       if (Platform.isAndroid) {
         data['store'] = dotenv.env['storeAndroid'];
       }
-      // if (!mounted) return;
       // ignore: use_build_context_synchronously
       var response = await serviceMethod(mounted, context, 'post', data, servicePostVersion(), false, false);
       if (response != null) {
@@ -223,9 +222,14 @@ Future<bool> checkVersion(bool mounted, BuildContext context) async {
                         launchUrl(Uri.parse(json.decode(response.body)['data']['url_store']), mode: LaunchMode.externalApplication);
                       })));
         }
+        return true;
+      }else{
+        return false;
       }
+    }else{
+      return false;
     }
-    return true;
+    
   } on SocketException catch (e) {
     debugPrint('errC $e');
     callDialogAction(context, 'Verifique su conexión a Internet');

@@ -40,7 +40,60 @@ class ButtonComponent extends StatelessWidget {
         ]));
   }
 }
+class ButtonIconComponent extends StatelessWidget {
+  final Widget icon;
+  final String text;
+  final Function()? onPressed;
+  final bool stateLoading;
+  const ButtonIconComponent(
+      {Key? key,
+      required this.icon,
+      required this.text,
+      required this.onPressed,
+      this.stateLoading = false})
+      : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      minWidth: 200,
+        padding: const EdgeInsets.symmetric(vertical: 19),
+        color: ThemeProvider.themeOf(context).data.primaryColor,
+        disabledColor: Colors.grey,
+        onPressed: onPressed,
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          stateLoading
+              ? Center(
+                  child: Image.asset(
+                  'assets/images/load.gif',
+                  fit: BoxFit.cover,
+                  height: 20,
+                ))
+              : Row(
+                children: [
+                  Center(
+                    child: icon,
+                  ),
+                                          // Center(
+                                          //     child: SvgPicture.asset(
+                                          //   'assets/icons/printer.svg',
+                                          //   height: 30.0,
+                                          //   color: ThemeProvider.themeOf(context).data.hintColor,
+                                          // )),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          Text(text,
+                  style: TextStyle(
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  )),
+                ],
+              ),
+        ]));
+  }
+}
 class ButtonWhiteComponent extends StatelessWidget {
   final String text;
   final Color? colorText;
