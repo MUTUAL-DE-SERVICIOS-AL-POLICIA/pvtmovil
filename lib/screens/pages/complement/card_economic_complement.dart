@@ -98,18 +98,20 @@ class _CardEcState extends State<CardEc> {
                                         style: const TextStyle(
                                             fontFamily: 'Manrope'),
                                       )),
-                        ]),
-                    if (widget.item!.printable!)
-                      ButtonIconComponent(
-                        stateLoading: !btnAccess,
-                        text: 'Solicitud de pago',
-                        icon: SvgPicture.asset(
-                          'assets/icons/printer.svg',
-                          height: 30.0,
-                          color: Colors.white,
-                        ),
-                        onPressed: () => printDocument(context),
-                      )
+                          if (widget.item!.printable!)
+                            tableInfo(
+                                'Solicitud de pago',
+                                ButtonIconComponent(
+                                  stateLoading: !btnAccess,
+                                  text: 'Documento PDF',
+                                  icon: SvgPicture.asset(
+                                    'assets/icons/printer.svg',
+                                    height: 30.0,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () => printDocument(context),
+                                ))
+                        ])
                   ],
                 ))
               ]))),
