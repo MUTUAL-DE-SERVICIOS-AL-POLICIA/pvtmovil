@@ -250,7 +250,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                             height: 10.h,
                           ),
                           Center(
-                            child: Text('Versión ${dotenv.env['version']}'),
+                            child: Text('Versión ${dotenv.env['version']}')
                           )
                         ],
                       )),

@@ -21,6 +21,7 @@ import 'package:muserpol_pvt/model/contribution_model.dart';
 import 'package:muserpol_pvt/model/loan_model.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
+import 'package:muserpol_pvt/provider/files_state.dart';
 import 'package:muserpol_pvt/screens/inbox/screen_inbox.dart';
 import 'package:muserpol_pvt/screens/pages/complement/procedure.dart';
 import 'package:muserpol_pvt/screens/pages/virtual_officine/contibutions/contribution.dart';
@@ -65,72 +66,94 @@ class _NavigatorBarState extends State<NavigatorBar> {
 
   List<Widget> pageList = [];
 
+  bool stateLoad = true;
+  bool? stateLoadTutorial;
+  bool consumeService = true;
   @override
   void initState() {
     super.initState();
-    generateMenu();
     services();
-  }
-
-  generateMenu() {
-    if (widget.stateApp == 'complement') {
-      setState(() => pageList = [
-            ScreenProcedures(
-                current: true,
-                scroll: _scrollController,
-                keyProcedure: keyCreateProcedure,
-                keyMenu: keyMenu,
-                keyRefresh: keyRefresh),
-            ScreenProcedures(
-                current: false, scroll: _scrollController, keyMenu: keyMenu),
-          ]);
-    } else {
-      setState(() => pageList = [
-            ScreenContributions(
-                keyMenu: keyMenu, keyBottomHeader: keyBottomHeader),
-            ScreenPageLoans(keyMenu: keyMenu)
-          ]);
-    }
+    setState(() => stateLoadTutorial = widget.tutorial);
   }
 
   services() async {
     if (await checkVersion(mounted, context)) {
       if (widget.stateApp == 'complement') {
-        getProcessingPermit();
-        getObservations();
-        _scrollController.addListener(() {
+        await getProcessingPermit();
+        await getObservations();
+        _scrollController.addListener(() async {
           if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent) {
             if (_currentIndex == 0 &&
                 procedureCurrent!.data!.nextPageUrl != null) {
-              getEconomicComplement(true);
+              if (consumeService) await getEconomicComplement(true);
             }
             if (_currentIndex == 1 &&
                 procedureHistory!.data!.nextPageUrl != null) {
-              getEconomicComplement(false);
+              if (consumeService) await getEconomicComplement(false);
             }
           }
         });
       }
-      if (widget.tutorial) {
+      if (widget.tutorial && stateLoadTutorial!) {
+        setState(() => stateLoad = false);
         Future.delayed(const Duration(milliseconds: 500), showTutorial);
       } else {
         if (widget.stateApp == 'complement') {
-          getEconomicComplement(true);
-          getEconomicComplement(false);
+          await getEconomicComplement(true);
+          await getEconomicComplement(false);
         } else {
           debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
-          getContributions();
-          getLoans();
+          await getContributions();
+          await getLoans();
         }
       }
+    }
+  }
+
+  refresh() async {
+    setState(() => stateLoad = true);
+    if (await checkVersion(mounted, context)) {
+      final filesState = Provider.of<FilesState>(context, listen: false);
+      final tabProcedureState =
+          Provider.of<TabProcedureState>(context, listen: false);
+      final processingState =
+          Provider.of<ProcessingState>(context, listen: false);
+      final procedureBloc =
+          BlocProvider.of<ProcedureBloc>(context, listen: false);
+      tabProcedureState.updateTabProcedure(0);
+      for (var element in filesState.files) {
+        filesState.updateFile(element.id!, null);
+      }
+      processingState.updateStateProcessing(false);
+      procedureBloc.add(ClearProcedures());
+      // procedureBloc.add(Clear);
+      setState(() {
+        pageCurrent = 1;
+        pageHistory = 1;
+      });
+      if (widget.stateApp == 'complement') {
+        await getProcessingPermit();
+        await getObservations();
+        await getEconomicComplement(true);
+        await getEconomicComplement(false);
+      } else {
+        debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
+        await getContributions();
+        await getLoans();
+      }
+    } else {
+      setState(() => stateLoad = false);
     }
   }
 
   getEconomicComplement(bool current) async {
     final procedureBloc =
         BlocProvider.of<ProcedureBloc>(context, listen: false);
-
+    setState(() {
+      stateLoad = true;
+      consumeService = false;
+    });
     var response = await serviceMethod(
         mounted,
         context,
@@ -141,23 +164,21 @@ class _NavigatorBarState extends State<NavigatorBar> {
         true,
         true);
     if (response != null) {
-      setState(() {
-        if (current) {
-          procedureCurrent = procedureModelFromJson(response.body);
-          procedureBloc
-              .add(AddCurrentProcedures(procedureCurrent!.data!.data!));
-        } else {
-          procedureHistory = procedureModelFromJson(response.body);
-          procedureBloc
-              .add(AddHistoryProcedures(procedureHistory!.data!.data!));
-        }
-        if (current) {
-          pageCurrent++;
-        } else {
-          pageHistory++;
-        }
-      });
+      if (current) {
+        procedureCurrent = procedureModelFromJson(response.body);
+        procedureBloc.add(AddCurrentProcedures(procedureCurrent!.data!.data!));
+        setState(() => pageCurrent++);
+      } else {
+        debugPrint('&current=false $pageHistory');
+        procedureHistory = procedureModelFromJson(response.body);
+        procedureBloc.add(AddHistoryProcedures(procedureHistory!.data!.data!));
+        setState(() => pageHistory++);
+      }
     }
+    setState(() {
+      stateLoad = false;
+      consumeService = true;
+    });
   }
 
   getObservations() async {
@@ -245,6 +266,25 @@ class _NavigatorBarState extends State<NavigatorBar> {
   Widget build(BuildContext context) {
     final notificationBloc =
         BlocProvider.of<NotificationBloc>(context, listen: true).state;
+    if (widget.stateApp == 'complement') {
+      pageList = [
+        ScreenProcedures(
+            current: true,
+            scroll: _scrollController,
+            keyProcedure: keyCreateProcedure,
+            keyMenu: keyMenu,
+            keyRefresh: keyRefresh,
+            reload: () => refresh(),
+            stateLoad: stateLoad),
+        ScreenProcedures(
+            current: false, scroll: _scrollController, keyMenu: keyMenu),
+      ];
+    } else {
+      pageList = [
+        ScreenContributions(keyMenu: keyMenu, keyBottomHeader: keyBottomHeader),
+        ScreenPageLoans(keyMenu: keyMenu)
+      ];
+    }
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
@@ -310,10 +350,9 @@ class _NavigatorBarState extends State<NavigatorBar> {
                 StyleProvider(
                     style: Style(),
                     child: ConvexAppBar(
-                        height: 65,
-                        elevation: 0,
+                        height: 55,
+                        elevation: 3,
                         backgroundColor: const Color(0xff419388),
-                        // color: Color(0xff419388),
                         style: TabStyle.react,
                         items: [
                           TabItem(
@@ -340,7 +379,6 @@ class _NavigatorBarState extends State<NavigatorBar> {
                     height: 65,
                     elevation: 0,
                     backgroundColor: const Color(0xff419388),
-                    // color: Color(0xff419388),
                     style: TabStyle.react,
                     items: [
                       TabItem(
@@ -400,6 +438,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
       paddingFocus: 10,
       opacityShadow: 0.8,
       onFinish: () async {
+        setState(() => stateLoadTutorial = !stateLoadTutorial!);
         if (await checkVersion(mounted, context)) {
           if (widget.stateApp == 'complement') {
             getEconomicComplement(true);
@@ -424,15 +463,17 @@ class _NavigatorBarState extends State<NavigatorBar> {
       },
       onSkip: () async {
         debugPrint("skip");
+        setState(() => stateLoadTutorial = !stateLoadTutorial!);
         if (await checkVersion(mounted, context)) {
-        if (widget.stateApp == 'complement') {
-          getEconomicComplement(true);
-          getEconomicComplement(false);
-        } else {
-          debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
-          getContributions();
-          getLoans();
-        }}
+          if (widget.stateApp == 'complement') {
+            getEconomicComplement(true);
+            getEconomicComplement(false);
+          } else {
+            debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
+            getContributions();
+            getLoans();
+          }
+        }
       },
     )..show(context: context);
   }
@@ -603,7 +644,7 @@ class Style extends StyleHook {
   double get iconSize => 20;
 
   @override
-  TextStyle textStyle(Color color, String? s) {
-    return TextStyle(fontSize: 13.sp, color: color);
+  TextStyle textStyle(Color color, String? fontFamily) {
+    return TextStyle(fontSize: 15.sp, color: color);
   }
 }

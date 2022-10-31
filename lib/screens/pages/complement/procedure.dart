@@ -8,7 +8,6 @@ import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/card_observation.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/main.dart';
-import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/provider/files_state.dart';
 import 'package:muserpol_pvt/screens/pages/menu.dart';
 import 'package:muserpol_pvt/screens/pages/complement/card_economic_complement.dart';
@@ -27,13 +26,17 @@ class ScreenProcedures extends StatefulWidget {
   final GlobalKey? keyProcedure;
   final GlobalKey? keyMenu;
   final GlobalKey? keyRefresh;
+  final Function()? reload;
+  final bool? stateLoad;
   const ScreenProcedures(
       {Key? key,
       required this.current,
       required this.scroll,
       this.keyProcedure,
       this.keyMenu,
-      this.keyRefresh})
+      this.keyRefresh,
+      this.reload,
+      this.stateLoad = false})
       : super(key: key);
 
   @override
@@ -41,7 +44,6 @@ class ScreenProcedures extends StatefulWidget {
 }
 
 class _ScreenProceduresState extends State<ScreenProcedures> {
-  bool stateLoad = false;
   bool stateBtn = true;
   @override
   Widget build(BuildContext context) {
@@ -137,8 +139,9 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
   }
 
   Widget stateInfo() {
+    
     return Center(
-        child: stateLoad
+        child: widget.stateLoad!
             ? Image.asset(
                 'assets/images/load.gif',
                 fit: BoxFit.cover,
@@ -147,30 +150,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
             : IconBtnComponent(
                 key: widget.keyRefresh,
                 iconText: 'assets/icons/reload.svg',
-                onPressed: () async {
-                  if (await checkVersion(mounted, context)) {
-                  setState(() => stateLoad = true);
-                  final filesState =
-                      Provider.of<FilesState>(context, listen: false);
-                  final tabProcedureState =
-                      Provider.of<TabProcedureState>(context, listen: false);
-                  final processingState =
-                      Provider.of<ProcessingState>(context, listen: false);
-                  final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: false);
-                  tabProcedureState.updateTabProcedure(0);
-                  for (var element in filesState.files) {
-                    filesState.updateFile(element.id!, null);
-                  }
-                  processingState.updateStateProcessing(false);
-                  if (!mounted) return;
-                  Navigator.pushReplacementNamed(context, 'check_auth');
-                  procedureBloc.add(ClearProcedures());
-                  //   setState(() => stateLoad = true);
-                  //   await getEconomicComplement();
-                  //   await getObservations();
-                  //   setState(() => stateLoad = false);
-                  }
-                }));
+                onPressed: () => widget.reload!()));
   }
 
   create() async {
@@ -213,42 +193,12 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
         tabProcedureState.updateTabProcedure(0);
         filesState.clearFiles();
       });
-      await getEconomicComplement();
-      await getObservations();
+      
+      // await getEconomicComplement();
+      // await getObservations();
       procedureBloc.add(UpdateStateComplementInfo(false));
+      return widget.reload!();
     });
-  }
-
-  getEconomicComplement() async {
-    //REINICIO DEL LISTADO DE TRÁMITES VIGENTES
-    final procedureBloc =
-        BlocProvider.of<ProcedureBloc>(context, listen: false);
-    var response = await serviceMethod(mounted, context, 'get', null,
-        serviceGetEconomicComplements(0, true), true, true);
-    if (response != null) {
-      procedureBloc.add(UpdateCurrentProcedures(
-          procedureModelFromJson(response.body).data!.data!));
-    } else {
-      return setState(() => stateLoad = false);
-    }
-  }
-
-  getObservations() async {
-    final observationState =
-        Provider.of<ObservationState>(context, listen: false);
-    final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
-    final processingState =
-        Provider.of<ProcessingState>(context, listen: false);
-    var response = await serviceMethod(mounted, context, 'get', null,
-        serviceGetObservation(userBloc.state.user!.id!), true, true);
-    if (response != null) {
-      observationState.updateObservation(response.body);
-      if (json.decode(response.body)['data']['enabled']) {
-        processingState.updateStateProcessing(true);
-      }
-    } else {
-      return setState(() => stateLoad = false);
-    }
   }
 
   controleVerified() async {

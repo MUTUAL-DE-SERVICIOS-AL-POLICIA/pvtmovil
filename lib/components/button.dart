@@ -57,36 +57,36 @@ class ButtonIconComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        color: ThemeProvider.themeOf(context).data.primaryColor,
-        disabledColor: Colors.grey,
-        onPressed: onPressed,
-        child: 
-          stateLoading
-              ? Center(
-                  child: Image.asset(
-                  'assets/images/load.gif',
-                  fit: BoxFit.cover,
-                  height: 20,
-                ))
-              : Row(
-                  children: [
-                    Center(
-                      child: icon,
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Flexible(
-                                            child: Text(text,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      color: ThemeProvider.themeOf(context).data.primaryColor,
+      disabledColor: Colors.grey,
+      onPressed: onPressed,
+      child: stateLoading
+          ? Center(
+              child: Image.asset(
+              'assets/images/load.gif',
+              fit: BoxFit.cover,
+              height: 20,
+            ))
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: icon,
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                Flexible(
+                    child: Text(text,
                         style: TextStyle(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ))),
-                  ],
-                ),
-        );
+              ],
+            ),
+    );
   }
 }
 
