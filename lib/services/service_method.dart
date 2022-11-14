@@ -7,6 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
+import 'package:muserpol_pvt/bloc/contribution/contribution_bloc.dart';
+import 'package:muserpol_pvt/bloc/loan/loan_bloc.dart';
 import 'package:muserpol_pvt/bloc/procedure/procedure_bloc.dart';
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/animate.dart';
@@ -119,7 +121,7 @@ Future<dynamic> serviceMethod(
             return null;
           });
         case 'patch':
-          return await http.patch(url, headers: headers, body: json.encode(body)).timeout(const Duration(seconds: 40)).then((value) {
+          return await http.patch(url, headers: headers, body: json.encode(body)).timeout(const Duration(seconds: 60)).then((value) {
             debugPrint('statusCode ${value.statusCode}');
             debugPrint('value ${value.body}');
             switch (value.statusCode) {
@@ -173,9 +175,12 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   final procedureBloc = BlocProvider.of<ProcedureBloc>(context, listen: false);
   final authService = Provider.of<AuthService>(context, listen: false);
   final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+  final contributionBloc = BlocProvider.of<ContributionBloc>(context, listen: false);
+  final loanBloc = BlocProvider.of<LoanBloc>(context, listen: false);
   final filesState = Provider.of<FilesState>(context, listen: false);
   final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
   final processingState = Provider.of<ProcessingState>(context, listen: false);
+  
 
   if (voluntary) {
     final biometric = biometricUserModelFromJson(await authService.readBiometric());
@@ -188,6 +193,8 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   userBloc.add(UpdateCtrlLive(false));
   await PushNotificationService.closeStreams();
   authService.logout();
+  contributionBloc.add(ClearContributions());
+  loanBloc.add(ClearLoans());
   procedureBloc.add(ClearProcedures());
   tabProcedureState.updateTabProcedure(0);
   processingState.updateStateProcessing(false);

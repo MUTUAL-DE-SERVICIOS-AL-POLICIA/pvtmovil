@@ -22,11 +22,7 @@ class _ScreenPageLoansState extends State<ScreenPageLoans> {
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
-          child: HedersComponent(
-              title: 'Mis Prestamos',
-              menu: true,
-              keyMenu: widget.keyMenu,
-              onPressMenu: () => Scaffold.of(context).openDrawer()),
+          child: HedersComponent(title: 'Mis Prestamos', menu: true, keyMenu: widget.keyMenu, onPressMenu: () => Scaffold.of(context).openDrawer()),
         ),
         Expanded(
             child: Center(
@@ -35,21 +31,31 @@ class _ScreenPageLoansState extends State<ScreenPageLoans> {
                         ? Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              if (loanBloc.state.loan!.payload!.inProcess!.isNotEmpty) const Text('Prestamos en proceso:'),
                               if (loanBloc.state.loan!.payload!.inProcess!.isNotEmpty)
-                                for (var item in loanBloc.state.loan!.payload!.inProcess!)
-                                  CardLoan(itemProcess: item, color: const Color(0xffffdead)),
-                              if (loanBloc.state.loan!.payload!.current!.isNotEmpty) const Text('Prestamos vigentes:'),
+                                loans('Prestamos en proceso:', [
+                                  for (var item in loanBloc.state.loan!.payload!.inProcess!)
+                                    CardLoan(itemProcess: item, color: const Color(0xffffdead))
+                                ]),
                               if (loanBloc.state.loan!.payload!.current!.isNotEmpty)
-                                for (var item in loanBloc.state.loan!.payload!.current!) CardLoan(itemCurrent: item),
-                              if (loanBloc.state.loan!.payload!.liquited!.isNotEmpty) const Text('Prestamos Liquidados:'),
+                                loans('Prestamos vigentes:', [for (var item in loanBloc.state.loan!.payload!.current!) CardLoan(itemCurrent: item)]),
                               if (loanBloc.state.loan!.payload!.liquited!.isNotEmpty)
-                                for (var item in loanBloc.state.loan!.payload!.liquited!) CardLoan(itemCurrent: item),
-                              if (loanBloc.state.loan!.error=='true') Text(loanBloc.state.loan!.message!)
+                                loans(
+                                    'Prestamos Liquidados:', [for (var item in loanBloc.state.loan!.payload!.liquited!) CardLoan(itemCurrent: item)]),
+                              if (loanBloc.state.loan!.error == 'true') Text(loanBloc.state.loan!.message!)
                             ]),
                           )
                         : Container()))),
       ]),
+    );
+  }
+
+  Widget loans(String text, List<Widget> cards) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment : CrossAxisAlignment.start,
+        children: [Text(text,style: const TextStyle(fontWeight: FontWeight.bold)), ...cards],
+      ),
     );
   }
 }

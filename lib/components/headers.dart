@@ -11,6 +11,8 @@ class HedersComponent extends StatelessWidget {
   final bool stateBack;
   final bool menu;
   final Function()? onPressMenu;
+  final Function()? onPressBack;
+  final bool? functionBack;
   final bool center;
   final GlobalKey? keyMenu;
   final Widget? option;
@@ -22,6 +24,8 @@ class HedersComponent extends StatelessWidget {
       this.stateBack = false,
       this.menu = false,
       this.onPressMenu,
+      this.onPressBack,
+      this.functionBack = false,
       this.center = false,
       this.keyMenu,
       this.option})
@@ -36,7 +40,7 @@ class HedersComponent extends StatelessWidget {
             children: [
               if (stateBack)
                 GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: () => functionBack! ? onPressBack!() : Navigator.pop(context),
                     child: Container(
                       padding: const EdgeInsets.all(10.0),
                       child: SvgPicture.asset(

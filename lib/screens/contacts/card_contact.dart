@@ -22,11 +22,11 @@ class _CardContactState extends State<CardContact> {
   AvailableMap? itemSelect;
   @override
   Widget build(BuildContext context) {
-    return ContainerComponent(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 1),
+      child: ContainerComponent(
         color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
-        child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-            child: Row(children: [
+        child:  Row(children: [
               Expanded(
                   child: Column(
                 children: [

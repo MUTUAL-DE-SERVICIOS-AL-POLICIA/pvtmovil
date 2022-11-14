@@ -16,10 +16,7 @@ class DialogAction extends StatelessWidget {
         message,
         textAlign: TextAlign.center,
       ),
-      actions: <Widget>[
-        ButtonComponent(
-            text: 'Aceptar', onPressed: () => Navigator.pop(context))
-      ],
+      actions: <Widget>[ButtonComponent(text: 'Aceptar', onPressed: () => Navigator.pop(context))],
     ));
   }
 }
@@ -29,12 +26,7 @@ class DialogOneFunction extends StatelessWidget {
   final String message;
   final String textButton;
   final Function() onPressed;
-  const DialogOneFunction(
-      {Key? key,
-      required this.title,
-      required this.message,
-      required this.textButton,
-      required this.onPressed})
+  const DialogOneFunction({Key? key, required this.title, required this.message, required this.textButton, required this.onPressed})
       : super(key: key);
 
   @override
@@ -60,9 +52,7 @@ class DialogOneFunction extends StatelessWidget {
               ),
             ],
           ),
-          actions: <Widget>[
-            ButtonComponent(text: textButton, onPressed: () => onPressed())
-          ],
+          actions: <Widget>[ButtonComponent(text: textButton, onPressed: () => onPressed())],
         )));
   }
 
@@ -77,12 +67,7 @@ class DialogTwoAction extends StatefulWidget {
   final Function()? actionCancel;
   final String messageCorrect;
 
-  const DialogTwoAction(
-      {Key? key,
-      required this.message,
-      required this.actionCorrect,
-      this.actionCancel,
-      required this.messageCorrect})
+  const DialogTwoAction({Key? key, required this.message, required this.actionCorrect, this.actionCancel, required this.messageCorrect})
       : super(key: key);
 
   @override
@@ -90,7 +75,6 @@ class DialogTwoAction extends StatefulWidget {
 }
 
 class _DialogTwoActionState extends State<DialogTwoAction> {
-
   bool stateBottons = true;
   @override
   Widget build(BuildContext context) {
@@ -103,16 +87,22 @@ class _DialogTwoActionState extends State<DialogTwoAction> {
         textAlign: TextAlign.center,
       ),
       actions: <Widget>[
-        ButtonWhiteComponent(
-          text: 'Cancelar',
-          onPressed: stateBottons? widget.actionCancel ?? ()=>Navigator.of(context).pop() : (){},
-        ),
-        ButtonWhiteComponent(
-            text: widget.messageCorrect, onPressed: () async {
-              setState(() => stateBottons = !stateBottons);
-              await widget.actionCorrect();
-              setState(() => stateBottons = !stateBottons);
-            })
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ButtonWhiteComponent(
+              text: 'Cancelar',
+              onPressed: stateBottons ? widget.actionCancel ?? () => Navigator.of(context).pop() : () {},
+            ),
+            ButtonWhiteComponent(
+                text: widget.messageCorrect,
+                onPressed: () async {
+                  setState(() => stateBottons = !stateBottons);
+                  await widget.actionCorrect();
+                  setState(() => stateBottons = !stateBottons);
+                })
+          ],
+        )
       ],
     ));
   }

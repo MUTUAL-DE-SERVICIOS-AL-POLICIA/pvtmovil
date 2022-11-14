@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/components/table_row.dart';
 import 'package:muserpol_pvt/model/loan_model.dart';
@@ -9,7 +10,7 @@ class CardLoan extends StatelessWidget {
   final InProcess? itemProcess;
   final Color? color;
   final Current? itemCurrent;
-  const CardLoan({Key? key, this.itemProcess,this.color, this.itemCurrent}) : super(key: key);
+  const CardLoan({Key? key, this.itemProcess, this.color, this.itemCurrent}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +21,37 @@ class CardLoan extends StatelessWidget {
           child: Material(
               type: MaterialType.transparency,
               child: ContainerComponent(
-                  color: color??ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                  color: color ?? ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Center(
-                      child: Table(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            // Flexible(
+                            //   child: Text(
+                            //     itemProcess != null ? itemProcess!.procedureModalityName ! : itemCurrent!.procedureModality!,
+                            //     style: const TextStyle(
+                            //       fontWeight: FontWeight.bold,
+                            //     ),
+                            //   ),
+                            // ),
+                            Flexible(
+                              child: Text(
+                                itemProcess != null ? itemProcess!.stateName! : itemCurrent!.state!,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Table(
                           columnWidths: const {
-                            0: FlexColumnWidth(4),
+                            0: FlexColumnWidth(3),
                             1: FlexColumnWidth(0.3),
                             2: FlexColumnWidth(5),
                           },
@@ -43,26 +68,29 @@ class CardLoan extends StatelessWidget {
                                 'Prestamo',
                                 Text(
                                   itemProcess != null ? itemProcess!.code! : itemCurrent!.code!,
-                                  style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
+                                  style: const TextStyle(color: Colors.black),
                                 )),
-                            tableInfo(
-                                'Estado',
-                                Text(
-                                  itemProcess != null ? itemProcess!.stateName! : itemCurrent!.state!,
-                                  style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
-                                )),
-                          ]),
+                          ],
+                        ),
+                        ButtonIconComponent(
+                          text: 'DETALLES',
+                          onPressed: () => onPressed(context),
+                          icon: Container(),
+                        ),
+                      ],
                     ),
                   )))),
-      onTap: () {
-        Navigator.of(context).push(
-          PageRouteBuilder(
-            opaque: false,
-            pageBuilder: (_, __, ___) => CardExpanded(
-                tag: itemProcess != null ? itemProcess!.stateName! : itemCurrent!.state!, inProcess: itemProcess, itemCurrent: itemCurrent),
-          ),
-        );
-      },
+      onTap: () => onPressed(context),
+    );
+  }
+
+  onPressed(BuildContext context) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (_, __, ___) =>
+            CardExpanded(tag: itemProcess != null ? itemProcess!.code! : itemCurrent!.code!, inProcess: itemProcess, itemCurrent: itemCurrent),
+      ),
     );
   }
 }

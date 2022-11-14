@@ -8,12 +8,7 @@ class ButtonComponent extends StatelessWidget {
   final String text;
   final Function()? onPressed;
   final bool stateLoading;
-  const ButtonComponent(
-      {Key? key,
-      required this.text,
-      required this.onPressed,
-      this.stateLoading = false})
-      : super(key: key);
+  const ButtonComponent({Key? key, required this.text, required this.onPressed, this.stateLoading = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +41,7 @@ class ButtonIconComponent extends StatelessWidget {
   final String text;
   final Function()? onPressed;
   final bool stateLoading;
-  const ButtonIconComponent(
-      {Key? key,
-      required this.icon,
-      required this.text,
-      required this.onPressed,
-      this.stateLoading = false})
-      : super(key: key);
+  const ButtonIconComponent({Key? key, required this.icon, required this.text, required this.onPressed, this.stateLoading = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -93,19 +82,22 @@ class ButtonIconComponent extends StatelessWidget {
 class ButtonWhiteComponent extends StatelessWidget {
   final String text;
   final Color? colorText;
-  final Function() onPressed;
-  const ButtonWhiteComponent(
-      {Key? key, required this.text, required this.onPressed, this.colorText})
-      : super(key: key);
+  final Function()? onPressed;
+  const ButtonWhiteComponent({Key? key, required this.text, required this.onPressed, this.colorText}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-        onPressed: onPressed,
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-        ));
+    return Center(
+      child: MaterialButton(
+          onPressed: onPressed,
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          )),
+    );
   }
 }
 
@@ -115,13 +107,7 @@ class ButtonDate extends StatelessWidget {
   final FontWeight? fontWeight;
   final bool iconState;
   final Function() onPressed;
-  const ButtonDate(
-      {Key? key,
-      required this.text,
-      required this.onPressed,
-      this.iconState = false,
-      this.colorText,
-      this.fontWeight})
+  const ButtonDate({Key? key, required this.text, required this.onPressed, this.iconState = false, this.colorText, this.fontWeight})
       : super(key: key);
 
   @override
@@ -129,7 +115,6 @@ class ButtonDate extends StatelessWidget {
     return MaterialButton(
         elevation: 0,
         focusElevation: 0,
-        autofocus: true,
         onPressed: onPressed,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
@@ -154,13 +139,7 @@ class IconBtnComponent extends StatelessWidget {
   final String iconText;
   final Color? iconColor;
   final double? iconSize;
-  const IconBtnComponent(
-      {Key? key,
-      required this.onPressed,
-      required this.iconText,
-      this.iconColor,
-      this.iconSize = 30})
-      : super(key: key);
+  const IconBtnComponent({Key? key, required this.onPressed, required this.iconText, this.iconColor, this.iconSize = 30}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -184,48 +163,67 @@ class IconBtnComponent extends StatelessWidget {
 class Buttontoltip extends StatelessWidget {
   final JustTheController tooltipController;
   final Function(bool) onPressed;
-  const Buttontoltip(
-      {Key? key, required this.tooltipController, required this.onPressed})
-      : super(key: key);
+  const Buttontoltip({Key? key, required this.tooltipController, required this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return JustTheTooltip(
-        controller: tooltipController,
-        showWhenUnlinked: true,
-        barrierDismissible: true,
-        isModal: true,
-        borderRadius: const BorderRadius.all(Radius.circular(18)),
-        content: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  '¿Cuenta con un carnet alfanumérico?\nEj. 123456-1M',
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+    return Positioned(
+        top: 0,
+        right: 0,
+        child: JustTheTooltip(
+            controller: tooltipController,
+            showWhenUnlinked: true,
+            barrierDismissible: true,
+            isModal: true,
+            borderRadius: const BorderRadius.all(Radius.circular(18)),
+            content: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    ButtonWhiteComponent(
-                        text: 'SI', onPressed: () => onPressed(true)),
-                    ButtonWhiteComponent(
-                        text: 'NO', onPressed: () => onPressed(false)),
+                    const Text(
+                      '¿Cuenta con un carnet alfanumérico?\nEj. 123456-1M',
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWhiteComponent(text: 'SI', onPressed: () => onPressed(true)),
+                        ButtonWhiteComponent(text: 'NO', onPressed: () => onPressed(false)),
+                      ],
+                    )
                   ],
-                )
-              ],
-            )),
-        child: Material(
-          color: ThemeProvider.themeOf(context).data.primaryColor,
-          shape: const CircleBorder(),
-          elevation: 0,
-          child: const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(
-              Icons.horizontal_rule,
-              color: Colors.white,
-            ),
-          ),
-        ));
+                )),
+            child: Material(
+              color: ThemeProvider.themeOf(context).data.primaryColor,
+              shape: const CircleBorder(),
+              elevation: 0,
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.horizontal_rule,
+                  color: Colors.white,
+                ),
+              ),
+            )));
+  }
+}
+
+class NumberComponent extends StatelessWidget {
+  final String text;
+  final bool iconColor;
+  const NumberComponent({Key? key, required this.text, required this.iconColor}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return RawMaterialButton(
+      onPressed: () {},
+      elevation: 2.0,
+      fillColor: iconColor ? const Color(0xff419388) : Colors.white,
+      shape: const CircleBorder(),
+      child: Text(
+        text,
+        style: TextStyle(color: iconColor ? Colors.white : Colors.black),
+      ),
+    );
   }
 }

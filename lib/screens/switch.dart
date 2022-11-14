@@ -3,15 +3,15 @@ import 'dart:io';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/components/animate.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/components/paint.dart';
 import 'package:muserpol_pvt/components/dialog_action.dart';
 import 'package:muserpol_pvt/model/qr_model.dart';
 import 'package:muserpol_pvt/screens/flowQR/flow.dart';
-import 'package:muserpol_pvt/screens/login.dart';
+import 'package:muserpol_pvt/screens/access/login.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -105,31 +105,31 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                                                   deviceId: deviceId!,
                                                 )),
                                       )),
-                              // optionTool(
-                              //     const Image(
-                              //       image: AssetImage(
-                              //         'assets/images/computer.png',
-                              //       ),
-                              //     ),
-                              //     'Oficina Virtual',
-                              //     'Seguimiento de Aportes y Préstamos',
-                              //     () => Navigator.push(
-                              //           context,
-                              //           MaterialPageRoute(
-                              //               builder: (context) => ScreenLogin(
-                              //                     title: 'Oficina Virtual',
-                              //                     deviceId: deviceId!,
-                              //                   )),
-                              //         )),
-                              // optionTool(
-                              //     SvgPicture.asset(
-                              //       'assets/icons/qr.svg',
-                              //       height: 100.sp,
-                              //       color: const Color(0xff419388),
-                              //     ),
-                              //     'Seguimiento de trámites',
-                              //     'Seguimiento de trámites con QR',
-                              //     () => scan()),
+                              optionTool(
+                                  const Image(
+                                    image: AssetImage(
+                                      'assets/images/computer.png',
+                                    ),
+                                  ),
+                                  'Oficina Virtual',
+                                  'Seguimiento de Aportes y Préstamos',
+                                  () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ScreenLogin(
+                                                  title: 'Oficina Virtual',
+                                                  deviceId: deviceId!,
+                                                )),
+                                      )),
+                              optionTool(
+                                  SvgPicture.asset(
+                                    'assets/icons/qr.svg',
+                                    height: 100.sp,
+                                    color: const Color(0xff419388),
+                                  ),
+                                  'Seguimiento de trámites',
+                                  'Seguimiento de trámites con QR',
+                                  () => scan()),
                             ],
                           ),
                         ),

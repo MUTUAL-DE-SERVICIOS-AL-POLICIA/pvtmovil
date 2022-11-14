@@ -3,7 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 String? url = dotenv.env['HOST_URL'];
 // String? urlPrueba = dotenv.env['HOST_URL_PVT_PRUEBA'];
 String? urlbla = dotenv.env['HOST_URLBLA'];
-String? urllea = dotenv.env['HOST_URLLEA'];
+// String? urllea = dotenv.env['HOST_URLLEA'];
 
 String? reazon = dotenv.env['reazon'];//v1
 String? reazonAffiliate = dotenv.env['reazonAffiliate'];//affiliate
@@ -47,7 +47,10 @@ String serviceGetQr(String info)=> '$urlbla/$reazonQr/procedure_qr/$info';
 String serviceAuthSessionOF()=>'$urlbla/$reazonAffiliate/auth';
 // CHANGE PASSWORD
 String serviceChangePasswordOF()=>'$urlbla/$reazonAffiliate/change_password';
-
+// FORGOT PASSWORD
+String serviceForgotPasswordOF()=>'$urlbla/app/send_code_reset_password';
+// FORGOT PASSWORD SEND CODE
+String serviceSendCodeOF()=>'$urlbla/app/reset_password';
 //////////////////////////////////////////////////
 /////////////APORTES/////////////////////
 ////////////////////////////////////////////////
@@ -68,4 +71,4 @@ String serviceLoans(int affiliateId)=> '$urlbla/app/get_information_loan/$affili
 //PRINT PLAN DE PAGOS
 String servicePrintLoans(int loanId)=> '$urlbla/app/loan/$loanId/print/plan';
 //PRINT KARDEX
-String servicePrintKadex(int loanId)=>'$urllea/app/loan/$loanId/print/kardex';
+String servicePrintKadex(int loanId)=>'$urlbla/app/loan/$loanId/print/kardex';

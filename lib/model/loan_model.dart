@@ -193,6 +193,7 @@ class InProcess {
         this.location,
         this.validated,
         this.stateName,
+        this.flow,
     });
 
     String? code;
@@ -201,6 +202,7 @@ class InProcess {
     String? location;
     bool? validated;
     String? stateName;
+    List<Flow>? flow;
 
     InProcess copyWith({
         String? code,
@@ -209,6 +211,7 @@ class InProcess {
         String? location,
         bool? validated,
         String? stateName,
+        List<Flow>? flow,
     }) => 
         InProcess(
             code: code ?? this.code,
@@ -217,6 +220,7 @@ class InProcess {
             location: location ?? this.location,
             validated: validated ?? this.validated,
             stateName: stateName ?? this.stateName,
+            flow: flow ?? this.flow,
         );
 
     factory InProcess.fromJson(Map<String, dynamic> json) => InProcess(
@@ -226,6 +230,7 @@ class InProcess {
         location: json["location"],
         validated: json["validated"],
         stateName: json["state_name"],
+        flow: List<Flow>.from(json["flow"].map((x) => Flow.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
@@ -235,5 +240,34 @@ class InProcess {
         "location": location,
         "validated": validated,
         "state_name": stateName,
+        "flow": List<dynamic>.from(flow!.map((x) => x.toJson())),
+    };
+}
+class Flow {
+    Flow({
+        this.displayName,
+        this.state,
+    });
+
+    String? displayName;
+    bool? state;
+
+    Flow copyWith({
+        String? displayName,
+        bool? state,
+    }) => 
+        Flow(
+            displayName: displayName ?? this.displayName,
+            state: state ?? this.state,
+        );
+
+    factory Flow.fromJson(Map<String, dynamic> json) => Flow(
+        displayName: json["display_name"],
+        state: json["state"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "display_name": displayName,
+        "state": state,
     };
 }

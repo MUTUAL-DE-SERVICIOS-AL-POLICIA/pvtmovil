@@ -33,11 +33,13 @@ class _CardExpandedState extends State<CardExpanded> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ContainerComponent(
-                        height: MediaQuery.of(context).size.height / 2.5,
+                        height: MediaQuery.of(context).size.height / 1.7,
                         width: 300,
-                        color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
-                        child: Center(
-                          child: SingleChildScrollView(
+                        // color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                        color: widget.contribution.reimbursementTotal != '0,00'  && widget.contribution.reimbursementTotal != null
+                                  ? const Color(0xffffdead)
+                                  : ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                        child: SingleChildScrollView(
                               child: Padding(
                                   padding: const EdgeInsets.all(15),
                                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -98,7 +100,7 @@ class _CardExpandedState extends State<CardExpanded> {
                                                 style: const TextStyle(color: Colors.black, fontFamily: 'Manrope'),
                                               )),
                                         ])
-                                  ]))),
+                                  ])),
                         ),
                       ),
                     ))),

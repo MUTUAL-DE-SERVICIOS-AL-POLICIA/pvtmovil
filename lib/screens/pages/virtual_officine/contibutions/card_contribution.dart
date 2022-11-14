@@ -22,7 +22,6 @@ class ContributionsYear extends StatelessWidget {
     return contributions.isNotEmpty
         ? GridView.count(
             padding: const EdgeInsets.only(bottom: 50),
-            // childAspectRatio: 0.,
             crossAxisCount: 3,
             children: List.generate(contributions.length, (index) {
               return GestureDetector(

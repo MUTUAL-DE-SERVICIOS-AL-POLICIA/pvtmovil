@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/bloc/contribution/contribution_bloc.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/model/contribution_model.dart';
 import 'package:muserpol_pvt/screens/pages/virtual_officine/contibutions/card_contribution.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class TabsContributions extends StatefulWidget {
   const TabsContributions({Key? key}) : super(key: key);
@@ -48,35 +50,35 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
         child: Column(
       children: [
         Padding(
-            padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                stateSubtract
-                    ? GestureDetector(
-                        onTap: () => setState(() => tabController!.animateTo(tabController!.index - 1)),
-                        child: Text(contributionsTotal[tabController!.index - 1].year!, style: TextStyle(fontSize: 25.sp)),
-                      )
-                    : Container(),
-                ContainerComponent(
-                  color: const Color(0xff419388),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      contributionsTotal[tabController!.index].year!,
-                      style: TextStyle(fontSize: 35.sp, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
+          padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
+          child: Table(columnWidths: const {
+            0: FlexColumnWidth(3),
+            1: FlexColumnWidth(3),
+            2: FlexColumnWidth(3),
+          }, children: [
+            TableRow(children: [
+              stateSubtract
+                  ? years(stateSubtract, TextDirection.ltr, contributionsTotal[tabController!.index - 1].year!,
+                      () => setState(() => tabController!.animateTo(tabController!.index - 1)), 1)
+                  : Container(),
+              ContainerComponent(
+                color: const Color(0xff419388),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    contributionsTotal[tabController!.index].year!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 21.sp, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
-                stateAdd
-                    ? GestureDetector(
-                        onTap: () => setState(() => tabController!.animateTo(tabController!.index + 1)),
-                        child: Text(contributionsTotal[tabController!.index + 1].year!, style: TextStyle(fontSize: 25.sp)),
-                      )
-                    : Container()
-              ],
-            )),
+              ),
+              stateAdd
+                  ? years(stateAdd, TextDirection.rtl, contributionsTotal[tabController!.index + 1].year!,
+                      () => setState(() => tabController!.animateTo(tabController!.index + 1)), 0.5)
+                  : Container()
+            ])
+          ]),
+        ),
         Expanded(
           child: DefaultTabController(
               length: contributionsTotal.length,
@@ -95,5 +97,26 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
         ),
       ],
     ));
+  }
+
+  Widget years(bool state, TextDirection textDirection, String text, Function() onTap, double value) {
+    return GestureDetector(
+        onTap: () => onTap(),
+        child: Row(
+          textDirection: textDirection,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              child: RotationTransition(
+                  turns: AlwaysStoppedAnimation(value),
+                  child: SvgPicture.asset(
+                    'assets/icons/back.svg',
+                    height: 20.sp,
+                    color: ThemeProvider.themeOf(context).data.hintColor,
+                  )),
+            ),
+            Text(text, style: TextStyle(fontSize: 20.sp)),
+          ],
+        ));
   }
 }

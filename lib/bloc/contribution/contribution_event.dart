@@ -8,3 +8,8 @@ class UpdateContributions extends ContributionEvent {
 
   UpdateContributions(this.contribution);
 }
+
+
+class ClearContributions extends ContributionEvent {
+  ClearContributions();
+}
