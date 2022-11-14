@@ -33,7 +33,7 @@ class ContributionsYear extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: ContainerComponent(
                               color: contributions[index].reimbursementTotal != '0,00' && contributions[index].reimbursementTotal != null
-                                  ? const Color(0xffffdead)
+                                  ? const Color(0xff7BA6A0)
                                   : ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
                               child: Center(
                                   child: SingleChildScrollView(

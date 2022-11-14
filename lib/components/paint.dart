@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class FormButtom extends StatelessWidget {
   const FormButtom({Key? key}) : super(key: key);
@@ -9,17 +10,20 @@ class FormButtom extends StatelessWidget {
       height: double.infinity,
       width: double.infinity,
       child: CustomPaint(
-        painter: FormButtomPainter(),
+        painter: FormButtomPainter(ThemeProvider.themeOf(context).id.contains('dark') ? const Color(0xff214a44):const Color(0xff8dbeb8)),
       ),
     );
   }
 }
 
 class FormButtomPainter extends CustomPainter {
+  final Color color;
+
+  FormButtomPainter(this.color);
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color.fromARGB(255, 146, 180, 177)
+      ..color = color
       ..strokeWidth = 2
       ..style = PaintingStyle.fill; //stroke //fill
 
@@ -58,7 +62,7 @@ class FormtopPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xffffdead)
+      ..color = const Color(0xffb3d4cf)
       ..strokeWidth = 2
       ..style = PaintingStyle.fill; //stroke //fill
 

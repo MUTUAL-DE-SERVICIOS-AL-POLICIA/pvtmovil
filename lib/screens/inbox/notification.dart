@@ -47,11 +47,11 @@ class _ScreenNotificationState extends State<ScreenNotification> {
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: Text(
                     args['text']
-                        .replaceAll(RegExp('{{full_name}}'), userBloc!.fullName)
-                        .replaceAll(RegExp('{{identity_card}}'), userBloc.identityCard)
-                        .replaceAll(RegExp('{{degree}}'), userBloc.degree)
-                        .replaceAll(RegExp('{{pension_entity}}'), userBloc.pensionEntity)
-                        .replaceAll(RegExp('{{category}}'), userBloc.category),
+                        .replaceAll(RegExp('{{full_name}}'), userBloc!.fullName??'')
+                        .replaceAll(RegExp('{{identity_card}}'), userBloc.identityCard??'')
+                        .replaceAll(RegExp('{{degree}}'), userBloc.degree??'')
+                        .replaceAll(RegExp('{{pension_entity}}'), userBloc.pensionEntity??'')
+                        .replaceAll(RegExp('{{category}}'), userBloc.category??''),
                     textAlign: TextAlign.justify,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),

@@ -380,7 +380,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
       targets: targets,
       colorShadow: const Color(0xff419388),
       textSkip: "OMITIR",
-      textStyleSkip: const TextStyle(color: Color(0xffffdead), fontWeight: FontWeight.bold),
+      textStyleSkip: const TextStyle(color: Color(0xffE0A44C), fontWeight: FontWeight.bold),
       paddingFocus: 10,
       opacityShadow: 0.8,
       onFinish: () async {

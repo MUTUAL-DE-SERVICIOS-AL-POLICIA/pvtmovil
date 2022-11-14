@@ -67,7 +67,7 @@ AppTheme styleDark2() {
       data: ThemeData.dark().copyWith(
           drawerTheme: const DrawerThemeData(
               elevation: 0,
-              backgroundColor: Color(0xff060d09),
+              backgroundColor: Color(0xff0d1d1b),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.horizontal(right: Radius.circular(8)))),
           inputDecorationTheme: ThemeData.dark().inputDecorationTheme.copyWith(
                 focusedErrorBorder:
@@ -114,11 +114,11 @@ AppTheme styleDark2() {
               .apply(fontFamily: 'Poppins'),
           colorScheme: ColorScheme.fromSwatch().copyWith(primary: const Color(0xff419388), secondary: const Color(0xff419388)),
           primaryColor: const Color(0xff419388),
-          cardColor: const Color(0xff060d09),
+          cardColor: const Color(0xff0d1d1b),
           highlightColor: Colors.transparent,
           splashColor: Colors.transparent,
-          dialogBackgroundColor: const Color(0xff060d09),
-          scaffoldBackgroundColor: const Color(0xff060d09),
+          dialogBackgroundColor: const Color(0xff0d1d1b),
+          scaffoldBackgroundColor: const Color(0xff0d1d1b),
           primaryColorDark: const Color(0xfff2f2f2),
           iconTheme: const IconThemeData(color: Color(0xff419388))));
 }

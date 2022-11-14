@@ -69,7 +69,7 @@ class _ScreenContributionsState extends State<ScreenContributions> {
     final biometric = biometricUserModelFromJson(await authService.readBiometric());
     setState(() => stateLoading = true);
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null, servicePrintLoans(biometric.affiliateId!), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null, servicePrintContributionPasive(biometric.affiliateId!), true, false);
     setState(() => stateLoading = false);
     if (response != null) {
       String pathFile = await saveFile('Contributions', 'contribucionesPasivo.pdf', response.bodyBytes);
@@ -82,7 +82,7 @@ class _ScreenContributionsState extends State<ScreenContributions> {
     final biometric = biometricUserModelFromJson(await authService.readBiometric());
     setState(() => stateLoading = true);
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null, servicePrintContributionActive(biometric.affiliateId!), true, true);
+    var response = await serviceMethod(mounted, context, 'get', null, servicePrintContributionActive(biometric.affiliateId!), true, false);
     setState(() => stateLoading = false);
     if (response != null) {
       String pathFile = await saveFile('Contributions', 'contribucionesActivo.pdf', response.bodyBytes);

@@ -17,7 +17,7 @@ String serviceAuthSession(int? affiliateId) => '$url/$reazon/auth/${affiliateId?
 //CONTACTS
 String serviceGetContacts() => '$url/$reazon/city';
 //PRIVACY POLICY
-String serviceGetPrivacyPolicy() => '$url/$reazon/policy';
+String serviceGetPrivacyPolicy() => 'https://www.muserpol.gob.bo/index.php/transparencia/terminos-y-condiciones-de-uso-aplicacion-movil';
 //HISTORY
 String serviceGetEconomicComplements(int page, bool current) =>
     '$url/$reazon/economic_complement/?page=$page&current=$current';

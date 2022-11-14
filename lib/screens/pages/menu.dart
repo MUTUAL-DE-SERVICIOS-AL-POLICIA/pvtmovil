@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,10 +11,9 @@ import 'package:muserpol_pvt/model/biometric_user_model.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
-import 'package:muserpol_pvt/utils/save_document.dart';
-import 'package:open_file_safe/open_file_safe.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MenuDrawer extends StatefulWidget {
   const MenuDrawer({Key? key}) : super(key: key);
@@ -62,7 +60,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
     return Drawer(
       width: MediaQuery.of(context).size.width / 1.5,
       child: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
+          padding: const EdgeInsets.fromLTRB(10, 30, 0, 0),
           child: SingleChildScrollView(
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,10 +94,11 @@ class _MenuDrawerState extends State<MenuDrawer> {
                       icon: Icons.av_timer,
                       text: 'CATEGORÍA: ${userBloc.category!}',
                     ),
-                  // IconName(
-                  //   icon: Icons.account_balance,
-                  //   text: 'GESTORA: ${userBloc.pensionEntity!}',
-                  // ),
+                  if (userBloc.pensionEntity != null)
+                    IconName(
+                      icon: Icons.account_balance,
+                      text: 'GESTORA: ${userBloc.pensionEntity!}',
+                    ),
                 ],
               ),
               Divider(height: 0.03.sh),
@@ -125,7 +124,11 @@ class _MenuDrawerState extends State<MenuDrawer> {
               SectiontitleComponent(
                   title: 'Contactos a nivel nacional', icon: Icons.contact_phone_rounded, onTap: () => Navigator.pushNamed(context, 'contacts')),
               SectiontitleComponent(
-                  title: 'Políticas de Privacidad', icon: Icons.privacy_tip, stateLoading: stateLoading, onTap: () => privacyPolicy(context)),
+                title: 'Políticas de Privacidad',
+                icon: Icons.privacy_tip,
+                stateLoading: stateLoading,
+                onTap: () => launchUrl(Uri.parse(serviceGetPrivacyPolicy()), mode: LaunchMode.externalApplication),
+              ),
               SectiontitleComponent(title: 'Cerrar Sesión', icon: Icons.info_outline, onTap: () => closeSession(context)),
               Center(
                 child: Text('Versión ${dotenv.env['version']}'),
@@ -136,16 +139,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
             ],
           ))),
     );
-  }
-
-  privacyPolicy(BuildContext context) async {
-    setState(() => stateLoading = true);
-    var response = await serviceMethod(mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, true);
-    setState(() => stateLoading = false);
-    if (response != null) {
-      String pathFile = await saveFile('Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
-      await OpenFile.open(pathFile);
-    }
   }
 
   void switchTheme(state) async {
@@ -225,7 +218,7 @@ class IconName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [Icon(icon), Flexible(child: Text(text))],
       ),

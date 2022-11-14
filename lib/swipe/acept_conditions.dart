@@ -3,12 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
-import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
-import 'package:muserpol_pvt/utils/save_document.dart';
-import 'package:open_file_safe/open_file_safe.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ModalAceptTermin extends StatefulWidget {
   const ModalAceptTermin({Key? key}) : super(key: key);
@@ -43,7 +41,7 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                                             !stateTermsConditions),
                                     state: stateTermsConditions,
                                     child: GestureDetector(
-                                      onTap: () => privacyPolicy(context),
+                                      onTap: () => launchUrl(Uri.parse(serviceGetPrivacyPolicy()), mode: LaunchMode.externalApplication),
                                       child: RichText(
                                           text: TextSpan(children: [
                                         TextSpan(
@@ -116,18 +114,7 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                 ]))));
   }
 
-  privacyPolicy(BuildContext context) async {
-    setState(() => btnAccess = false);
 
-    var response = await serviceMethod(
-        mounted, context, 'get', null, serviceGetPrivacyPolicy(), false, false);
-    setState(() => btnAccess = true);
-    if (response != null) {
-      String pathFile = await saveFile(
-          'Documents', 'MUSERPOL_POLITICA_PRIVACIDAD.pdf', response.bodyBytes);
-      await OpenFile.open(pathFile);
-    }
-  }
 
   getInto(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);

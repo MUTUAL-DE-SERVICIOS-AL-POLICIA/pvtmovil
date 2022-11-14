@@ -34,7 +34,7 @@ class _ScreenPageLoansState extends State<ScreenPageLoans> {
                               if (loanBloc.state.loan!.payload!.inProcess!.isNotEmpty)
                                 loans('Prestamos en proceso:', [
                                   for (var item in loanBloc.state.loan!.payload!.inProcess!)
-                                    CardLoan(itemProcess: item, color: const Color(0xffffdead))
+                                    CardLoan(itemProcess: item, color: const Color(0xff7BA6A0))
                                 ]),
                               if (loanBloc.state.loan!.payload!.current!.isNotEmpty)
                                 loans('Prestamos vigentes:', [for (var item in loanBloc.state.loan!.payload!.current!) CardLoan(itemCurrent: item)]),

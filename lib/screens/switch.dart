@@ -105,31 +105,31 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                                                   deviceId: deviceId!,
                                                 )),
                                       )),
-                              optionTool(
-                                  const Image(
-                                    image: AssetImage(
-                                      'assets/images/computer.png',
-                                    ),
-                                  ),
-                                  'Oficina Virtual',
-                                  'Seguimiento de Aportes y Préstamos',
-                                  () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => ScreenLogin(
-                                                  title: 'Oficina Virtual',
-                                                  deviceId: deviceId!,
-                                                )),
-                                      )),
-                              optionTool(
-                                  SvgPicture.asset(
-                                    'assets/icons/qr.svg',
-                                    height: 100.sp,
-                                    color: const Color(0xff419388),
-                                  ),
-                                  'Seguimiento de trámites',
-                                  'Seguimiento de trámites con QR',
-                                  () => scan()),
+                              // optionTool(
+                              //     const Image(
+                              //       image: AssetImage(
+                              //         'assets/images/computer.png',
+                              //       ),
+                              //     ),
+                              //     'Oficina Virtual',
+                              //     'Seguimiento de Aportes y Préstamos',
+                              //     () => Navigator.push(
+                              //           context,
+                              //           MaterialPageRoute(
+                              //               builder: (context) => ScreenLogin(
+                              //                     title: 'Oficina Virtual',
+                              //                     deviceId: deviceId!,
+                              //                   )),
+                              //         )),
+                              // optionTool(
+                              //     SvgPicture.asset(
+                              //       'assets/icons/qr.svg',
+                              //       height: 100.sp,
+                              //       color: const Color(0xff419388),
+                              //     ),
+                              //     'Seguimiento de trámites',
+                              //     'Seguimiento de trámites con QR',
+                              //     () => scan()),
                             ],
                           ),
                         ),
@@ -204,15 +204,16 @@ class ScreenSwitchState extends State<ScreenSwitch> {
         onTap: () async =>
             {if (await checkVersion(mounted, context)) onPress()},
         child: ContainerComponent(
+          stateBorder:false,
           width: double.infinity,
-          color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+          color: const Color(0xffb3d4cf),
           child: Padding(
-            padding: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.only(top: 8,right:8),
             child: Column(
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
                   textAlign: TextAlign.center,
                 ),
                 Row(
@@ -223,7 +224,7 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width / 1.5,
-                      child: Text(description),
+                      child: Text(description,style: const TextStyle(color: Colors.black),),
                     )
                   ],
                 ),

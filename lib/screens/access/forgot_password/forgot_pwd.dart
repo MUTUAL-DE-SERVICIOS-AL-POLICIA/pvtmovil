@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:muserpol_pvt/components/animate.dart';
-import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/dialog_action.dart';
 import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
@@ -110,6 +109,7 @@ class _ForgotPwdState extends State<ForgotPwd> {
         stateForgot = 'code';
         stateSendSms = !stateSendSms;
       });
+      if (!mounted) return;
       var response = await serviceMethod(mounted, context, 'patch', body, serviceForgotPasswordOF(), false, true);
       setState(() => stateSendSms = !stateSendSms);
       if (response == null) {

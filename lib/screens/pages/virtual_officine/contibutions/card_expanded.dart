@@ -37,7 +37,7 @@ class _CardExpandedState extends State<CardExpanded> {
                         width: 300,
                         // color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
                         color: widget.contribution.reimbursementTotal != '0,00'  && widget.contribution.reimbursementTotal != null
-                                  ? const Color(0xffffdead)
+                                  ? const Color(0xff7BA6A0)
                                   : ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
                         child: SingleChildScrollView(
                               child: Padding(
