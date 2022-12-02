@@ -35,10 +35,8 @@ class _ScreenNotificationState extends State<ScreenNotification> {
         body: Stack(children: [
       if (args['image'].length <= 0) const Formtop(),
       if (args['image'].length <= 0) const FormButtom(),
-      Padding(
-          padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-          child: Column(children: [
-            HedersComponent(title: args!['title'], titleExtra: args['PublicationDate'], stateBack: true),
+      Column(children: [
+            HedersComponent(title: args!['title'], titleHeader: args['PublicationDate']),
             Expanded(
                 child: Center(
               child: SingleChildScrollView(
@@ -63,7 +61,7 @@ class _ScreenNotificationState extends State<ScreenNotification> {
                 if (args['image'].length > 0) InteractiveViewer(minScale: 1, maxScale: 4, child: Image.network(args['image'])),
               ])),
             )),
-          ]))
+          ])
     ]));
   }
 }

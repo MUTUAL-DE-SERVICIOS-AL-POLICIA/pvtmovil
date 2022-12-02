@@ -47,11 +47,11 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: Column(
+        child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child:Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
-          child: Table(columnWidths: const {
+           Table(columnWidths: const {
             0: FlexColumnWidth(3),
             1: FlexColumnWidth(3),
             2: FlexColumnWidth(3),
@@ -78,7 +78,6 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
                   : Container()
             ])
           ]),
-        ),
         Expanded(
           child: DefaultTabController(
               length: contributionsTotal.length,
@@ -96,7 +95,7 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
               )),
         ),
       ],
-    ));
+    )));
   }
 
   Widget years(bool state, TextDirection textDirection, String text, Function() onTap, double value) {

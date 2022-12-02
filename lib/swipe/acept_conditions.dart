@@ -22,13 +22,12 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        height: MediaQuery.of(context).size.height / 2,
+        height: MediaQuery.of(context).size.height / 1.5,
         child: Scaffold(
             body: Padding(
                 padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
                 child: Column(children: [
-                  const HedersComponent(
-                      title: 'Términos y Condiciones', stateBack: true),
+                  const HedersComponent(title: 'Términos y Condiciones'),
                   Expanded(
                     child: Center(
                       child: SingleChildScrollView(
@@ -36,9 +35,7 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                           children: [
                             btnAccess
                                 ? OptionTermCondition(
-                                    onChanged: (val) => setState(() =>
-                                        stateTermsConditions =
-                                            !stateTermsConditions),
+                                    onChanged: (val) => setState(() => stateTermsConditions = !stateTermsConditions),
                                     state: stateTermsConditions,
                                     child: GestureDetector(
                                       onTap: () => launchUrl(Uri.parse(serviceGetPrivacyPolicy()), mode: LaunchMode.externalApplication),
@@ -47,30 +44,15 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                                         TextSpan(
                                             text: 'Acepto ',
                                             style: TextStyle(
-                                                color: ThemeProvider.themeOf(
-                                                        context)
-                                                    .data
-                                                    .primaryColorDark,
-                                                fontFamily: 'Poppins',
-                                                fontSize: 17.sp)),
+                                                color: ThemeProvider.themeOf(context).data.primaryColorDark, fontFamily: 'Poppins', fontSize: 17.sp)),
                                         TextSpan(
                                             text: 'Términos y Condiciones ',
                                             style: TextStyle(
-                                                color: Colors.blue,
-                                                decoration:
-                                                    TextDecoration.underline,
-                                                fontFamily: 'Poppins',
-                                                fontSize: 17.sp)),
+                                                color: Colors.blue, decoration: TextDecoration.underline, fontFamily: 'Poppins', fontSize: 17.sp)),
                                         TextSpan(
-                                            text:
-                                                'de uso de la aplicación móvil "MUSERPOL PVT"',
+                                            text: 'de uso de la aplicación móvil "MUSERPOL PVT"',
                                             style: TextStyle(
-                                                color: ThemeProvider.themeOf(
-                                                        context)
-                                                    .data
-                                                    .primaryColorDark,
-                                                fontFamily: 'Poppins',
-                                                fontSize: 17.sp))
+                                                color: ThemeProvider.themeOf(context).data.primaryColorDark, fontFamily: 'Poppins', fontSize: 17.sp))
                                       ])),
                                     ),
                                   )
@@ -81,20 +63,12 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                                     height: 20,
                                   )),
                             OptionTermCondition(
-                              onChanged: (val) => setState(() =>
-                                  stateNotificationsPush =
-                                      !stateNotificationsPush),
+                              onChanged: (val) => setState(() => stateNotificationsPush = !stateNotificationsPush),
                               state: stateNotificationsPush,
                               child: GestureDetector(
-                                onTap: () => setState(() =>
-                                    stateNotificationsPush =
-                                        !stateNotificationsPush),
-                                child: Text(
-                                    'Acepto que me envien notificaciones',
-                                    style: TextStyle(
-                                        color: ThemeProvider.themeOf(context)
-                                            .data
-                                            .primaryColorDark)),
+                                onTap: () => setState(() => stateNotificationsPush = !stateNotificationsPush),
+                                child: Text('Acepto que me envien notificaciones',
+                                    style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark)),
                               ),
                             )
                           ],
@@ -104,17 +78,11 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ButtonComponent(
-                        text: 'INGRESAR',
-                        onPressed:
-                            stateTermsConditions && stateNotificationsPush
-                                ? () => getInto(context)
-                                : null),
+                    child:
+                        ButtonComponent(text: 'INGRESAR', onPressed: stateTermsConditions && stateNotificationsPush ? () => getInto(context) : null),
                   ),
                 ]))));
   }
-
-
 
   getInto(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);
@@ -128,12 +96,7 @@ class OptionTermCondition extends StatelessWidget {
   final Function(bool) onChanged;
   final bool state;
   final Widget child;
-  const OptionTermCondition(
-      {Key? key,
-      required this.onChanged,
-      required this.state,
-      required this.child})
-      : super(key: key);
+  const OptionTermCondition({Key? key, required this.onChanged, required this.state, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -145,8 +108,7 @@ class OptionTermCondition extends StatelessWidget {
                 value: state,
                 activeColor: const Color(0xff419388),
                 splashRadius: 50,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 materialTapTargetSize: MaterialTapTargetSize.padded,
                 onChanged: (val) => onChanged(val!))),
         Flexible(child: child)

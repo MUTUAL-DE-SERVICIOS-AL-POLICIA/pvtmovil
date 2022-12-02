@@ -44,8 +44,10 @@ class _BirthDateState extends State<BirthDate> {
             cancelButton: CupertinoActionSheetAction(
               child: const Text('Elegir'),
               onPressed: () {
-                widget.selectDate(DateFormat(' dd, MMMM yyyy ', "es_ES").format(widget.currentDate), widget.currentDate,
-                    DateFormat('yyyy-MM-dd').format(widget.currentDate));
+                widget.selectDate(
+                  DateFormat(' dd, MMMM yyyy ', "es_ES").format(widget.currentDate),
+                  widget.currentDate,
+                  DateFormat('yyyy-MM-dd').format(widget.currentDate));
                 Navigator.of(context, rootNavigator: true).pop("Discard");
                 FocusScope.of(context).unfocus();
               },
@@ -61,8 +63,10 @@ class _BirthDateState extends State<BirthDate> {
             mode: CupertinoDatePickerMode.date,
             initialDateTime: widget.currentDate,
             onDateTimeChanged: (DateTime newDataTime) {
-              widget.selectDate(DateFormat(' dd, MMMM yyyy ', "es_ES").format(widget.currentDate), newDataTime,
-                  DateFormat('dd-MM-yyyy').format(widget.currentDate));
+              widget.selectDate(
+                DateFormat(' dd, MMMM yyyy ', "es_ES").format(newDataTime),
+                newDataTime,
+                DateFormat('dd-MM-yyyy').format(newDataTime));
             }));
   }
 }

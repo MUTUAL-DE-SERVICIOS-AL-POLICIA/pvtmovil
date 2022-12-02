@@ -38,9 +38,9 @@ class _ForgotPwdState extends State<ForgotPwd> {
         onWillPop: () => backAcction(),
         child: Scaffold(
             body: Padding(
-                padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
+                padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                 child: Column(children: [
-                  HedersComponent(title: 'Recuperar Contraseña', stateBack: true, onPressBack: () => backAcction(),functionBack:true),
+                  const HedersComponent(title: 'Recuperar Contraseña'),
                   Expanded(
                       child: Center(
                     child: SingleChildScrollView(

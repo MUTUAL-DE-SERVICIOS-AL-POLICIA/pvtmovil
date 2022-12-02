@@ -10,6 +10,8 @@ import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/swipe/slider.dart';
 import 'package:provider/provider.dart';
 
+import 'model/files_model.dart';
+
 //WIDGET: verifica la autenticación del usuario
 class CheckAuthScreen extends StatelessWidget {
   const CheckAuthScreen({Key? key}) : super(key: key);
@@ -75,7 +77,7 @@ class CheckAuthScreen extends StatelessWidget {
       Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-              pageBuilder: (_, __, ___) => NavigatorBar(tutorial: false, stateApp: stateApp), transitionDuration: const Duration(seconds: 0)));
+              pageBuilder: (_, __, ___) => NavigatorBar(tutorial: false, stateApp: stateApp=='complement'?StateAplication.complement:StateAplication.virtualOficine), transitionDuration: const Duration(seconds: 0)));
     });
   }
 

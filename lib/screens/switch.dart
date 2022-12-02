@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:animate_do/animate_do.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +27,8 @@ class ScreenSwitch extends StatefulWidget {
 }
 
 class ScreenSwitchState extends State<ScreenSwitch> {
+  bool statelogin = false;
+  bool stateOF = true;
   String? deviceId;
   final deviceInfo = DeviceInfoPlugin();
   int value = 0;
@@ -36,8 +39,7 @@ class ScreenSwitchState extends State<ScreenSwitch> {
   final _flashOffController = TextEditingController(text: 'SIN FLASH');
   final _cancelController = TextEditingController(text: 'ATRAS');
 
-  static final _possibleFormats = BarcodeFormat.values.toList()
-    ..removeWhere((e) => e == BarcodeFormat.unknown);
+  static final _possibleFormats = BarcodeFormat.values.toList()..removeWhere((e) => e == BarcodeFormat.unknown);
   List<BarcodeFormat> selectedFormats = [..._possibleFormats];
 
   @override
@@ -72,66 +74,56 @@ class ScreenSwitchState extends State<ScreenSwitch> {
             Padding(
                 padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Hero(
-                        tag: 'image',
-                        child: Image(
-                          image: AssetImage(
-                            ThemeProvider.themeOf(context).id.contains('dark')
-                                ? 'assets/images/muserpol-logo.png'
-                                : 'assets/images/muserpol-logo2.png',
-                          ),
-                        )),
+                    if (statelogin) GestureDetector(onTap: () => setState(() => statelogin = !statelogin), child: Icon(Icons.arrow_back_ios,color:ThemeProvider.themeOf(context).id.contains('dark') ? Colors.white:Colors.black)),
+                    Image(
+                      image: AssetImage(
+                        ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
+                      ),
+                    ),
                     Expanded(
                       child: Center(
                         child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              optionTool(
-                                  const Image(
-                                    image: AssetImage(
-                                      'assets/images/couple.png',
-                                    ),
+                          child: statelogin
+                              ? FadeIn(animate: statelogin, child: ScreenLogin(deviceId: deviceId!, stateOfficeVirtual: stateOF))
+                              : FadeIn(
+                                  animate: !statelogin,
+                                  child: Column(
+                                    children: [
+                                      optionTool(
+                                          const Image(
+                                            image: AssetImage(
+                                              'assets/images/couple.png',
+                                            ),
+                                          ),
+                                          'Complemento Económico',
+                                          'Creación de trámites y seguimiento para el pago del Complemento Económico',
+                                          () => setState(() => stateOF = false),
+                                          false),
+                                      // optionTool(
+                                      //     const Image(
+                                      //       image: AssetImage(
+                                      //         'assets/images/computer.png',
+                                      //       ),
+                                      //     ),
+                                      //     'Oficina Virtual',
+                                      //     'Seguimiento de Aportes y Préstamos',
+                                      //     () => setState(() => stateOF = true),
+                                      //     false),
+                                      // optionTool(
+                                      //     SvgPicture.asset(
+                                      //       'assets/icons/qr.svg',
+                                      //       height: 100.sp,
+                                      //       color: const Color(0xff419388),
+                                      //     ),
+                                      //     'Seguimiento de trámites',
+                                      //     'Seguimiento de trámites con QR',
+                                      //     () => scan(),
+                                      //     true),
+                                    ],
                                   ),
-                                  'Complemento Económico',
-                                  'Creación de trámites y seguimiento para el pago del Complemento Económico',
-                                  () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => ScreenLogin(
-                                                  title:
-                                                      'Complemento Económico',
-                                                  stateOfficeVirtual: false,
-                                                  deviceId: deviceId!,
-                                                )),
-                                      )),
-                              // optionTool(
-                              //     const Image(
-                              //       image: AssetImage(
-                              //         'assets/images/computer.png',
-                              //       ),
-                              //     ),
-                              //     'Oficina Virtual',
-                              //     'Seguimiento de Aportes y Préstamos',
-                              //     () => Navigator.push(
-                              //           context,
-                              //           MaterialPageRoute(
-                              //               builder: (context) => ScreenLogin(
-                              //                     title: 'Oficina Virtual',
-                              //                     deviceId: deviceId!,
-                              //                   )),
-                              //         )),
-                              // optionTool(
-                              //     SvgPicture.asset(
-                              //       'assets/icons/qr.svg',
-                              //       height: 100.sp,
-                              //       color: const Color(0xff419388),
-                              //     ),
-                              //     'Seguimiento de trámites',
-                              //     'Seguimiento de trámites con QR',
-                              //     () => scan()),
-                            ],
-                          ),
+                                ),
                         ),
                       ),
                     )
@@ -162,15 +154,12 @@ class ScreenSwitchState extends State<ScreenSwitch> {
       if (scanResult!.rawContent != '') {
         debugPrint('scanResult!.rawContent ${scanResult!.rawContent}');
         if (!mounted) return;
-        var response = await serviceMethod(mounted, context, 'get', null,
-            serviceGetQr(scanResult!.rawContent), false, false);
+        var response = await serviceMethod(mounted, context, 'get', null, serviceGetQr(scanResult!.rawContent), false, false);
         if (response != null) {
           if (!mounted) return;
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    ScreenWorkFlow(qrModel: qrModelFromJson(response.body))),
+            MaterialPageRoute(builder: (context) => ScreenWorkFlow(qrModel: qrModelFromJson(response.body))),
           );
         } else {
           if (!mounted) return;
@@ -184,53 +173,64 @@ class ScreenSwitchState extends State<ScreenSwitch> {
   }
 
   Future<bool> _onBackPressed() async {
+    if (statelogin) {
+      setState(() => statelogin = !statelogin);
+      return false;
+    }
     return await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return ComponentAnimate(
               child: DialogTwoAction(
-                  message:
-                      '¿Estás seguro de salir de la aplicación MUSERPOL PVT?',
-                  actionCorrect: () => SystemChannels.platform
-                      .invokeMethod('SystemNavigator.pop'),
+                  message: '¿Estás seguro de salir de la aplicación MUSERPOL PVT?',
+                  actionCorrect: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
                   messageCorrect: 'Salir'));
         });
   }
 
-  Widget optionTool(
-      Widget child, String title, String description, Function() onPress) {
-    return GestureDetector(
-        onTap: () async =>
-            {if (await checkVersion(mounted, context)) onPress()},
-        child: ContainerComponent(
-          stateBorder:false,
-          width: double.infinity,
-          color: const Color(0xffb3d4cf),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8,right:8),
-            child: Column(
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
-                  textAlign: TextAlign.center,
-                ),
-                Row(
+  Widget optionTool(Widget child, String title, String description, Function() onPress, bool qrstate) {
+    return FadeIn(
+        animate: !statelogin,
+        duration: const Duration(milliseconds: 500),
+        child: GestureDetector(
+            onTap: () {
+              onPress();
+              if (!qrstate) {
+                setState(() => statelogin = !statelogin);
+              }
+            },
+            // {if (await checkVersion(mounted, context)) onPress()},
+            child: ContainerComponent(
+              stateBorder: false,
+              width: double.infinity,
+              color: const Color(0xffd9e9e7),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, right: 8),
+                child: Column(
                   children: [
-                    Expanded(
-                      child: Padding(
-                          padding: const EdgeInsets.all(10.0), child: child),
+                    Text(
+                      title,
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                      textAlign: TextAlign.center,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 1.5,
-                      child: Text(description,style: const TextStyle(color: Colors.black),),
-                    )
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Padding(padding: const EdgeInsets.all(10.0), child: child),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 1.5,
+                          child: Text(
+                            description,
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                        )
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
-          ),
-        ));
+              ),
+            )));
   }
 }

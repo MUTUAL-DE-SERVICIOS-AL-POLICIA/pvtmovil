@@ -16,3 +16,12 @@ class FileDocument {
       this.wordsKey,
       this.validateState = false});
 }
+
+enum StateAplication { virtualOficine, complement }
+
+// // Make a class
+// class StateAplication  {
+//   final state app;
+
+//   StateAplication(this.app);
+// }

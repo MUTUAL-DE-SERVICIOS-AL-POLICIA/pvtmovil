@@ -32,7 +32,6 @@ AppTheme styleLigth2() {
               splashColor: Colors.transparent,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               textTheme: ButtonTextTheme.accent),
-              
           textTheme: ThemeData.light()
               .textTheme
               .copyWith(
@@ -58,7 +57,9 @@ AppTheme styleLigth2() {
           dialogBackgroundColor: const Color(0xfff2f2f2),
           scaffoldBackgroundColor: const Color(0xfff2f2f2),
           primaryColorDark: const Color(0xff21232A),
-          iconTheme: const IconThemeData(color: Color(0xff419388))));
+          iconTheme: const IconThemeData(color: Color(0xff419388)),
+          appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent, elevation: 0)
+              .copyWith(titleTextStyle: const TextStyle(color: Colors.black), iconTheme: const IconThemeData(color: Colors.black))));
 }
 
 AppTheme styleDark2() {
@@ -67,7 +68,7 @@ AppTheme styleDark2() {
       data: ThemeData.dark().copyWith(
           drawerTheme: const DrawerThemeData(
               elevation: 0,
-              backgroundColor: Color(0xff0d1d1b),
+              backgroundColor: Color(0xff132c29),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.horizontal(right: Radius.circular(8)))),
           inputDecorationTheme: ThemeData.dark().inputDecorationTheme.copyWith(
                 focusedErrorBorder:
@@ -114,11 +115,13 @@ AppTheme styleDark2() {
               .apply(fontFamily: 'Poppins'),
           colorScheme: ColorScheme.fromSwatch().copyWith(primary: const Color(0xff419388), secondary: const Color(0xff419388)),
           primaryColor: const Color(0xff419388),
-          cardColor: const Color(0xff0d1d1b),
+          cardColor: const Color(0xff132c29),
           highlightColor: Colors.transparent,
           splashColor: Colors.transparent,
-          dialogBackgroundColor: const Color(0xff0d1d1b),
-          scaffoldBackgroundColor: const Color(0xff0d1d1b),
+          dialogBackgroundColor: const Color(0xff132c29),
+          scaffoldBackgroundColor: const Color(0xff132c29),
           primaryColorDark: const Color(0xfff2f2f2),
-          iconTheme: const IconThemeData(color: Color(0xff419388))));
+          iconTheme: const IconThemeData(color: Color(0xff419388)),
+          appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent, elevation: 0)
+              .copyWith(titleTextStyle: const TextStyle(color: Color(0xfff2f2f2)), iconTheme: const IconThemeData(color: Color(0xfff2f2f2)))));
 }

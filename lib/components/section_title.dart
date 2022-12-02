@@ -38,6 +38,7 @@ class SectiontitleComponent extends StatelessWidget {
           : Icon(
               icon,
               size: 15.sp,
+              color: ThemeProvider.themeOf(context).id.contains('dark') ?Colors.white:Colors.black,
             ),
       onTap: onTap,
     );

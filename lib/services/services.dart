@@ -1,9 +1,8 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-String? url = dotenv.env['HOST_URL'];
-// String? urlPrueba = dotenv.env['HOST_URL_PVT_PRUEBA'];
-String? urlbla = dotenv.env['HOST_URLBLA'];
-// String? urllea = dotenv.env['HOST_URLLEA'];
+String? url = dotenv.env['HOST_URL_PVT'];
+
+String? urlbla = dotenv.env['HOST_URL_STI'];
 
 String? reazon = dotenv.env['reazon'];//v1
 String? reazonAffiliate = dotenv.env['reazonAffiliate'];//affiliate

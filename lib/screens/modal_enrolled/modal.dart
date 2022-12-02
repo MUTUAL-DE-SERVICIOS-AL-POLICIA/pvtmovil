@@ -31,7 +31,7 @@ class _ModalInsideModalState extends State<ModalInsideModal> with TickerProvider
   String message = '';
   LivenesData? infoLivenes;
   String titleback = '';
-  String titleHeader= 'MUSERPOL';
+  String titleHeader= '';
 
   @override
   void initState() {
@@ -62,7 +62,7 @@ class _ModalInsideModalState extends State<ModalInsideModal> with TickerProvider
         child: Scaffold(
             body: SizedBox(
                 child: Column(children: [
-          Padding(padding: const EdgeInsets.fromLTRB(10, 15, 10, 0), child: HedersComponent(titleHeader:titleHeader, title: title, center: true)),
+          Padding(padding: const EdgeInsets.fromLTRB(10, 0, 10, 0), child: HedersComponent(titleHeader:titleHeader, title: title, center: true)),
           Expanded(
             child: DefaultTabController(
                 length: 2,

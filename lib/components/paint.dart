@@ -10,7 +10,8 @@ class FormButtom extends StatelessWidget {
       height: double.infinity,
       width: double.infinity,
       child: CustomPaint(
-        painter: FormButtomPainter(ThemeProvider.themeOf(context).id.contains('dark') ? const Color(0xff214a44):const Color(0xff8dbeb8)),
+        // painter: FormButtomPainter(ThemeProvider.themeOf(context).id.contains('dark') ? const Color(0xff214a44):const Color(0xff8dbeb8)),
+        painter: FormButtomPainter(ThemeProvider.themeOf(context).id.contains('dark') ? const Color(0xff214a44):const Color(0xfff2f2f2)),
       ),
     );
   }

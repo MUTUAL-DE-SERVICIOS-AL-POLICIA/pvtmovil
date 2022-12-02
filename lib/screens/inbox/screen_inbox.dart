@@ -21,34 +21,29 @@ class ScreenInbox extends StatefulWidget {
 }
 
 class _ScreenInboxState extends State<ScreenInbox> {
-  
   @override
   Widget build(BuildContext context) {
-    
-    final notificationBloc =
-        BlocProvider.of<NotificationBloc>(context, listen: true).state;
+    final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: true).state;
     return ComponentAnimate(
         child: AlertDialog(
+      titlePadding: const EdgeInsets.all(10),
       actionsAlignment: MainAxisAlignment.spaceAround,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       title: SizedBox(
         height: MediaQuery.of(context).size.height / 2,
         child: Column(
           children: [
-            
             if (notificationBloc.existNotifications)
               Text(
                   '${notificationBloc.listNotifications!.where((e) => e.idAffiliate == notificationBloc.affiliateId).isEmpty ? 'Sin' : notificationBloc.listNotifications!.where((e) => e.idAffiliate == notificationBloc.affiliateId).length} Notificación(es)',
-                  style: const TextStyle(
-                      fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             Expanded(
               child: Center(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 0),
                   child: Column(
                     children: [
-                      if (!notificationBloc.existNotifications ||
-                          notificationBloc.listNotifications!.isEmpty)
+                      if (!notificationBloc.existNotifications || notificationBloc.listNotifications!.isEmpty)
                         Column(
                           children: [
                             Image.asset(
@@ -64,10 +59,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
                           ],
                         ),
                       if (notificationBloc.existNotifications)
-                        for (final item in notificationBloc
-                            .listNotifications!.reversed
-                            .where((e) => e.idAffiliate == notificationBloc.affiliateId)
-                            )
+                        for (final item in notificationBloc.listNotifications!.reversed.where((e) => e.idAffiliate == notificationBloc.affiliateId))
                           messageWidget(item)
                     ],
                   ),
@@ -88,14 +80,11 @@ class _ScreenInboxState extends State<ScreenInbox> {
 
   Widget messageWidget(NotificationModel item) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, 'message',
-          arguments: json.decode(item.content)),
+      onTap: () => Navigator.pushNamed(context, 'message', arguments: json.decode(item.content)),
       child: ContainerComponent(
-          color: item.read
-              ? ThemeProvider.themeOf(context).data.scaffoldBackgroundColor
-              : const Color.fromARGB(255, 235, 218, 192),
+          color: item.read ? ThemeProvider.themeOf(context).data.scaffoldBackgroundColor : const Color.fromARGB(255, 235, 218, 192),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
             child: Row(
               children: [
                 Expanded(
@@ -107,21 +96,12 @@ class _ScreenInboxState extends State<ScreenInbox> {
                           children: [
                             Text(
                               'Titulo: ',
-                              style: TextStyle(
-                                  color: ThemeProvider.themeOf(context)
-                                      .data
-                                      .primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.sp),
+                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontWeight: FontWeight.bold, fontSize: 16.sp),
                             ),
                             Flexible(
                                 child: Text(
                               item.title,
-                              style: TextStyle(
-                                  color: ThemeProvider.themeOf(context)
-                                      .data
-                                      .primaryColor,
-                                  fontSize: 16.sp),
+                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontSize: 16.sp),
                             ))
                           ],
                         ),
@@ -129,22 +109,12 @@ class _ScreenInboxState extends State<ScreenInbox> {
                           children: [
                             Text(
                               'Fecha: ',
-                              style: TextStyle(
-                                  color: ThemeProvider.themeOf(context)
-                                      .data
-                                      .primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.sp),
+                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontWeight: FontWeight.bold, fontSize: 16.sp),
                             ),
                             Flexible(
                                 child: Text(
-                              DateFormat('EEE dd, MMMM', "es_ES")
-                                  .format(item.date),
-                              style: TextStyle(
-                                  color: ThemeProvider.themeOf(context)
-                                      .data
-                                      .primaryColor,
-                                  fontSize: 16.sp),
+                              DateFormat('EEE dd, MMMM', "es_ES").format(item.date),
+                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontSize: 16.sp),
                             )),
                           ],
                         ),
@@ -152,21 +122,12 @@ class _ScreenInboxState extends State<ScreenInbox> {
                           children: [
                             Text(
                               'Hora: ',
-                              style: TextStyle(
-                                  color: ThemeProvider.themeOf(context)
-                                      .data
-                                      .primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.sp),
+                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontWeight: FontWeight.bold, fontSize: 16.sp),
                             ),
                             Flexible(
                                 child: Text(
                               DateFormat('kk:mm', "es_ES").format(item.date),
-                              style: TextStyle(
-                                  color: ThemeProvider.themeOf(context)
-                                      .data
-                                      .primaryColor,
-                                  fontSize: 16.sp),
+                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontSize: 16.sp),
                             )),
                           ],
                         ),
@@ -193,8 +154,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
   }
 
   deleteMessage(NotificationModel item) async {
-    final notificationBloc =
-        BlocProvider.of<NotificationBloc>(context, listen: false);
+    final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: false);
     return await showDialog(
         barrierDismissible: false,
         context: context,
@@ -203,8 +163,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
                 message: 'Deseas eliminar la notificación ${item.title} ?',
                 actionCorrect: () async {
                   await DBProvider.db.deleteNotificationModelById(item.id!);
-                  await DBProvider.db.getAllNotificationModel().then(
-                      (res) => notificationBloc.add(UpdateNotifications(res)));
+                  await DBProvider.db.getAllNotificationModel().then((res) => notificationBloc.add(UpdateNotifications(res)));
                   if (!mounted) return;
                   Navigator.pop(context);
                 },

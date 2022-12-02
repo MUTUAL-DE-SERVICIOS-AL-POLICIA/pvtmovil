@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/model/qr_model.dart';
+import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
 class ScreenWorkFlow extends StatefulWidget {
   final QrModel qrModel;
@@ -11,49 +12,54 @@ class ScreenWorkFlow extends StatefulWidget {
   State<ScreenWorkFlow> createState() => _ScreenWorkFlowState();
 }
 
-class _ScreenWorkFlowState extends State<ScreenWorkFlow> with SingleTickerProviderStateMixin {
-  AnimationController? _animationController;
+class _ScreenWorkFlowState extends State<ScreenWorkFlow> {
+  late ValueNotifier<double> valueNotifier;
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      lowerBound: widget.qrModel.payload!.porcentage! / 100,
-      upperBound: widget.qrModel.payload!.porcentage! / 100,
-      vsync: this,
-      duration: const Duration(seconds: 30),
-    );
-
-    _animationController!.addListener(() => setState(() {}));
-    _animationController!.repeat();
-  }
-
-  @override
-  void dispose() {
-    _animationController!.dispose();
-    super.dispose();
+    valueNotifier = ValueNotifier(widget.qrModel.payload!.porcentage!);
   }
 
   @override
   Widget build(BuildContext context) {
-    final percentage = _animationController!.value * 100;
     return Scaffold(
-        body: Padding(
-            padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
-            child: Column(children: [
-              HedersComponent(title: widget.qrModel.payload!.code!, stateBack: true),
-              Text(
-                widget.qrModel.payload!.moduleDisplayName!,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.sp),
-              ),
-              Expanded(
-                  child: SingleChildScrollView(
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                SizedBox(
-                  height: 10.h,
+        body: Column(children: [
+      HedersComponent(
+        titleHeader: widget.qrModel.payload!.code!,
+        title: widget.qrModel.payload!.moduleDisplayName!,
+      ),
+      Expanded(
+          child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(
+                  padding: const EdgeInsets.all(0),
+                  child: Row(
+                    children: [
+                      if(widget.qrModel.payload!.stateName! != 'En Proceso')
+                      Expanded(
+                        flex: 1,
+                        child: SimpleCircularProgressBar(
+                          valueNotifier: valueNotifier,
+                          mergeMode: true,
+                          animationDuration: 3,
+                          progressColors: const [
+                            Color(0xff419388),
+                          ],
+                          onGetText: (double value) {
+                            return Text('${value.toInt()}%');
+                          },
+                        ),
+                      ),
+                      if(widget.qrModel.payload!.stateName! != 'En Proceso')
+                      const SizedBox(width: 20),
+                      Expanded(
+                        flex: 2,
+                        child: Text(widget.qrModel.payload!.procedureTypeName!),
+                      ),
+                    ],
+                  ),
                 ),
-                const Text('Tipo de Trámite: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text('${widget.qrModel.payload!.procedureTypeName!}:'),
                 SizedBox(
                   height: 10.h,
                 ),
@@ -62,6 +68,7 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> with SingleTickerProvid
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Column(
+                  crossAxisAlignment : CrossAxisAlignment.start,
                   children: [
                     for (final person in widget.qrModel.payload!.person!)
                       Column(
@@ -70,50 +77,51 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> with SingleTickerProvid
                           SizedBox(
                             height: 10.h,
                           ),
-                          Text('- ${person.fullName!}'),
-                          SizedBox(
-                            height: 10.h,
-                          ),
+                          Text('• ${person.fullName!}'),
                         ],
                       )
                   ],
                 ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                const Text('Ubicación del trámite:', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(widget.qrModel.payload!.location!)
+                if (widget.qrModel.payload!.flow != null)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Divider(height: 0.03.sh, color: Colors.white),
+                      const Text('Ubicación del trámite:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                if (widget.qrModel.payload!.flow != null)
+                  Center(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: List.generate(widget.qrModel.payload!.flow!.length, (index) {
+                          return Column(
+                            children: [
+                              Row(
+                                children: [
+                                  const Spacer(),
+                                  Expanded(
+                                      flex: 1,
+                                      child: NumberComponent(
+                                          text: '${index + 1}', iconColor: widget.qrModel.payload!.flow![index].state! ? true : false)),
+                                  Expanded(flex: 2, child: Text(widget.qrModel.payload!.flow![index].displayName!)),
+                                  const Spacer(),
+                                ],
+                              ),
+                              if (index != widget.qrModel.payload!.flow!.length - 1)
+                                Row(
+                                  children: [
+                                    const Spacer(),
+                                    const Expanded(flex: 1, child: Center(child: Text('|'))),
+                                    Expanded(flex: 2, child: Container()),
+                                    const Spacer(),
+                                  ],
+                                ),
+                            ],
+                          );
+                        })),
+                  )
               ]))),
-              const Text('Progreso:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Container(
-                width: double.infinity,
-                height: 75.0,
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: LiquidLinearProgressIndicator(
-                    value: _animationController!.value,
-                    backgroundColor: const Color(0xfff2f2f2),
-                    valueColor: const AlwaysStoppedAnimation(Color(0xff419388)),
-                    borderRadius: 12.0,
-                    borderWidth: 0.5,
-                    borderColor: Colors.black,
-                    center: Stack(
-                      children: <Widget>[
-                        Text(
-                          "${percentage.toStringAsFixed(0)}%",
-                          style: TextStyle(
-                            foreground: Paint()
-                              ..style = PaintingStyle.stroke
-                              ..strokeWidth = 5
-                              ..color = Colors.white,
-                          ),
-                        ),
-                        Text(
-                          "${percentage.toStringAsFixed(0)}%",
-                          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xff419388)),
-                        ),
-                      ],
-                    )),
-              )
-            ])));
+    ]));
   }
 }

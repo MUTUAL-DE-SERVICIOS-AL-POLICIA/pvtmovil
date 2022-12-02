@@ -21,6 +21,7 @@ import 'package:muserpol_pvt/components/susessful.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/biometric_user_model.dart';
+import 'package:muserpol_pvt/model/files_model.dart';
 import 'package:muserpol_pvt/model/user_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/screens/access/model_update_pwd.dart';
@@ -31,7 +32,6 @@ import 'package:muserpol_pvt/services/push_notifications.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
-import 'package:theme_provider/theme_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:local_auth_android/local_auth_android.dart';
@@ -39,10 +39,9 @@ import 'package:local_auth_ios/local_auth_ios.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ScreenLogin extends StatefulWidget {
-  final String title;
   final bool stateOfficeVirtual;
   final String deviceId;
-  const ScreenLogin({Key? key, required this.title, this.stateOfficeVirtual = true, required this.deviceId}) : super(key: key);
+  const ScreenLogin({Key? key, required this.stateOfficeVirtual, required this.deviceId}) : super(key: key);
 
   @override
   State<ScreenLogin> createState() => _ScreenLoginState();
@@ -145,92 +144,72 @@ class _ScreenLoginState extends State<ScreenLogin> {
       DeviceOrientation.portraitDown,
     ]);
     final node = FocusScope.of(context);
-    return WillPopScope(
-        onWillPop: _onBackPressed,
-        child: Scaffold(
-            body: Center(
-          child: SingleChildScrollView(
-              padding: const EdgeInsets.all(30),
-              child: Form(
-                  key: formKey,
-                  child: Column(children: [
-                    Hero(
-                        tag: 'image',
-                        child: Image(
-                          image: AssetImage(
-                            ThemeProvider.themeOf(context).id.contains('dark')
-                                ? 'assets/images/muserpol-logo.png'
-                                : 'assets/images/muserpol-logo2.png',
-                          ),
-                        )),
-                    Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    if (btnAccess)
-                      Column(
-                        children: [
-                          IdentityCard(
-                            title: widget.stateOfficeVirtual ? 'Usuario:' : 'Cédula de identidad:',
-                            dniCtrl: dniCtrl,
-                            dniComCtrl: dniComCtrl,
-                            onEditingComplete: () => node.nextFocus(),
-                            textSecondFocusNode: textSecondFocusNode,
-                            formatter: widget.stateOfficeVirtual
-                                ? FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z-]"))
-                                : FilteringTextInputFormatter.allow(RegExp("[0-9]")),
-                            keyboardType: widget.stateOfficeVirtual ? TextInputType.text : TextInputType.number,
-                            stateAlphanumericFalse: () => setState(() => dniComCtrl.text = ''),
-                            stateAlphanumeric: !widget.stateOfficeVirtual,
-                          ),
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          if (!widget.stateOfficeVirtual)
-                            BirthDate(
-                              dateState: dateState,
-                              currentDate: currentDate,
-                              dateCtrl: dateCtrl,
-                              selectDate: (date, dateCurrent, dateFormat) => {
-                                setState(() {
-                                  dateCtrl = date;
-                                  currentDate = dateCurrent;
-                                  dateCtrlText = dateFormat;
-                                  dateState = false;
-                                })
-                              },
-                            ),
-                          if (widget.stateOfficeVirtual) Password(passwordCtrl: passwordCtrl, onEditingComplete: () => initSession()),
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          ButtonComponent(text: 'INGRESAR', onPressed: () => initSession()),
-                          if (widget.stateOfficeVirtual)
-                            ButtonWhiteComponent(text: 'Olvidé mi contraseña', onPressed: () => Navigator.pushNamed(context, 'forgot')),
-                          ButtonWhiteComponent(text: 'Contactos a nivel nacional', onPressed: () => Navigator.pushNamed(context, 'contacts')),
-                          ButtonWhiteComponent(
-                            text: 'Política de privacidad',
-                            onPressed: () => launchUrl(Uri.parse(serviceGetPrivacyPolicy()), mode: LaunchMode.externalApplication),
-                          ),
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          Center(child: Text('Versión ${dotenv.env['version']}'))
-                        ],
-                      ),
-                    if (!btnAccess)
-                      Center(
-                          child: Image.asset(
-                        'assets/images/load.gif',
-                        fit: BoxFit.cover,
-                        height: 20,
-                      )),
-                  ]))),
-        )));
-  }
-
-  Future<bool> _onBackPressed() async {
-    return btnAccess;
+    return Form(
+        key: formKey,
+        child: Column(children: [
+          Text(widget.stateOfficeVirtual?'Oficina Virtual':'Complemento Económico',style: const TextStyle(fontWeight: FontWeight.bold),),
+          SizedBox(
+            height: 10.h,
+          ),
+          if (btnAccess)
+            Column(
+              children: [
+                IdentityCard(
+                  title: widget.stateOfficeVirtual ? 'Usuario:' : 'Cédula de identidad:',
+                  dniCtrl: dniCtrl,
+                  dniComCtrl: dniComCtrl,
+                  onEditingComplete: () => node.nextFocus(),
+                  textSecondFocusNode: textSecondFocusNode,
+                  formatter: widget.stateOfficeVirtual
+                      ? FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z-]"))
+                      : FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+                  keyboardType: widget.stateOfficeVirtual ? TextInputType.text : TextInputType.number,
+                  stateAlphanumericFalse: () => setState(() => dniComCtrl.text = ''),
+                  stateAlphanumeric: !widget.stateOfficeVirtual,
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                if (!widget.stateOfficeVirtual)
+                  BirthDate(
+                    dateState: dateState,
+                    currentDate: currentDate,
+                    dateCtrl: dateCtrl,
+                    selectDate: (date, dateCurrent, dateFormat) => {
+                      setState(() {
+                        dateCtrl = date;
+                        currentDate = dateCurrent;
+                        dateCtrlText = dateFormat;
+                        dateState = false;
+                      })
+                    },
+                  ),
+                if (widget.stateOfficeVirtual) Password(passwordCtrl: passwordCtrl, onEditingComplete: () => initSession()),
+                SizedBox(
+                  height: 10.h,
+                ),
+                ButtonComponent(text: 'INGRESAR', onPressed: () => initSession()),
+                if (widget.stateOfficeVirtual)
+                  ButtonWhiteComponent(text: 'Olvidé mi contraseña', onPressed: () => Navigator.pushNamed(context, 'forgot')),
+                ButtonWhiteComponent(text: 'Contactos a nivel nacional', onPressed: () => Navigator.pushNamed(context, 'contacts')),
+                ButtonWhiteComponent(
+                  text: 'Política de privacidad',
+                  onPressed: () => launchUrl(Uri.parse(serviceGetPrivacyPolicy()), mode: LaunchMode.externalApplication),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Center(child: Text('Versión ${dotenv.env['version']}'))
+              ],
+            ),
+          if (!btnAccess)
+            Center(
+                child: Image.asset(
+              'assets/images/load.gif',
+              fit: BoxFit.cover,
+              height: 20,
+            )),
+        ]));
   }
 
   initSession() async {
@@ -315,7 +294,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
         return Navigator.pushReplacement(
             context,
             PageRouteBuilder(
-                pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
+                pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: StateAplication.complement),
+                transitionDuration: const Duration(seconds: 0)));
       }
     } else {
       if (json.decode(response.body)['data']['update_device_id']) {
@@ -353,7 +333,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
               Navigator.pushReplacement(
                   context,
                   PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'complement'), transitionDuration: const Duration(seconds: 0)));
+                      pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: StateAplication.complement),
+                      transitionDuration: const Duration(seconds: 0)));
             });
           }),
     );
@@ -381,7 +362,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
     return Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-            pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: 'virtualofficine'), transitionDuration: const Duration(seconds: 0)));
+            pageBuilder: (_, __, ___) => const NavigatorBar(stateApp: StateAplication.virtualOficine),
+            transitionDuration: const Duration(seconds: 0)));
   }
 
   virtualOfficineUpdatePwd(String message) {

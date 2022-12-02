@@ -4,8 +4,8 @@ import 'package:muserpol_pvt/components/inputs/password.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-// import 'package:sms_autodetect/sms_autodetect.dart';
 import 'package:sms_autofill/sms_autofill.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class CodeForgotPwd extends StatefulWidget {
   final String cellPhoneNumber;
@@ -86,7 +86,7 @@ class _CodeForgotPwdState extends State<CodeForgotPwd> with CodeAutoFill {
                 inactiveFillColor: Colors.transparent,
                 shape: PinCodeFieldShape.box,
                 borderRadius: BorderRadius.circular(5),
-                activeFillColor: Colors.white,
+                activeFillColor: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
               ),
               animationDuration: const Duration(milliseconds: 300),
               enableActiveFill: true,

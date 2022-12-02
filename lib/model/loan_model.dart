@@ -95,6 +95,7 @@ class Current {
         this.paymentType,
         this.destinyId,
         this.quota,
+        this.percentagePaid,
     });
 
     int? id;
@@ -112,6 +113,7 @@ class Current {
     String? paymentType;
     String? destinyId;
     double? quota;
+    double? percentagePaid;
 
     Current copyWith({
         int? id,
@@ -129,6 +131,7 @@ class Current {
         String? paymentType,
         String? destinyId,
         double? quota,
+        double? percentagePaid,
     }) => 
         Current(
             id: id ?? this.id,
@@ -146,6 +149,7 @@ class Current {
             paymentType: paymentType ?? this.paymentType,
             destinyId: destinyId ?? this.destinyId,
             quota: quota ?? this.quota,
+            percentagePaid: percentagePaid ?? this.percentagePaid,
         );
 
     factory Current.fromJson(Map<String, dynamic> json) => Current(
@@ -164,6 +168,7 @@ class Current {
         paymentType: json["payment_type"],
         destinyId: json["destiny_id"],
         quota: json["quota"].toDouble(),
+        percentagePaid: json["percentage_paid"].toDouble(),
     );
 
     Map<String, dynamic> toJson() => {
@@ -182,6 +187,7 @@ class Current {
         "payment_type": paymentType,
         "destiny_id": destinyId,
         "quota": quota,
+        "percentage_paid": percentagePaid,
     };
 }
 

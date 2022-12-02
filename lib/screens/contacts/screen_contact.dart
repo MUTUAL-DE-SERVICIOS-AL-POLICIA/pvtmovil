@@ -32,10 +32,10 @@ class _ScreenContactState extends State<ScreenContact> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Padding(
-            padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
+            padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
             child: Column(children: [
               const HedersComponent(
-                  title: 'Contactos a nivel nacional', stateBack: true),
+                  title: 'Contactos a nivel nacional'),
               contact != null
                   ? Expanded(
                       child: SingleChildScrollView(

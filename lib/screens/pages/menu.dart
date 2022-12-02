@@ -39,6 +39,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   verifyBiometric() async {
     final authService = Provider.of<AuthService>(context, listen: false);
+    await Future.delayed(const Duration(milliseconds: 50), () {});
     debugPrint('etado ${await authService.readBiometric()}');
     if (await authService.readBiometric() != "") {
       final biometric = await authService.readBiometric();
@@ -58,86 +59,91 @@ class _MenuDrawerState extends State<MenuDrawer> {
   Widget build(BuildContext context) {
     final userBloc = BlocProvider.of<UserBloc>(context, listen: true).state.user;
     return Drawer(
-      width: MediaQuery.of(context).size.width / 1.5,
+      width: MediaQuery.of(context).size.width / 1.4,
       child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 30, 0, 0),
-          child: SingleChildScrollView(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+          padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
+          child: Column(
+            children: [
               Image(
                 image: AssetImage(
                   ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
-                ),
+                )
               ),
-              const Text(
-                'Mis datos',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Column(
-                children: [
-                  IconName(
-                    icon: Icons.person_outline,
-                    text: userBloc!.fullName!,
-                  ),
-                  if (userBloc.degree != null)
-                    IconName(
-                      icon: Icons.local_police_outlined,
-                      text: 'GRADO: ${userBloc.degree!}',
+              Expanded(
+                child: SingleChildScrollView(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Text(
+                      'Mis datos',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                  IconName(
-                    icon: Icons.contact_page_outlined,
-                    text: 'C.I.: ${userBloc.identityCard!}',
-                  ),
-                  if (userBloc.category != null)
-                    IconName(
-                      icon: Icons.av_timer,
-                      text: 'CATEGORÍA: ${userBloc.category!}',
+                    Column(
+                      children: [
+                        IconName(
+                          icon: Icons.person_outline,
+                          text: userBloc!.fullName!,
+                        ),
+                        if (userBloc.degree != null)
+                          IconName(
+                            icon: Icons.local_police_outlined,
+                            text: 'GRADO: ${userBloc.degree!}',
+                          ),
+                        IconName(
+                          icon: Icons.contact_page_outlined,
+                          text: 'C.I.: ${userBloc.identityCard!}',
+                        ),
+                        if (userBloc.category != null)
+                          IconName(
+                            icon: Icons.av_timer,
+                            text: 'CATEGORÍA: ${userBloc.category!}',
+                          ),
+                        if (userBloc.pensionEntity != null)
+                          IconName(
+                            icon: Icons.account_balance,
+                            text: 'GESTORA: ${userBloc.pensionEntity!}',
+                          ),
+                      ],
                     ),
-                  if (userBloc.pensionEntity != null)
-                    IconName(
-                      icon: Icons.account_balance,
-                      text: 'GESTORA: ${userBloc.pensionEntity!}',
+                    Divider(height: 0.03.sh),
+                    const Text(
+                      'Configuración de preferencias',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                ],
-              ),
-              Divider(height: 0.03.sh),
-              const Text(
-                'Configuración de preferencias',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SectiontitleSwitchComponent(
-                title: 'Tema Oscuro',
-                valueSwitch: colorValue,
-                onChangedSwitch: (v) => switchTheme(v),
-              ),
-              SectiontitleSwitchComponent(
-                title: 'Autenticación Biométrica',
-                valueSwitch: biometricValue,
-                onChangedSwitch: (v) => authBiometric(v),
-              ),
-              Divider(height: 0.03.sh),
-              const Text(
-                'Configuración general',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SectiontitleComponent(
-                  title: 'Contactos a nivel nacional', icon: Icons.contact_phone_rounded, onTap: () => Navigator.pushNamed(context, 'contacts')),
-              SectiontitleComponent(
-                title: 'Políticas de Privacidad',
-                icon: Icons.privacy_tip,
-                stateLoading: stateLoading,
-                onTap: () => launchUrl(Uri.parse(serviceGetPrivacyPolicy()), mode: LaunchMode.externalApplication),
-              ),
-              SectiontitleComponent(title: 'Cerrar Sesión', icon: Icons.info_outline, onTap: () => closeSession(context)),
-              Center(
-                child: Text('Versión ${dotenv.env['version']}'),
-              ),
-              const SizedBox(
-                height: 30,
+                    SectiontitleSwitchComponent(
+                      title: 'Tema Oscuro',
+                      valueSwitch: colorValue,
+                      onChangedSwitch: (v) => switchTheme(v),
+                    ),
+                    SectiontitleSwitchComponent(
+                      title: 'Autenticación Biométrica',
+                      valueSwitch: biometricValue,
+                      onChangedSwitch: (v) => authBiometric(v),
+                    ),
+                    Divider(height: 0.03.sh),
+                    const Text(
+                      'Configuración general',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SectiontitleComponent(
+                        title: 'Contactos a nivel nacional',
+                        icon: Icons.contact_phone_rounded,
+                        onTap: () => Navigator.pushNamed(context, 'contacts')),
+                    SectiontitleComponent(
+                      title: 'Políticas de Privacidad',
+                      icon: Icons.privacy_tip,
+                      stateLoading: stateLoading,
+                      onTap: () => launchUrl(Uri.parse(serviceGetPrivacyPolicy()), mode: LaunchMode.externalApplication),
+                    ),
+                    SectiontitleComponent(title: 'Cerrar Sesión', icon: Icons.info_outline, onTap: () => closeSession(context)),
+                    Center(
+                      child: Text('Versión ${dotenv.env['version']}'),
+                    )
+                  ],
+                )),
               )
             ],
-          ))),
+          )),
     );
   }
 
