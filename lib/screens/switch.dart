@@ -101,26 +101,26 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                                           'Creación de trámites y seguimiento para el pago del Complemento Económico',
                                           () => setState(() => stateOF = false),
                                           false),
-                                      // optionTool(
-                                      //     const Image(
-                                      //       image: AssetImage(
-                                      //         'assets/images/computer.png',
-                                      //       ),
-                                      //     ),
-                                      //     'Oficina Virtual',
-                                      //     'Seguimiento de Aportes y Préstamos',
-                                      //     () => setState(() => stateOF = true),
-                                      //     false),
-                                      // optionTool(
-                                      //     SvgPicture.asset(
-                                      //       'assets/icons/qr.svg',
-                                      //       height: 100.sp,
-                                      //       color: const Color(0xff419388),
-                                      //     ),
-                                      //     'Seguimiento de trámites',
-                                      //     'Seguimiento de trámites con QR',
-                                      //     () => scan(),
-                                      //     true),
+                                      optionTool(
+                                          const Image(
+                                            image: AssetImage(
+                                              'assets/images/computer.png',
+                                            ),
+                                          ),
+                                          'Oficina Virtual',
+                                          'Seguimiento de Aportes y Préstamos',
+                                          () => setState(() => stateOF = true),
+                                          false),
+                                      optionTool(
+                                          SvgPicture.asset(
+                                            'assets/icons/qr.svg',
+                                            height: 100.sp,
+                                            color: const Color(0xff419388),
+                                          ),
+                                          'Seguimiento de trámites',
+                                          'Seguimiento de trámites con QR',
+                                          () => scan(),
+                                          true),
                                     ],
                                   ),
                                 ),
@@ -200,9 +200,7 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                 setState(() => statelogin = !statelogin);
               }
             },
-            // {if (await checkVersion(mounted, context)) onPress()},
             child: ContainerComponent(
-              stateBorder: false,
               width: double.infinity,
               color: const Color(0xffd9e9e7),
               child: Padding(

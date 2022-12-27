@@ -12,33 +12,39 @@ class LoanModel {
     LoanModel({
         this.error,
         this.message,
+        this.notification,
         this.payload,
     });
 
     String? error;
     String? message;
+    String? notification;
     Payload? payload;
 
     LoanModel copyWith({
         String? error,
         String? message,
+        String? notification,
         Payload? payload,
     }) => 
         LoanModel(
             error: error ?? this.error,
             message: message ?? this.message,
+            notification: notification ?? this.notification,
             payload: payload ?? this.payload,
         );
 
     factory LoanModel.fromJson(Map<String, dynamic> json) => LoanModel(
         error: json["error"],
         message: json["message"],
+        notification: json["notification"],
         payload: Payload.fromJson(json["payload"]),
     );
 
     Map<String, dynamic> toJson() => {
         "error": error,
         "message": message,
+        "notification": notification,
         "payload": payload!.toJson(),
     };
 }

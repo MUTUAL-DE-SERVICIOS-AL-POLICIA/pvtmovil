@@ -50,6 +50,8 @@ class Payload {
         this.stateName,
         this.porcentage,
         this.flow,
+        this.observationsTitle,
+        this.observations,
     });
 
     String? moduleDisplayName;
@@ -63,6 +65,8 @@ class Payload {
     String? stateName;
     double? porcentage;
     List<Flow>? flow;
+    String? observationsTitle;
+    List<Observation>? observations;
 
     Payload copyWith({
         String? moduleDisplayName,
@@ -76,6 +80,8 @@ class Payload {
         String? stateName,
         double? porcentage,
         List<Flow>? flow,
+        String? observationsTitle,
+        List<Observation>? observations,
     }) => 
         Payload(
             moduleDisplayName: moduleDisplayName ?? this.moduleDisplayName,
@@ -89,6 +95,8 @@ class Payload {
             stateName: stateName ?? this.stateName,
             porcentage: porcentage ?? this.porcentage,
             flow: flow ?? this.flow,
+            observationsTitle: observationsTitle ?? this.observationsTitle,
+            observations: observations ?? this.observations,
         );
 
     factory Payload.fromJson(Map<String, dynamic> json) => Payload(
@@ -103,6 +111,8 @@ class Payload {
         stateName: json["state_name"],
         porcentage: json["porcentage"].toDouble(),
         flow: json["flow"]==null? json["flow"]:List<Flow>.from(json["flow"].map((x) => Flow.fromJson(x))),
+        observationsTitle: json["observations_title"],
+        observations: json["observations"]==null? json["observations"]:List<Observation>.from(json["observations"].map((x) => Observation.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
@@ -117,6 +127,38 @@ class Payload {
         "state_name": stateName,
         "porcentage": porcentage,
         "flow": List<dynamic>.from(flow!.map((x) => x.toJson())),
+        "observations_title": observationsTitle,
+        "observations": List<dynamic>.from(observations!.map((x) => x.toJson())),
+
+    };
+}
+
+class Observation {
+    Observation({
+        this.message,
+        this.enabled,
+    });
+
+    String? message;
+    bool? enabled;
+
+    Observation copyWith({
+        String ?message,
+        bool? enabled,
+    }) => 
+        Observation(
+            message: message ?? this.message,
+            enabled: enabled ?? this.enabled,
+        );
+
+    factory Observation.fromJson(Map<String, dynamic> json) => Observation(
+        message: json["message"],
+        enabled: json["enabled"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "message": message,
+        "enabled": enabled,
     };
 }
 

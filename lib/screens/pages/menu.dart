@@ -23,6 +23,7 @@ class MenuDrawer extends StatefulWidget {
 }
 
 class _MenuDrawerState extends State<MenuDrawer> {
+
   bool colorValue = false;
   bool biometricValue = false;
   bool autentificaction = false;

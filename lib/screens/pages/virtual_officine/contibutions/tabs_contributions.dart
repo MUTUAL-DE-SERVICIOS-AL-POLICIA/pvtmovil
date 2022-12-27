@@ -108,11 +108,7 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
               padding: const EdgeInsets.all(10.0),
               child: RotationTransition(
                   turns: AlwaysStoppedAnimation(value),
-                  child: SvgPicture.asset(
-                    'assets/icons/back.svg',
-                    height: 20.sp,
-                    color: ThemeProvider.themeOf(context).data.hintColor,
-                  )),
+                  child: Icon(Icons.arrow_back_ios,color: ThemeProvider.themeOf(context).data.hintColor,)),
             ),
             Text(text, style: TextStyle(fontSize: 20.sp)),
           ],

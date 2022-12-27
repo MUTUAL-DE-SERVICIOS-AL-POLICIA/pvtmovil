@@ -36,23 +36,22 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> {
                   padding: const EdgeInsets.all(0),
                   child: Row(
                     children: [
-                      if(widget.qrModel.payload!.stateName! != 'En Proceso')
-                      Expanded(
-                        flex: 1,
-                        child: SimpleCircularProgressBar(
-                          valueNotifier: valueNotifier,
-                          mergeMode: true,
-                          animationDuration: 3,
-                          progressColors: const [
-                            Color(0xff419388),
-                          ],
-                          onGetText: (double value) {
-                            return Text('${value.toInt()}%');
-                          },
+                      if (widget.qrModel.payload!.stateName! != 'En Proceso')
+                        Expanded(
+                          flex: 1,
+                          child: SimpleCircularProgressBar(
+                            valueNotifier: valueNotifier,
+                            mergeMode: true,
+                            animationDuration: 3,
+                            progressColors: const [
+                              Color(0xff419388),
+                            ],
+                            onGetText: (double value) {
+                              return Text('${value.toInt()}%');
+                            },
+                          ),
                         ),
-                      ),
-                      if(widget.qrModel.payload!.stateName! != 'En Proceso')
-                      const SizedBox(width: 20),
+                      if (widget.qrModel.payload!.stateName! != 'En Proceso') const SizedBox(width: 20),
                       Expanded(
                         flex: 2,
                         child: Text(widget.qrModel.payload!.procedureTypeName!),
@@ -68,7 +67,7 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Column(
-                  crossAxisAlignment : CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     for (final person in widget.qrModel.payload!.person!)
                       Column(
@@ -82,6 +81,22 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> {
                       )
                   ],
                 ),
+                if (widget.qrModel.payload!.observations != null)
+                  Text(
+                    '${widget.qrModel.payload!.observationsTitle!}:',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                if (widget.qrModel.payload!.observations != null)
+                  for (final observation in widget.qrModel.payload!.observations!)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        Text('• ${observation.message!}'),
+                      ],
+                    ),
                 if (widget.qrModel.payload!.flow != null)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

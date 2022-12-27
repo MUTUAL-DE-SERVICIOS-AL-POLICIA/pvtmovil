@@ -6,14 +6,12 @@ class ContainerComponent extends StatelessWidget {
   final double? width;
   final double? height;
   final Color color;
-  final bool? stateBorder;
   const ContainerComponent(
       {Key? key,
       required this.child,
       this.width,
       this.height,
-      required this.color,
-      this.stateBorder = true})
+      required this.color})
       : super(key: key);
 
   @override
@@ -27,10 +25,9 @@ class ContainerComponent extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
               color: color,
               boxShadow: [
-                if(stateBorder!)
                 BoxShadow(
                   color: ThemeProvider.themeOf(context).data.primaryColorDark,
-                  blurRadius: 1.0,
+                  blurRadius: 2.0,
                   offset: const Offset(0, 0.5),
                 )
               ],

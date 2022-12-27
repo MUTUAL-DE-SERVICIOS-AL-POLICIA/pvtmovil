@@ -67,8 +67,9 @@ class _CardLoanState extends State<CardLoan> {
                                   Flexible(
                                     child: Text(
                                       widget.itemProcess != null ? widget.itemProcess!.stateName! : widget.itemCurrent!.state!,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w300,
+                                      style:  TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color:widget.color!=null? Colors.black:null
                                       ),
                                       textAlign: TextAlign.right,
                                     ),
@@ -76,7 +77,7 @@ class _CardLoanState extends State<CardLoan> {
                                 ],
                               ),
                               const SizedBox(height: 20),
-                              Text(widget.itemProcess != null ? widget.itemProcess!.code! : widget.itemCurrent!.code!),
+                              Text(widget.itemProcess != null ? widget.itemProcess!.code! : widget.itemCurrent!.code!,style: widget.color!=null? const TextStyle(color: Colors.black):null),
                               ButtonIconComponent(
                                 text: 'DETALLES',
                                 onPressed: () => onPressed(context),

@@ -82,7 +82,7 @@ class NavigationDown extends StatelessWidget {
                   label: "Aportes"),
             if (stateApp == StateAplication.virtualOficine)
               CurvedNavigationBarItem(
-                  icon: SvgPicture.asset('assets/icons/historyProcedure.svg',
+                  icon: SvgPicture.asset('assets/icons/requisites.svg',
                       height: 25.sp,
                       color: ThemeProvider.themeOf(context).id.contains('dark')
                           ? Colors.white

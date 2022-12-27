@@ -122,19 +122,30 @@ class _ForgotPwdState extends State<ForgotPwd> {
     if (dateCtrlText == null) return setState(() => dateState = true);
     return setState(() => dateState = false);
   }
-
-  backAcction() async {
+  Future<bool> backAcction() async {
     return await showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (context) => ComponentAnimate(
-            child: DialogTwoAction(
-                message: '¿Deseas salir de la actualización de contraseña?',
-                actionCorrect: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  return true;
-                },
-                messageCorrect: 'Salir')));
+        builder: (BuildContext context) {
+          return ComponentAnimate(
+              child: DialogTwoAction(
+                  message: '¿Deseas salir de la actualización de contraseña?',
+                  actionCorrect: () => Navigator.pushNamed(context, 'check_auth'),
+                  messageCorrect: 'Salir'));
+        });
   }
+  // backAcction() async {
+  //   return await showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (context) => ComponentAnimate(
+  //           child: DialogTwoAction(
+  //               message: '¿Deseas salir de la actualización de contraseña?',
+  //               actionCorrect: () {
+  //                 Navigator.pop(context);
+  //                 Navigator.pop(context);
+  //                 return true;
+  //               },
+  //               messageCorrect: 'Salir')));
+  // }
 }

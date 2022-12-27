@@ -52,7 +52,7 @@ TargetFocus targetBottomNavigation2(GlobalKey<State<StatefulWidget>> keyTarget, 
               Padding(
                   padding: const EdgeInsets.all(30),
                   child: Text(
-                    stateApp == StateAplication.complement ? "Aquí podrá ver el historial de sus trámites" : "Aquí podrá ver sus prestamos",
+                    stateApp == StateAplication.complement ? "Aquí podrá ver el historial de sus trámites" : "Aquí podrá ver sus préstamos",
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   )),
               Transform.rotate(
