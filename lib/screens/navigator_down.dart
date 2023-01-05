@@ -48,7 +48,6 @@ class NavigationDown extends StatelessWidget {
           ),
         ),
         CurvedNavigationBar(
-          height: 76.0,
           items: [
             if (stateApp == StateAplication.complement)
               CurvedNavigationBarItem(

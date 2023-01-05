@@ -21,6 +21,7 @@ class ContributionsYear extends StatelessWidget {
   Widget build(BuildContext context) {
     return contributions.isNotEmpty
         ? GridView.count(
+            padding: const EdgeInsets.only(bottom: 68),
             crossAxisCount: 3,
             children: List.generate(contributions.length, (index) {
               return Hero(

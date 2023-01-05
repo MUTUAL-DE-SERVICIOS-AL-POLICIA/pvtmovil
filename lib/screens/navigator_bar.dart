@@ -246,7 +246,9 @@ class _NavigatorBarState extends State<NavigatorBar> {
         onWillPop: _onBackPressed,
         child: Scaffold(
             drawer: const MenuDrawer(),
-            body: Stack(children: [
+            body: Stack(
+              alignment : AlignmentDirectional.bottomStart,
+              children: [
               Column(
                 children: [
                   const SizedBox(height: 25),
@@ -258,14 +260,14 @@ class _NavigatorBarState extends State<NavigatorBar> {
                 ],
               ),
               pageList.elementAt(_currentIndex),
-            ]),
-            bottomNavigationBar: NavigationDown(
-              stateApp: widget.stateApp,
-              currentIndex: _currentIndex,
-              keyBottomNavigation1: keyBottomNavigation1,
-              keyBottomNavigation2: keyBottomNavigation2,
-              onTap: (i) => setState(() => _currentIndex = i),
-            )));
+              NavigationDown(
+                stateApp: widget.stateApp,
+                currentIndex: _currentIndex,
+                keyBottomNavigation1: keyBottomNavigation1,
+                keyBottomNavigation2: keyBottomNavigation2,
+                onTap: (i) => setState(() => _currentIndex = i),
+              )
+            ])));
   }
 
   Future<bool> _onBackPressed() async {

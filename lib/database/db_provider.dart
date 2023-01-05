@@ -132,12 +132,4 @@ class DBProvider {
       return 0;
     }
   }
-
-  Future<int> deleteALL() async {
-    final db = await database;
-    await db.execute('''
-        DROP TABLE notification
-    ''');
-    return 1;
-  }
 }

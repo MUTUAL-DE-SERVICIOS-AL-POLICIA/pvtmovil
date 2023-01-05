@@ -30,7 +30,8 @@ class _HedersComponentState extends State<HedersComponent> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppBar(leadingWidth: 30, title: Text(widget.titleHeader ?? 'MUSERPOL', style: const TextStyle(fontWeight: FontWeight.bold)), actions: [
+        AppBar(leadingWidth: 30, title: Text(widget.titleHeader ?? 'MUSERPOL',
+                maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.bold)), actions: [
           if (widget.stateBell!)
             GestureDetector(
               onTap: () => dialogInbox(context),
@@ -72,8 +73,7 @@ class _HedersComponentState extends State<HedersComponent> {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(widget.title!,
               textAlign: widget.center ? TextAlign.center : TextAlign.start, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp)),
-        ),
-        const SizedBox(height: 20)
+        )
       ],
     );
   }

@@ -85,9 +85,11 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                                   )
                             : SingleChildScrollView(
                                 controller: widget.scroll,
-                                child: Column(
-                                  children: [for (var item in procedureBloc.currentProcedures!) CardEc(item: item), stateInfo()],
-                                ))
+                                child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 70),
+                                    child: Column(
+                                      children: [for (var item in procedureBloc.currentProcedures!) CardEc(item: item), stateInfo()],
+                                    )))
                         : stateInfo()),
               if (!widget.current)
                 Expanded(
@@ -95,6 +97,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
                         ? procedureBloc.historicalProcedures!.isEmpty
                             ? const Center(child: Text('No se encontraron trámites'))
                             : ListView.builder(
+                                padding: const EdgeInsets.only(bottom: 70),
                                 controller: widget.scroll,
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,

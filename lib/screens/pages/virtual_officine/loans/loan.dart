@@ -37,8 +37,13 @@ class _ScreenPageLoansState extends State<ScreenPageLoans> {
             Future.delayed(const Duration(seconds: 3));
             reloadLoans();
           },
-          builder: MaterialIndicatorDelegate(builder: (context, controller) {
-            return Container();
+          builder: MaterialIndicatorDelegate(
+            builder: (context, controller) {
+            return Image.asset(
+              'assets/images/load.gif',
+              fit: BoxFit.cover,
+              height: 10,
+            );
           }),
           child: SingleChildScrollView(
               child: loanBloc.state.existLoan
@@ -72,7 +77,8 @@ class _ScreenPageLoansState extends State<ScreenPageLoans> {
                         if (loanBloc.state.loan!.payload!.liquited!.isNotEmpty)
                           loans('Prestamos Liquidados:', [for (var item in loanBloc.state.loan!.payload!.liquited!) CardLoan(itemCurrent: item)]),
                         if (loanBloc.state.loan!.error == 'true') Text(loanBloc.state.loan!.message!),
-                        Center(child: IconBtnComponent(iconText: 'assets/icons/reload.svg', onPressed: () => reloadLoans()))
+                        Center(child: IconBtnComponent(iconText: 'assets/icons/reload.svg', onPressed: () => reloadLoans())),
+                        const SizedBox(height: 70)
                       ]),
                     )
                   : Image.asset(

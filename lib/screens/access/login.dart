@@ -147,7 +147,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
     return Form(
         key: formKey,
         child: Column(children: [
-          Text(widget.stateOfficeVirtual?'Oficina Virtual':'Complemento Económico',style: const TextStyle(fontWeight: FontWeight.bold),),
+          Text(
+            widget.stateOfficeVirtual ? 'Oficina Virtual' : 'Complemento Económico',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           SizedBox(
             height: 10.h,
           ),
@@ -224,8 +227,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
       setState(() => btnAccess = false);
       if (await checkVersion(mounted, context)) {
         body['device_id'] = widget.deviceId;
-        body['firebase_token'] = await PushNotificationService.getTokenFirebase();
-        // body['firebase_token'] = '';
+        if (dotenv.env['storeAndroid'] == 'appgallery') {
+          body['firebase_token'] = '';
+        } else {
+          body['firebase_token'] = await PushNotificationService.getTokenFirebase();
+        }
         if (!widget.stateOfficeVirtual) {
           body['identity_card'] = '${dniCtrl.text.trim()}${dniComCtrl.text == '' ? '' : '-${dniComCtrl.text.trim()}'}';
           body['birth_date'] = dateCtrlText;
@@ -282,8 +288,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
     if (response.statusCode == 200) {
       if (!user.user!.enrolled!) {
         //proceso de enrolamiento
-        _showModalInside(user.apiToken!, false, await PushNotificationService.getTokenFirebase());
-        // _showModalInside(user.apiToken!, false, '');
+        if (dotenv.env['storeAndroid'] == 'appgallery') {
+          _showModalInside(user.apiToken!, false, '');
+        } else {
+          _showModalInside(user.apiToken!, false, await PushNotificationService.getTokenFirebase());
+        }
       } else {
         if (!mounted) return;
         await authService.writeStateApp(context, 'complement');
@@ -300,8 +309,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
     } else {
       if (json.decode(response.body)['data']['update_device_id']) {
         //reconocimiento facial
-        return _showModalInside(user.apiToken!, true, await PushNotificationService.getTokenFirebase());
-        // return _showModalInside(user.apiToken!, true, '');
+        if (dotenv.env['storeAndroid'] == 'appgallery') {
+          return _showModalInside(user.apiToken!, true, '');
+        } else {
+          return _showModalInside(user.apiToken!, true, await PushNotificationService.getTokenFirebase());
+        }
       } else {
         if (!mounted) return;
         return callDialogAction(context, json.decode(response.body)['message']);
