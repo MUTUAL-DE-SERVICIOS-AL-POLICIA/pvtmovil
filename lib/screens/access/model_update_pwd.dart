@@ -8,7 +8,9 @@ import 'package:muserpol_pvt/components/inputs/password.dart';
 class ModalUpdatePwd extends StatefulWidget {
   final String message;
   final Function(String) onPressed;
-  const ModalUpdatePwd({Key? key, required this.message, required this.onPressed}) : super(key: key);
+  final bool stateLoading;
+  const ModalUpdatePwd({Key? key, required this.message, required this.onPressed, required this.stateLoading})
+      : super(key: key);
 
   @override
   State<ModalUpdatePwd> createState() => _ModalUpdatePwdState();
@@ -30,7 +32,9 @@ class _ModalUpdatePwdState extends State<ModalUpdatePwd> with TickerProviderStat
         onWillPop: _onBackPressed,
         child: Scaffold(
             body: Column(children: [
-          Padding(padding: const EdgeInsets.fromLTRB(10, 15, 10, 0), child: HedersComponent(title: widget.message, center: true)),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+              child: HedersComponent(title: widget.message, center: true)),
           Expanded(
               child: Center(
             child: SingleChildScrollView(
@@ -56,19 +60,26 @@ class _ModalUpdatePwdState extends State<ModalUpdatePwd> with TickerProviderStat
                   ),
                 )),
           )),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ButtonWhiteComponent(
-                  text: 'Cancelar',
-                  onPressed: () => _onBackPressed(),
-                ),
-                ButtonComponent(text: 'Actualizar', onPressed: () => updatePassword())
-              ],
-            ),
-          )
+          widget.stateLoading
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ButtonWhiteComponent(
+                        text: 'Cancelar',
+                        onPressed: () => _onBackPressed(),
+                      ),
+                      ButtonComponent(text: 'Actualizar', onPressed: () => updatePassword())
+                    ],
+                  ),
+                )
+              : Center(
+                  child: Image.asset(
+                  'assets/images/load.gif',
+                  fit: BoxFit.cover,
+                  height: 20,
+                ))
         ])));
   }
 

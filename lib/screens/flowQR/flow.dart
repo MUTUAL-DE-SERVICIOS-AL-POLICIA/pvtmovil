@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/model/qr_model.dart';
-import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
 class ScreenWorkFlow extends StatefulWidget {
   final String stateFlow;
@@ -33,16 +32,13 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> {
           child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Padding(
-                  padding: const EdgeInsets.all(0),
-                  child: Text(widget.qrModel.payload!.procedureTypeName!)
-                ),
+                Padding(padding: const EdgeInsets.all(0), child: Text(widget.qrModel.payload!.procedureTypeName!)),
                 SizedBox(
                   height: 10.h,
                 ),
                 const Text(
                   'Modalidad:',
-                  style:  TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
                   '${widget.qrModel.payload!.procedureModalityName}',
@@ -106,7 +102,8 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> {
                                   Expanded(
                                       flex: 1,
                                       child: NumberComponent(
-                                          text: '${index + 1}', iconColor: widget.qrModel.payload!.flow![index].state! ? true : false)),
+                                          text: '${index + 1}',
+                                          iconColor: widget.qrModel.payload!.flow![index].state! ? true : false)),
                                   Expanded(flex: 2, child: Text(widget.qrModel.payload!.flow![index].displayName!)),
                                   const Spacer(),
                                 ],

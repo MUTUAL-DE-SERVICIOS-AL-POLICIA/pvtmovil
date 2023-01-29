@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ import 'package:muserpol_pvt/model/qr_model.dart';
 import 'package:muserpol_pvt/screens/flowQR/flow.dart';
 import 'package:muserpol_pvt/screens/access/login.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:platform_device_id/platform_device_id.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:theme_provider/theme_provider.dart';
@@ -30,8 +30,9 @@ class ScreenSwitchState extends State<ScreenSwitch> {
   bool statelogin = false;
   bool stateOF = true;
   String? deviceId;
-  final deviceInfo = DeviceInfoPlugin();
+  // final deviceInfo = DeviceInfoPlugin();
   int value = 0;
+  // var deviceInfoo;
 
   ScanResult? scanResult;
 
@@ -48,19 +49,18 @@ class ScreenSwitchState extends State<ScreenSwitch> {
 
     checkVersion(mounted, context);
     initializeDateFormatting();
-    getId();
+    initPlatformState();
   }
 
-  Future<void> getId() async {
-    if (Platform.isIOS) {
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      debugPrint('iosDeviceInfo $iosDeviceInfo');
-      return setState(() => deviceId = iosDeviceInfo.identifierForVendor);
-    } else if (Platform.isAndroid) {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      debugPrint('androidDeviceInfo ${androidDeviceInfo.androidId}');
-      return setState(() => deviceId = androidDeviceInfo.androidId);
+  Future<void> initPlatformState() async {
+    String? statusDeviceId;
+    try {
+      statusDeviceId = await PlatformDeviceId.getDeviceId;
+    } on PlatformException {
+      statusDeviceId = 'Failed to get deviceId.';
     }
+    if (!mounted) return;
+    setState(() => deviceId = statusDeviceId);
   }
 
   @override
@@ -76,17 +76,25 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (statelogin) GestureDetector(onTap: () => setState(() => statelogin = !statelogin), child: Icon(Icons.arrow_back_ios,color:ThemeProvider.themeOf(context).id.contains('dark') ? Colors.white:Colors.black)),
+                    if (statelogin)
+                      GestureDetector(
+                          onTap: () => setState(() => statelogin = !statelogin),
+                          child: Icon(Icons.arrow_back_ios,
+                              color: ThemeProvider.themeOf(context).id.contains('dark') ? Colors.white : Colors.black)),
                     Image(
                       image: AssetImage(
-                        ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
+                        ThemeProvider.themeOf(context).id.contains('dark')
+                            ? 'assets/images/muserpol-logo.png'
+                            : 'assets/images/muserpol-logo2.png',
                       ),
                     ),
                     Expanded(
                       child: Center(
                         child: SingleChildScrollView(
                           child: statelogin
-                              ? FadeIn(animate: statelogin, child: ScreenLogin(deviceId: deviceId!, stateOfficeVirtual: stateOF))
+                              ? FadeIn(
+                                  animate: statelogin,
+                                  child: ScreenLogin(deviceId: deviceId!, stateOfficeVirtual: stateOF))
                               : FadeIn(
                                   animate: !statelogin,
                                   child: Column(
@@ -154,12 +162,15 @@ class ScreenSwitchState extends State<ScreenSwitch> {
       if (scanResult!.rawContent != '') {
         debugPrint('scanResult!.rawContent ${scanResult!.rawContent}');
         if (!mounted) return;
-        var response = await serviceMethod(mounted, context, 'get', null, serviceGetQr(scanResult!.rawContent), false, false);
+        var response =
+            await serviceMethod(mounted, context, 'get', null, serviceGetQr(scanResult!.rawContent), false, false);
         if (response != null) {
           if (!mounted) return;
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ScreenWorkFlow(qrModel: qrModelFromJson(response.body),stateFlow: scanResult!.rawContent)),
+            MaterialPageRoute(
+                builder: (context) =>
+                    ScreenWorkFlow(qrModel: qrModelFromJson(response.body), stateFlow: scanResult!.rawContent)),
           );
         } else {
           if (!mounted) return;

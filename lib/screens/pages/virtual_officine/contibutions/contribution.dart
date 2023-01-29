@@ -38,7 +38,7 @@ class _ScreenContributionsState extends State<ScreenContributions> {
                     children: [
                       if (contributionBloc.existContribution)
                         if (contributionBloc.contribution!.payload.hasContributionsActive!)
-                      documentContribution(() => getContributionActive(), 'Certificación de Activo'),
+                          documentContribution(() => getContributionActive(), 'Certificación de Activo'),
                       if (contributionBloc.existContribution)
                         if (contributionBloc.contribution!.payload.hasContributionsPassive!)
                           documentContribution(() => getContributionPasive(), 'Certificación de Pasivo')
@@ -50,14 +50,22 @@ class _ScreenContributionsState extends State<ScreenContributions> {
                     fit: BoxFit.cover,
                     height: 20,
                   )),
-            if (contributionBloc.existContribution) const Text('Mis Aportes por año:', style: TextStyle(fontWeight: FontWeight.bold)),
+            if (contributionBloc.existContribution)
+              const Text('Mis Aportes por año:', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(
               height: 20,
             ),
           ],
         ),
       ),
-      !contributionBloc.existContribution ? Container() : const TabsContributions(),
+      !contributionBloc.existContribution
+          ? Center(
+              child: Image.asset(
+              'assets/images/load.gif',
+              fit: BoxFit.cover,
+              height: 20,
+            ))
+          : const TabsContributions(),
     ]);
   }
 
@@ -65,7 +73,7 @@ class _ScreenContributionsState extends State<ScreenContributions> {
     final contributionBloc = BlocProvider.of<ContributionBloc>(context, listen: true).state;
     return contributionBloc.existContribution
         ? Expanded(
-          child: Container(
+            child: Container(
               padding: const EdgeInsets.all(5),
               child: GestureDetector(
                 onTap: () => onPressed(),
@@ -82,7 +90,7 @@ class _ScreenContributionsState extends State<ScreenContributions> {
                 ),
               ),
             ),
-        )
+          )
         : Container();
   }
 
@@ -91,7 +99,8 @@ class _ScreenContributionsState extends State<ScreenContributions> {
     final biometric = biometricUserModelFromJson(await authService.readBiometric());
     setState(() => stateLoading = true);
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null, servicePrintContributionPasive(biometric.affiliateId!), true, false);
+    var response = await serviceMethod(
+        mounted, context, 'get', null, servicePrintContributionPasive(biometric.affiliateId!), true, false);
     setState(() => stateLoading = false);
     if (response != null) {
       String pathFile = await saveFile('Contributions', 'contribucionesPasivo.pdf', response.bodyBytes);
@@ -104,7 +113,8 @@ class _ScreenContributionsState extends State<ScreenContributions> {
     final biometric = biometricUserModelFromJson(await authService.readBiometric());
     setState(() => stateLoading = true);
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null, servicePrintContributionActive(biometric.affiliateId!), true, false);
+    var response = await serviceMethod(
+        mounted, context, 'get', null, servicePrintContributionActive(biometric.affiliateId!), true, false);
     setState(() => stateLoading = false);
     if (response != null) {
       String pathFile = await saveFile('Contributions', 'contribucionesActivo.pdf', response.bodyBytes);

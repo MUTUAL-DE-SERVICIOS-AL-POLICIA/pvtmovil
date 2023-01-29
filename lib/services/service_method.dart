@@ -22,8 +22,8 @@ import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Future<dynamic> serviceMethod(
-    bool mounted, BuildContext context, String method, Map<String, dynamic>? body, String urlAPI, bool accessToken, bool errorState) async {
+Future<dynamic> serviceMethod(bool mounted, BuildContext context, String method, Map<String, dynamic>? body,
+    String urlAPI, bool accessToken, bool errorState) async {
   final Map<String, String> headers = {
     "Content-Type": "application/json",
   };
@@ -75,7 +75,10 @@ Future<dynamic> serviceMethod(
             return null;
           });
         case 'post':
-          return await http.post(url, headers: headers, body: json.encode(body)).timeout(const Duration(seconds: 40)).then((value) {
+          return await http
+              .post(url, headers: headers, body: json.encode(body))
+              .timeout(const Duration(seconds: 40))
+              .then((value) {
             debugPrint('statusCode ${value.statusCode}');
             debugPrint('value ${value.body}');
             switch (value.statusCode) {
@@ -121,7 +124,10 @@ Future<dynamic> serviceMethod(
             return null;
           });
         case 'patch':
-          return await http.patch(url, headers: headers, body: json.encode(body)).timeout(const Duration(seconds: 60)).then((value) {
+          return await http
+              .patch(url, headers: headers, body: json.encode(body))
+              .timeout(const Duration(seconds: 60))
+              .then((value) {
             debugPrint('statusCode ${value.statusCode}');
             debugPrint('value ${value.body}');
             switch (value.statusCode) {
@@ -168,7 +174,8 @@ Future<dynamic> serviceMethod(
 }
 
 void callDialogAction(BuildContext context, String message) {
-  showDialog(barrierDismissible: false, context: context, builder: (BuildContext context) => DialogAction(message: message));
+  showDialog(
+      barrierDismissible: false, context: context, builder: (BuildContext context) => DialogAction(message: message));
 }
 
 confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
@@ -180,7 +187,6 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
   final filesState = Provider.of<FilesState>(context, listen: false);
   final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
   final processingState = Provider.of<ProcessingState>(context, listen: false);
-  
 
   if (voluntary) {
     final biometric = biometricUserModelFromJson(await authService.readBiometric());
@@ -226,17 +232,17 @@ Future<bool> checkVersion(bool mounted, BuildContext context) async {
                       message: 'Para mejorar la experiencia, Porfavor actualiza la nueva versión',
                       textButton: 'Actualizar',
                       onPressed: () async {
-                        launchUrl(Uri.parse(json.decode(response.body)['data']['url_store']), mode: LaunchMode.externalApplication);
+                        launchUrl(Uri.parse(json.decode(response.body)['data']['url_store']),
+                            mode: LaunchMode.externalApplication);
                       })));
         }
         return true;
-      }else{
+      } else {
         return false;
       }
-    }else{
+    } else {
       return false;
     }
-    
   } on SocketException catch (e) {
     debugPrint('errC $e');
     callDialogAction(context, 'Verifique su conexión a Internet');

@@ -34,10 +34,9 @@ dependencies:
   camera: ^0.10.0+4
   cupertino_icons: ^1.0.5
   custom_refresh_indicator: ^2.0.1
-  device_info_plus: ^3.2.4
-  firebase_analytics: ^9.3.5
-  firebase_core: ^1.22.0
-  firebase_messaging: ^13.0.2
+  firebase_analytics: ^10.1.0
+  firebase_core: ^2.4.1
+  firebase_messaging: ^14.2.1
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.1
@@ -46,9 +45,9 @@ dependencies:
     sdk: flutter
   flutter_native_image: ^0.0.6+1
   flutter_screenutil: ^5.5.4
-  flutter_secure_storage: ^6.0.0
+  flutter_secure_storage: ^7.0.1
   flutter_svg: ^1.1.5
-  google_mlkit_text_recognition: ^0.4.0
+  google_mlkit_text_recognition: ^0.5.0
   html: ^0.15.0
   http: ^0.13.5
   image_picker: ^0.8.6
@@ -61,6 +60,7 @@ dependencies:
   open_file_safe: ^3.2.3
   path_provider: ^2.0.11
   pin_code_fields: ^7.4.0
+  platform_device_id: ^1.0.1
   provider: ^6.0.4
   shared_preferences: ^2.0.15
   simple_circular_progress_bar: ^1.0.2
@@ -71,7 +71,7 @@ dependencies:
   url_launcher: ^6.1.5
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.10.0
+  flutter_launcher_icons: ^0.11.0
   flutter_lints: ^2.0.1
   flutter_test:
     sdk: flutter

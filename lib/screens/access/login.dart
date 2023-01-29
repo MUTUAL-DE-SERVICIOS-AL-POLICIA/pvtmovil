@@ -33,7 +33,6 @@ import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_ios/local_auth_ios.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -54,7 +53,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  final deviceInfo = DeviceInfoPlugin();
   bool btnAccess = true;
   String dateCtrl = '';
   DateTime? dateTime;
@@ -187,17 +185,21 @@ class _ScreenLoginState extends State<ScreenLogin> {
                       })
                     },
                   ),
-                if (widget.stateOfficeVirtual) Password(passwordCtrl: passwordCtrl, onEditingComplete: () => initSession()),
+                if (widget.stateOfficeVirtual)
+                  Password(passwordCtrl: passwordCtrl, onEditingComplete: () => initSession()),
                 SizedBox(
                   height: 10.h,
                 ),
                 ButtonComponent(text: 'INGRESAR', onPressed: () => initSession()),
                 if (widget.stateOfficeVirtual)
-                  ButtonWhiteComponent(text: 'Olvidé mi contraseña', onPressed: () => Navigator.pushNamed(context, 'forgot')),
-                ButtonWhiteComponent(text: 'Contactos a nivel nacional', onPressed: () => Navigator.pushNamed(context, 'contacts')),
+                  ButtonWhiteComponent(
+                      text: 'Olvidé mi contraseña', onPressed: () => Navigator.pushNamed(context, 'forgot')),
+                ButtonWhiteComponent(
+                    text: 'Contactos a nivel nacional', onPressed: () => Navigator.pushNamed(context, 'contacts')),
                 ButtonWhiteComponent(
                   text: 'Política de privacidad',
-                  onPressed: () => launchUrl(Uri.parse(serviceGetPrivacyPolicy()), mode: LaunchMode.externalApplication),
+                  onPressed: () =>
+                      launchUrl(Uri.parse(serviceGetPrivacyPolicy()), mode: LaunchMode.externalApplication),
                 ),
                 SizedBox(
                   height: 10.h,
@@ -242,13 +244,14 @@ class _ScreenLoginState extends State<ScreenLogin> {
           body['password'] = passwordCtrl.text.trim();
         }
         if (!mounted) return;
-        var response = await serviceMethod(
-            mounted, context, 'post', body, widget.stateOfficeVirtual ? serviceAuthSessionOF() : serviceAuthSession(null), false, true);
+        var response = await serviceMethod(mounted, context, 'post', body,
+            widget.stateOfficeVirtual ? serviceAuthSessionOF() : serviceAuthSession(null), false, true);
         setState(() => btnAccess = true);
         debugPrint('response $response');
         if (response != null) {
           await DBProvider.db.database;
-          if (json.decode(response.body)['data']['status'] != null && json.decode(response.body)['data']['status'] == 'Pendiente') {
+          if (json.decode(response.body)['data']['status'] != null &&
+              json.decode(response.body)['data']['status'] == 'Pendiente') {
             return virtualOfficineUpdatePwd(json.decode(response.body)['message']);
           }
           UserModel user = userModelFromJson(json.encode(json.decode(response.body)['data']));
@@ -261,9 +264,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
           await DBProvider.db.newAffiliateModel(affiliateModel);
           notificationBloc.add(UpdateAffiliateId(user.user!.id!));
           if (widget.stateOfficeVirtual) {
-            initSessionVirtualOfficine(response, UserVirtualOfficine(identityCard: body['username'], password: body['password']), user);
+            initSessionVirtualOfficine(
+                response, UserVirtualOfficine(identityCard: body['username'], password: body['password']), user);
           } else {
-            intSessionComplement(response, UserComplement(identityCard: body['identity_card'], dateBirth: body['birth_date']), user);
+            intSessionComplement(
+                response, UserComplement(identityCard: body['identity_card'], dateBirth: body['birth_date']), user);
           }
         }
       } else {
@@ -278,10 +283,12 @@ class _ScreenLoginState extends State<ScreenLogin> {
     final biometric = await authService.readBiometric();
     final biometricUserModel = BiometricUserModel(
         biometricComplement: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricComplement,
-        biometricVirtualOfficine: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
+        biometricVirtualOfficine:
+            biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
         affiliateId: user.user!.id,
         userComplement: userComplement,
-        userVirtualOfficine: biometric == '' ? UserVirtualOfficine() : biometricUserModelFromJson(biometric).userVirtualOfficine);
+        userVirtualOfficine:
+            biometric == '' ? UserVirtualOfficine() : biometricUserModelFromJson(biometric).userVirtualOfficine);
     if (!mounted) return;
     await authService.writeBiometric(context, biometricUserModelToJson(biometricUserModel));
     prefs!.setBool('isDoblePerception', json.decode(response.body)['data']['is_doble_perception']);
@@ -324,7 +331,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   _showModalInside(String token, bool facialRecognition, String firebaseToken) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final tokenState = Provider.of<TokenState>(context, listen: false);
-    await Future.delayed(const Duration(milliseconds: 50));
+    if (!mounted) return;
     return showBarModalBottomSheet(
       expand: false,
       enableDrag: false,
@@ -358,7 +365,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
     tokenState.updateStateAuxToken(false);
     final biometric = await authService.readBiometric();
     final biometricUserModel = BiometricUserModel(
-        biometricVirtualOfficine: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
+        biometricVirtualOfficine:
+            biometric == '' ? false : biometricUserModelFromJson(biometric).biometricVirtualOfficine,
         biometricComplement: biometric == '' ? false : biometricUserModelFromJson(biometric).biometricComplement,
         affiliateId: json.decode(response.body)['data']['user']['id'],
         userComplement: biometric == '' ? UserComplement() : biometricUserModelFromJson(biometric).userComplement,
@@ -386,9 +394,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
       context: context,
       builder: (context) => ModalUpdatePwd(
           message: message,
+          stateLoading: btnAccess,
           onPressed: (password) async {
+            setState(() => btnAccess = false);
             body['new_password'] = password;
             var response = await serviceMethod(mounted, context, 'patch', body, serviceChangePasswordOF(), false, true);
+
+            setState(() => btnAccess = true);
             if (response != null) {
               if (!mounted) return;
               return showSuccessful(context, json.decode(response.body)['message'], () {
