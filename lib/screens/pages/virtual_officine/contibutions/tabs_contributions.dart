@@ -24,7 +24,7 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
     super.initState();
     final contributionBloc = BlocProvider.of<ContributionBloc>(context, listen: false).state;
     setState(() {
-      contributionsTotal = contributionBloc.contribution!.payload!.contributionsTotal!;
+      contributionsTotal = contributionBloc.contribution!.payload.contributionsTotal!;
       tabController = TabController(vsync: this, length: contributionsTotal.length, initialIndex: contributionsTotal.length - 1);
     });
     tabController!.addListener(() {
@@ -57,7 +57,7 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
           }, children: [
             TableRow(children: [
               stateSubtract
-                  ? years(stateSubtract, TextDirection.ltr, contributionsTotal[tabController!.index - 1].year!,
+                  ? years(stateSubtract, TextDirection.ltr, contributionsTotal[tabController!.index - 1].year,
                       () => setState(() => tabController!.animateTo(tabController!.index - 1)), 1)
                   : Container(),
               ContainerComponent(
@@ -65,14 +65,14 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    contributionsTotal[tabController!.index].year!,
+                    contributionsTotal[tabController!.index].year,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 21.sp, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),
               stateAdd
-                  ? years(stateAdd, TextDirection.rtl, contributionsTotal[tabController!.index + 1].year!,
+                  ? years(stateAdd, TextDirection.rtl, contributionsTotal[tabController!.index + 1].year,
                       () => setState(() => tabController!.animateTo(tabController!.index + 1)), 0.5)
                   : Container()
             ])
@@ -88,7 +88,7 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
                     ContributionsYear(
                       tabController: tabController!,
                       year: '${contributionsTotal[i].year}',
-                      contributions: contributionsTotal[i].contributions!,
+                      contributions: contributionsTotal[i].contributions,
                     ),
                 ],
               )),

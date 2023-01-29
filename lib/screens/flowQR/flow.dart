@@ -6,8 +6,9 @@ import 'package:muserpol_pvt/model/qr_model.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
 class ScreenWorkFlow extends StatefulWidget {
+  final String stateFlow;
   final QrModel qrModel;
-  const ScreenWorkFlow({Key? key, required this.qrModel}) : super(key: key);
+  const ScreenWorkFlow({Key? key, required this.qrModel, required this.stateFlow}) : super(key: key);
   @override
   State<ScreenWorkFlow> createState() => _ScreenWorkFlowState();
 }
@@ -34,30 +35,17 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Padding(
                   padding: const EdgeInsets.all(0),
-                  child: Row(
-                    children: [
-                      if (widget.qrModel.payload!.stateName! != 'En Proceso')
-                        Expanded(
-                          flex: 1,
-                          child: SimpleCircularProgressBar(
-                            valueNotifier: valueNotifier,
-                            mergeMode: true,
-                            animationDuration: 3,
-                            progressColors: const [
-                              Color(0xff419388),
-                            ],
-                            onGetText: (double value) {
-                              return Text('${value.toInt()}%');
-                            },
-                          ),
-                        ),
-                      if (widget.qrModel.payload!.stateName! != 'En Proceso') const SizedBox(width: 20),
-                      Expanded(
-                        flex: 2,
-                        child: Text(widget.qrModel.payload!.procedureTypeName!),
-                      ),
-                    ],
-                  ),
+                  child: Text(widget.qrModel.payload!.procedureTypeName!)
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                const Text(
+                  'Modalidad:',
+                  style:  TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '${widget.qrModel.payload!.procedureModalityName}',
                 ),
                 SizedBox(
                   height: 10.h,
@@ -81,7 +69,7 @@ class _ScreenWorkFlowState extends State<ScreenWorkFlow> {
                       )
                   ],
                 ),
-                if (widget.qrModel.payload!.observations != null)
+                if (widget.qrModel.payload!.observations != null && widget.qrModel.payload!.observations!.isNotEmpty)
                   Text(
                     '${widget.qrModel.payload!.observationsTitle!}:',
                     style: const TextStyle(fontWeight: FontWeight.bold),

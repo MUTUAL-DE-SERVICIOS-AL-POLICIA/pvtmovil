@@ -159,7 +159,7 @@ class ScreenSwitchState extends State<ScreenSwitch> {
           if (!mounted) return;
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ScreenWorkFlow(qrModel: qrModelFromJson(response.body))),
+            MaterialPageRoute(builder: (context) => ScreenWorkFlow(qrModel: qrModelFromJson(response.body),stateFlow: scanResult!.rawContent)),
           );
         } else {
           if (!mounted) return;

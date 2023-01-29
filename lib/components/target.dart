@@ -140,7 +140,7 @@ TargetFocus targetNotification(GlobalKey<State<StatefulWidget>> keyTarget) {
               const Padding(
                   padding: EdgeInsets.all(30),
                   child: Text(
-                    "BUZÓN DE MENSAJES\nAquí podrá observar todos los mensajes enviados por la MUSERPOL",
+                    "BUZÓN DE NOTIFICACIONES\nAquí podrá observar todos los mensajes enviados por la MUSERPOL",
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   )),
             ],
@@ -162,7 +162,7 @@ TargetFocus targetMenu(GlobalKey<State<StatefulWidget>> keyTarget) {
             const Padding(
                 padding: EdgeInsets.all(30),
                 child: Text(
-                  "MENU\nAquí podrá ingresar al menú de datos y configuraciones",
+                  "MENÚ\nAquí podrá ingresar al menú de datos y configuraciones",
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 )),
             RotationTransition(

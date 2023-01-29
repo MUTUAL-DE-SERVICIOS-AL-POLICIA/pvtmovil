@@ -40,7 +40,7 @@ class _CardExpandedState extends State<CardExpanded> {
                         child: Column(
                             children: [
                               HedersComponent(
-                                titleHeader: widget.contribution.state!,
+                                titleHeader: widget.contribution.state,
                                 title: DateFormat(' dd, MMMM yyyy ', "es_ES").format(widget.contribution.monthYear!)
                               ),
                               Expanded(

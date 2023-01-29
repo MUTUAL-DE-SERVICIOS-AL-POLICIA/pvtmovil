@@ -36,9 +36,11 @@ class _ScreenContributionsState extends State<ScreenContributions> {
             !stateLoading
                 ? Row(
                     children: [
+                      if (contributionBloc.existContribution)
+                        if (contributionBloc.contribution!.payload.hasContributionsActive!)
                       documentContribution(() => getContributionActive(), 'Certificación de Activo'),
                       if (contributionBloc.existContribution)
-                        if (contributionBloc.contribution!.payload!.affiliatePassive!)
+                        if (contributionBloc.contribution!.payload.hasContributionsPassive!)
                           documentContribution(() => getContributionPasive(), 'Certificación de Pasivo')
                     ],
                   )

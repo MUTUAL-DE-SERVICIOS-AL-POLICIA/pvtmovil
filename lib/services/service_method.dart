@@ -70,7 +70,7 @@ Future<dynamic> serviceMethod(
             } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
               callDialogAction(context, 'Verifique su conexión a Internet');
             } else {
-              callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+              callDialogAction(context, 'Lamentamos los inconvenientes, inténtalo de nuevo');
             }
             return null;
           });
@@ -94,7 +94,7 @@ Future<dynamic> serviceMethod(
             } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
               callDialogAction(context, 'Verifique su conexión a Internet');
             } else {
-              callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+              callDialogAction(context, 'Lamentamos los inconvenientes, inténtalo de nuevo');
             }
             return null;
           });
@@ -116,7 +116,7 @@ Future<dynamic> serviceMethod(
             } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
               callDialogAction(context, 'Verifique su conexión a Internet');
             } else {
-              callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+              callDialogAction(context, 'Lamentamos los inconvenientes, inténtalo de nuevo');
             }
             return null;
           });
@@ -138,7 +138,7 @@ Future<dynamic> serviceMethod(
             } else if ('$err' == 'Software caused connection abort' || '$err' == 'Connection reset by peer') {
               callDialogAction(context, 'Verifique su conexión a Internet');
             } else {
-              callDialogAction(context, 'Lamentamos los inconvenientes, intentalo de nuevo');
+              callDialogAction(context, 'Lamentamos los inconvenientes, inténtalo de nuevo');
             }
             return null;
           });

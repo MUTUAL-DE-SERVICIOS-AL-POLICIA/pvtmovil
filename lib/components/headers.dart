@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/screens/inbox/screen_inbox.dart';
-
+import 'package:badges/badges.dart' as badges;
 import '../bloc/notification/notification_bloc.dart';
 
 //  widget que se ajusta en la parte superior
@@ -38,16 +38,16 @@ class _HedersComponentState extends State<HedersComponent> {
               child: Container(
                 color: Colors.transparent,
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Badge(
+                child: badges.Badge(
                   key: widget.keyNotification,
-                  animationDuration: const Duration(milliseconds: 300),
-                  animationType: BadgeAnimationType.slide,
-                  badgeColor: notificationBloc.existNotifications
-                      ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId).isNotEmpty
-                          ? Colors.red
-                          : Colors.transparent
-                      : Colors.transparent,
-                  elevation: 0,
+                  //animationDuration: const Duration(milliseconds: 300),
+                  //animationType: BadgeAnimationType.slide,
+                  //badgeColor: notificationBloc.existNotifications
+                  //    ? notificationBloc.listNotifications!.where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId).isNotEmpty
+                  //        ? Colors.red
+                  //        : Colors.transparent
+                  //    : Colors.transparent,
+                  //elevation: 0,
                   badgeContent: notificationBloc.existNotifications && notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
                       ? Text(
                           notificationBloc.listNotifications!
