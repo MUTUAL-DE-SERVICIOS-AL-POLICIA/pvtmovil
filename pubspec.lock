@@ -82,13 +82,14 @@ packages:
     source: hosted
     version: "0.10.3"
   camera_android:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: camera_android
-      sha256: "417e9eddda8025d7342f82ee53b214f149793e95c8490c3440a46144409f7966"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.10.2+3"
+      path: "packages/camera/camera_android"
+      ref: "5172b44088a4082ff0899594614c5380457d341b"
+      resolved-ref: "5172b44088a4082ff0899594614c5380457d341b"
+      url: "https://github.com/MaxLyonel/plugins.git"
+    source: git
+    version: "0.10.0+1"
   camera_avfoundation:
     dependency: transitive
     description:
@@ -667,7 +668,7 @@ packages:
       path: modal_bottom_sheet
       ref: HEAD
       resolved-ref: d79185a564c6d1b1535568ea7dfef060e20a049d
-      url: "https://github.com/danReynolds/modal_bottom_sheet.git"
+      url: "https://github.com/MaxLyonel/modal_bottom_sheet"
     source: git
     version: "2.1.2"
   nested:

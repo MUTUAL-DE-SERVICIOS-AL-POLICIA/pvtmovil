@@ -99,6 +99,11 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                                   animate: !statelogin,
                                   child: Column(
                                     children: [
+                                      // const Text(
+                                      //   'Versión de pruebas',
+                                      //   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, backgroundColor: Color(0xffd9e9e7)),
+                                      //   textAlign: TextAlign.center,
+                                      // ),
                                       optionTool(
                                           const Image(
                                             image: AssetImage(
