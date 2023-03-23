@@ -87,7 +87,7 @@ packages:
       path: "packages/camera/camera_android"
       ref: "5172b44088a4082ff0899594614c5380457d341b"
       resolved-ref: "5172b44088a4082ff0899594614c5380457d341b"
-      url: "https://github.com/MaxLyonel/plugins.git"
+      url: "https://github.com/MUTUAL-DE-SERVICIOS-AL-POLICIA/plugins-app"
     source: git
     version: "0.10.0+1"
   camera_avfoundation:
@@ -668,7 +668,7 @@ packages:
       path: modal_bottom_sheet
       ref: HEAD
       resolved-ref: d79185a564c6d1b1535568ea7dfef060e20a049d
-      url: "https://github.com/MaxLyonel/modal_bottom_sheet"
+      url: "https://github.com/MUTUAL-DE-SERVICIOS-AL-POLICIA/modal_bottom_sheet-app"
     source: git
     version: "2.1.2"
   nested:
