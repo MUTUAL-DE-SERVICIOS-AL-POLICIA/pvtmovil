@@ -49,6 +49,7 @@ class _ModalUpdatePwdState extends State<ModalUpdatePwd> with TickerProviderStat
                       Password(
                           passwordCtrl: newPasswordConfirmCtrl,
                           onEditingComplete: () => updatePassword(),
+                          confirm: true,
                           validator: (value) {
                             if (value == newPasswordCtrl.text) {
                               return null;
