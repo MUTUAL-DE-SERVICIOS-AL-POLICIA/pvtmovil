@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -85,29 +84,26 @@ class MyApp extends StatelessWidget {
                 minTextAdapt: true,
                 splitScreenMode: true,
                 builder: (context, child) => ThemeProvider(
-                    saveThemesOnChange: true, // Auto save any theme change we do
-                    loadThemeOnInit: false, // Do not load the saved theme(use onInitCallback callback)
+                    saveThemesOnChange: true,
+                    loadThemeOnInit: false,
                     onInitCallback: (controller, previouslySavedThemeFuture) async {
+                      final view = View.of(context);
                       String? savedTheme = await previouslySavedThemeFuture;
-
                       if (savedTheme != null) {
-                        // If previous theme saved, use saved theme
                         controller.setTheme(savedTheme);
                       } else {
-                        // If previous theme not found, use platform default
-                        Brightness platformBrightness = SchedulerBinding.instance.window.platformBrightness;
+                        Brightness platformBrightness = view.platformDispatcher.platformBrightness;
                         if (platformBrightness == Brightness.dark) {
                           controller.setTheme('dark');
                         } else {
                           controller.setTheme('light');
                         }
-                        // Forget the saved theme(which were saved just now by previous lines)
                         controller.forgetSavedTheme();
                       }
                     },
                     themes: [
-                      styleLigth2(),
-                      styleDark2(),
+                      styleLigth(),
+                      styleDark(),
                     ],
                     child: const ThemeConsumer(child: Muserpol())))));
   }
@@ -133,31 +129,16 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    super.initState();
-    final window = WidgetsBinding.instance.window;
-
-    // This callback is called every time the brightness changes.
-    window.onPlatformBrightnessChanged = () {
-      final brightness = window.platformBrightness;
-      debugPrint('brightness ${brightness.name}');
-      debugPrint('ThemeProvider.themeOf(context).id. ${ThemeProvider.themeOf(context).id}');
-      if (brightness.name == 'dark' && ThemeProvider.themeOf(context).id.contains('light')) {
-        ThemeProvider.controllerOf(context).nextTheme();
-      }
-      if (brightness.name == 'light' && ThemeProvider.themeOf(context).id.contains('dark')) {
-        ThemeProvider.controllerOf(context).nextTheme();
-      }
-    };
     PushNotificationService.messagesStream.listen((message) {
       debugPrint('NO TI FI CA CION $message');
       final msg = json.decode(message);
-      debugPrint('HOLA ${msg['origin']}');
       if (msg['origin'] == '_onMessageHandler') {
         _updatebd();
       } else {
         navigatorKey.currentState!.pushNamed('message', arguments: msg);
       }
     });
+    super.initState();
   }
 
   @override
@@ -185,7 +166,7 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver {
           Locale('es', 'ES'), // Spanish
           Locale('en', 'US'), // English
         ],
-        debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: dotenv.env['STATE_PROD']!='true',
         navigatorKey: navigatorKey,
         theme: ThemeProvider.themeOf(context).data,
         title: 'MUSERPOL PVT',

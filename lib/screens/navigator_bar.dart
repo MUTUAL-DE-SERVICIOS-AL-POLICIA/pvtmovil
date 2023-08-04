@@ -104,6 +104,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
   refresh() async {
     setState(() => stateLoad = true);
     if (await checkVersion(mounted, context)) {
+      if (!mounted) return;
       final filesState = Provider.of<FilesState>(context, listen: false);
       final tabProcedureState = Provider.of<TabProcedureState>(context, listen: false);
       final processingState = Provider.of<ProcessingState>(context, listen: false);

@@ -62,7 +62,7 @@ class ContributionsYear extends StatelessWidget {
                     child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('${key.state}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(key.state, style: const TextStyle(fontWeight: FontWeight.bold)),
                 Text(
                   DateFormat('MMMM', "es_ES").format(key.monthYear!).toUpperCase(),
                   style: TextStyle(fontSize: 15.sp),

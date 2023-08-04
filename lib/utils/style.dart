@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:theme_provider/theme_provider.dart';
 
-AppTheme styleLigth2() {
+AppTheme styleLigth() {
   return AppTheme.light().copyWith(
       id: 'light',
       data: ThemeData.light().copyWith(
@@ -37,9 +37,9 @@ AppTheme styleLigth2() {
           textTheme: ThemeData.light()
               .textTheme
               .copyWith(
-                bodyText1: TextStyle(color: const Color(0xff21232A), fontSize: 17.sp),
-                bodyText2: TextStyle(color: const Color(0xff21232A), fontSize: 17.sp),
-                button: TextStyle(fontSize: 17.sp),
+                bodyLarge: TextStyle(color: const Color(0xff21232A), fontSize: 17.sp),
+                bodyMedium: TextStyle(color: const Color(0xff21232A), fontSize: 17.sp),
+                labelLarge: TextStyle(fontSize: 17.sp),
               )
               .apply(
                 fontFamily: 'Poppins',
@@ -47,8 +47,8 @@ AppTheme styleLigth2() {
           primaryTextTheme: ThemeData.light()
               .textTheme
               .copyWith(
-                bodyText1: TextStyle(fontSize: 20.sp),
-                bodyText2: TextStyle(fontSize: 20.sp),
+                bodyLarge: TextStyle(fontSize: 20.sp),
+                bodyMedium: TextStyle(fontSize: 20.sp),
               )
               .apply(fontFamily: 'Poppins'),
           colorScheme:
@@ -66,7 +66,7 @@ AppTheme styleLigth2() {
               iconTheme: const IconThemeData(color: Colors.black))));
 }
 
-AppTheme styleDark2() {
+AppTheme styleDark() {
   return AppTheme.dark().copyWith(
       id: 'dark',
       data: ThemeData.dark().copyWith(
@@ -104,9 +104,9 @@ AppTheme styleDark2() {
           textTheme: ThemeData.dark()
               .textTheme
               .copyWith(
-                bodyText1: TextStyle(fontSize: 17.sp),
-                bodyText2: TextStyle(fontSize: 17.sp),
-                button: TextStyle(fontSize: 17.sp),
+                bodyLarge: TextStyle(fontSize: 17.sp),
+                bodyMedium: TextStyle(fontSize: 17.sp),
+                labelLarge: TextStyle(fontSize: 17.sp),
               )
               .apply(
                 fontFamily: 'Poppins',
@@ -114,8 +114,8 @@ AppTheme styleDark2() {
           primaryTextTheme: ThemeData.dark()
               .textTheme
               .copyWith(
-                bodyText1: TextStyle(fontSize: 20.sp),
-                bodyText2: TextStyle(fontSize: 20.sp),
+                bodyLarge: TextStyle(fontSize: 20.sp),
+                bodyMedium: TextStyle(fontSize: 20.sp),
               )
               .apply(fontFamily: 'Poppins'),
           colorScheme:

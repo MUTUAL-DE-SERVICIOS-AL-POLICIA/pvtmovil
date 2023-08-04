@@ -111,6 +111,7 @@ class _ModalInsideModalState extends State<ModalInsideModal> with TickerProvider
     if (response != null) {
       if (json.decode(response.body)['error']) {
         setState(() => title = json.decode(response.body)['data']['action']['message']);
+        if (!mounted) return;
         showDialog(
             barrierDismissible: false,
             context: context,

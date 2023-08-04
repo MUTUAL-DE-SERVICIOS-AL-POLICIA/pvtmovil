@@ -142,7 +142,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
                       child: SvgPicture.asset(
                         'assets/icons/delete.svg',
                         height: 25.sp,
-                        color: Colors.red[900],
+                        colorFilter: const ColorFilter.mode( Color.fromARGB(255, 183, 28, 28), BlendMode.srcIn)
                       ),
                     ),
                   ),

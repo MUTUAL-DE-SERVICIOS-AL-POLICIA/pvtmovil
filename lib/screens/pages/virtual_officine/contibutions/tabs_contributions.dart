@@ -56,7 +56,7 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
             2: FlexColumnWidth(3),
           }, children: [
             TableRow(children: [
-              stateSubtract
+              stateSubtract && (contributionsTotal.length - 1 != 0)
                   ? years(stateSubtract, TextDirection.ltr, contributionsTotal[tabController!.index - 1].year,
                       () => setState(() => tabController!.animateTo(tabController!.index - 1)), 1)
                   : Container(),
@@ -87,7 +87,7 @@ class _TabsContributionsState extends State<TabsContributions> with TickerProvid
                   for (var i = 0; i <= contributionsTotal.length - 1; i++)
                     ContributionsYear(
                       tabController: tabController!,
-                      year: '${contributionsTotal[i].year}',
+                      year: contributionsTotal[i].year,
                       contributions: contributionsTotal[i].contributions,
                     ),
                 ],

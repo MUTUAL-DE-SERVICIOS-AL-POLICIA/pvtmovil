@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  file_selector_windows
   flutter_secure_storage_windows
   local_auth_windows
   platform_device_id_windows

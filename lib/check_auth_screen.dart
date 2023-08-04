@@ -61,6 +61,8 @@ class CheckAuthScreen extends StatelessWidget {
   getInfo(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+
+    final notificationBloc = BlocProvider.of<NotificationBloc>(context);
     if (await authService.readUser() == '') {
       debugPrint('no hay usuario');
       return Future.microtask(() {
@@ -68,8 +70,8 @@ class CheckAuthScreen extends StatelessWidget {
             context, PageRouteBuilder(pageBuilder: (_, __, ___) => const ScreenSwitch(), transitionDuration: const Duration(seconds: 0)));
       });
     }
-    debugPrint('hay usuario');
-    await getNotifications(context);
+    
+    await getNotifications(notificationBloc);
     UserModel user = userModelFromJson(await authService.readUser());
     userBloc.add(UpdateUser(user.user!));
     final stateApp = await authService.readStateApp();
@@ -81,8 +83,7 @@ class CheckAuthScreen extends StatelessWidget {
     });
   }
 
-  getNotifications(BuildContext context) async {
-    final notificationBloc = BlocProvider.of<NotificationBloc>(context);
+  getNotifications(NotificationBloc notificationBloc) async {
     await DBProvider.db.getAllNotificationModel().then((res) => notificationBloc.add(UpdateNotifications(res)));
     await DBProvider.db.getAllAffiliateModel().then((res) => notificationBloc.add(UpdateAffiliateId(res[0].idAffiliate)));
   }

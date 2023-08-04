@@ -37,7 +37,8 @@ Future<dynamic> serviceMethod(bool mounted, BuildContext context, String method,
     }
   }
   try {
-    final result = await InternetAddress.lookup('pvt.muserpol.gob.bo');
+
+    final result = await InternetAddress.lookup(dotenv.env['STATE_PROD'] == 'true'? 'pvt.muserpol.gob.bo': 'google.com');
     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
       var url = Uri.parse(urlAPI);
       final ioc = HttpClient();
@@ -210,7 +211,7 @@ confirmDeleteSession(bool mounted, BuildContext context, bool voluntary) async {
 
 Future<bool> checkVersion(bool mounted, BuildContext context) async {
   try {
-    final result = await InternetAddress.lookup('pvt.muserpol.gob.bo');
+    final result = await InternetAddress.lookup(dotenv.env['STATE_PROD'] == 'true' ? 'pvt.muserpol.gob.bo' : 'google.com');
     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
       final Map<String, dynamic> data = {'version': dotenv.env['version']};
       if (Platform.isIOS) {
@@ -219,10 +220,11 @@ Future<bool> checkVersion(bool mounted, BuildContext context) async {
       if (Platform.isAndroid) {
         data['store'] = dotenv.env['storeAndroid'];
       }
-      // ignore: use_build_context_synchronously
+      if (!mounted) return false;
       var response = await serviceMethod(mounted, context, 'post', data, servicePostVersion(), false, false);
       if (response != null) {
         if (!json.decode(response.body)['error']) {
+          if (!mounted) return false;
           return await showDialog(
               barrierDismissible: false,
               context: context,

@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:muserpol_pvt/bloc/notification/notification_bloc.dart';
 import 'package:muserpol_pvt/screens/inbox/screen_inbox.dart';
 import 'package:badges/badges.dart' as badges;
-import 'package:theme_provider/theme_provider.dart';
-import '../bloc/notification/notification_bloc.dart';
 
 //  widget que se ajusta en la parte superior
 class HedersComponent extends StatefulWidget {
@@ -45,7 +44,7 @@ class _HedersComponentState extends State<HedersComponent> {
                 GestureDetector(
                   onTap: () => dialogInbox(context),
                   child: Container(
-                    color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                    color:Colors.transparent,
                     padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
                     child: badges.Badge(
                       key: widget.keyNotification,
@@ -55,8 +54,8 @@ class _HedersComponentState extends State<HedersComponent> {
                                     .where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId)
                                     .isNotEmpty
                                 ? Colors.red
-                                : ThemeProvider.themeOf(context).data.scaffoldBackgroundColor
-                            : ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                                : Colors.transparent
+                            : Colors.transparent,
                         elevation: 0,
                       ),
                       badgeContent: notificationBloc.existNotifications &&
@@ -74,7 +73,7 @@ class _HedersComponentState extends State<HedersComponent> {
                         child: SvgPicture.asset(
                           'assets/icons/bell.svg',
                           height: 25.sp,
-                          color: const Color(0xff419388),
+                          colorFilter: const ColorFilter.mode(Color(0xff419388), BlendMode.srcIn)
                         ),
                       ),
                     ),

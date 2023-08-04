@@ -3,25 +3,25 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 final liquidPages = [
   const LiquidPage(
-      imageBackground: 'assets/images/001.jpg',
+      imageBackground: 'assets/images/001.webp',
       imageFront: "assets/icons/6.png",
       titleText: "BIENVENIDO",
       subtitleText: "MUTUAL DE SERVICIOS AL POLICÍA",
       text: ""),
   const LiquidPage(
-      imageBackground: 'assets/images/002.jpg',
+      imageBackground: 'assets/images/002.webp',
       imageFront: "assets/icons/7.png",
       titleText: "EVITE HACER FILAS",
       subtitleText: "COMPLEMENTO ECONÓMICO",
       text: "Realice la solicitud y seguimiento del pago del Beneficio del Complemento Económico"),
   const LiquidPage(
-      imageBackground: 'assets/images/003.jpg',
+      imageBackground: 'assets/images/003.webp',
       imageFront: "assets/icons/003.png",
       titleText: "SEGUIMIENTO\nDE",
       subtitleText: "APORTES",
       text: "Realiza seguimiento de tus aportes"),
   const LiquidPage(
-      imageBackground: 'assets/images/004.jpg',
+      imageBackground: 'assets/images/004.webp',
       imageFront: "assets/icons/9.png",
       titleText: "SEGUIMIENTO\nDE",
       subtitleText: "PRESTAMOS",

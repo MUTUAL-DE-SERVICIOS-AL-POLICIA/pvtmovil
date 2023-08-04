@@ -8,7 +8,6 @@ import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
 import 'package:open_file_safe/open_file_safe.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class CardEc extends StatefulWidget {
   final Datum? item;
@@ -25,9 +24,10 @@ class _CardEcState extends State<CardEc> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: ContainerComponent(
-          color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+          color: Colors.transparent,
           child: Container(
               padding: const EdgeInsets.all(5),
+              
               child: Row(children: [
                 Expanded(
                     child: Column(
@@ -107,7 +107,7 @@ class _CardEcState extends State<CardEc> {
                                   icon: SvgPicture.asset(
                                     'assets/icons/printer.svg',
                                     height: 30.0,
-                                    color: Colors.white,
+                                            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                                   ),
                                   onPressed: () => printDocument(context),
                                 ))

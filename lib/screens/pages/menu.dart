@@ -150,11 +150,13 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   void switchTheme(state) async {
     setState(() => colorValue = state);
-    if (state) {
-      ThemeProvider.controllerOf(context).setTheme('dark');
-    } else {
-      ThemeProvider.controllerOf(context).setTheme('light');
-    }
+    ThemeProvider.controllerOf(context).nextTheme();
+    // if (state) {
+    //   ThemeProvider.controllerOf(context).nextTheme();
+    //   ThemeProvider.controllerOf(context).setTheme('dark');
+    // } else {
+    //   ThemeProvider.controllerOf(context).setTheme('light');
+    // }
   }
 
   authBiometric(bool state) async {

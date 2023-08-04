@@ -53,41 +53,43 @@ class NavigationDown extends StatelessWidget {
               CurvedNavigationBarItem(
                   icon: SvgPicture.asset('assets/icons/newProcedure.svg',
                       height: 25.sp,
-                      color: ThemeProvider.themeOf(context).id.contains('dark')
+                      colorFilter: ColorFilter.mode(ThemeProvider.themeOf(context).id.contains('dark')
                           ? Colors.white
                           : currentIndex == 0
                               ? Colors.black
-                              : Colors.white),
+                              : Colors.white, BlendMode.srcIn)),
                   label: "Solicitud de Pago"),
             if (stateApp == StateAplication.complement)
               CurvedNavigationBarItem(
                   icon: SvgPicture.asset('assets/icons/historyProcedure.svg',
                       height: 25.sp,
-                      color: ThemeProvider.themeOf(context).id.contains('dark')
+                      colorFilter: ColorFilter.mode(ThemeProvider.themeOf(context).id.contains('dark')
                           ? Colors.white
                           : currentIndex == 1
                               ? Colors.black
-                              : Colors.white),
+                              : Colors.white, BlendMode.srcIn)),
                   label: "Trámites Históricos"),
             if (stateApp == StateAplication.virtualOficine)
               CurvedNavigationBarItem(
                   icon: SvgPicture.asset('assets/icons/newProcedure.svg',
                       height: 25.sp,
-                      color: ThemeProvider.themeOf(context).id.contains('dark')
+                      colorFilter: ColorFilter.mode(ThemeProvider.themeOf(context).id.contains('dark')
                           ? Colors.white
                           : currentIndex == 0
                               ? Colors.black
-                              : Colors.white),
+                              : Colors.white, BlendMode.srcIn)),
                   label: "Aportes"),
             if (stateApp == StateAplication.virtualOficine)
               CurvedNavigationBarItem(
                   icon: SvgPicture.asset('assets/icons/requisites.svg',
                       height: 25.sp,
-                      color: ThemeProvider.themeOf(context).id.contains('dark')
-                          ? Colors.white
-                          : currentIndex == 1
-                              ? Colors.black
-                              : Colors.white),
+
+                                            colorFilter: ColorFilter.mode(
+                          ThemeProvider.themeOf(context).id.contains('dark')
+                              ? Colors.white
+                              : currentIndex == 1
+                                  ? Colors.black
+                                  : Colors.white, BlendMode.srcIn),),
                   label: "Préstamos"),
           ],
           animationCurve: Curves.fastOutSlowIn,

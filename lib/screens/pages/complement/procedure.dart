@@ -132,6 +132,7 @@ class _ScreenProceduresState extends State<ScreenProcedures> {
     for (var element in filesState.files) {
       filesState.updateFile(element.id!, null);
     }
+    if (!mounted) return;
     return showBarModalBottomSheet(
       duration: const Duration(milliseconds: 800),
       expand: false,

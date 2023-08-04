@@ -33,7 +33,6 @@ class PushNotificationService {
 @pragma('vm:entry-point')
   static Future<void> _backgroundHandle(RemoteMessage message) async {
     await Firebase.initializeApp();
-    debugPrint('HOLA');
     debugPrint('_backgroundHandle ${json.encode(message.data)}');
     final affiliateId = await DBProvider.db.getAffiliateModelById();
     final notification = NotificationModel(

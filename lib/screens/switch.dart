@@ -128,7 +128,7 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                                           SvgPicture.asset(
                                             'assets/icons/qr.svg',
                                             height: 50.sp,
-                                            color: const Color(0xff419388),
+                                            colorFilter: const ColorFilter.mode( Color(0xff419388), BlendMode.srcIn),
                                           ),
                                           'SEGUIMIENTO CON QR',
                                           'Seguimiento de trámite de Préstamos y Beneficios Económicos con QR.',
