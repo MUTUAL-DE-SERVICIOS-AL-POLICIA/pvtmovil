@@ -27,6 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  adaptive_theme: ^3.3.0
   animate_do: ^3.0.2
   badges: ^3.1.1
   barcode_scan2: ^4.2.4
@@ -65,7 +66,6 @@ dependencies:
   simple_circular_progress_bar: ^1.0.2
   sms_autofill: ^2.3.0
   sqflite: ^2.3.0
-  theme_provider: ^0.6.0
   tutorial_coach_mark: ^1.2.9
   url_launcher: ^6.1.12
 

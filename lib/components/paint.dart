@@ -1,5 +1,5 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class FormButtom extends StatelessWidget {
   const FormButtom({Key? key}) : super(key: key);
@@ -10,8 +10,7 @@ class FormButtom extends StatelessWidget {
       height: double.infinity,
       width: double.infinity,
       child: CustomPaint(
-        // painter: FormButtomPainter(ThemeProvider.themeOf(context).id.contains('dark') ? const Color(0xff214a44):const Color(0xff8dbeb8)),
-        painter: FormButtomPainter(ThemeProvider.themeOf(context).id.contains('dark') ? const Color(0xff214a44):const Color(0xfff2f2f2)),
+        painter: FormButtomPainter(AdaptiveTheme.of(context).mode.isDark? const Color(0xff214a44) : const Color(0xfff2f2f2)),
       ),
     );
   }

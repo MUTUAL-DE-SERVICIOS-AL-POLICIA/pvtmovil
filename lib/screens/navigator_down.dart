@@ -1,9 +1,9 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muserpol_pvt/model/files_model.dart';
 import 'package:muserpol_pvt/utils/nav.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class NavigationDown extends StatelessWidget {
   final StateAplication stateApp;
@@ -53,43 +53,51 @@ class NavigationDown extends StatelessWidget {
               CurvedNavigationBarItem(
                   icon: SvgPicture.asset('assets/icons/newProcedure.svg',
                       height: 25.sp,
-                      colorFilter: ColorFilter.mode(ThemeProvider.themeOf(context).id.contains('dark')
-                          ? Colors.white
-                          : currentIndex == 0
-                              ? Colors.black
-                              : Colors.white, BlendMode.srcIn)),
+                      colorFilter: ColorFilter.mode(
+                          AdaptiveTheme.of(context).mode.isDark
+                              ? Colors.white
+                              : currentIndex == 0
+                                  ? Colors.black
+                                  : Colors.white,
+                          BlendMode.srcIn)),
                   label: "Solicitud de Pago"),
             if (stateApp == StateAplication.complement)
               CurvedNavigationBarItem(
                   icon: SvgPicture.asset('assets/icons/historyProcedure.svg',
                       height: 25.sp,
-                      colorFilter: ColorFilter.mode(ThemeProvider.themeOf(context).id.contains('dark')
-                          ? Colors.white
-                          : currentIndex == 1
-                              ? Colors.black
-                              : Colors.white, BlendMode.srcIn)),
+                      colorFilter: ColorFilter.mode(
+                          AdaptiveTheme.of(context).mode.isDark
+                              ? Colors.white
+                              : currentIndex == 1
+                                  ? Colors.black
+                                  : Colors.white,
+                          BlendMode.srcIn)),
                   label: "Trámites Históricos"),
             if (stateApp == StateAplication.virtualOficine)
               CurvedNavigationBarItem(
                   icon: SvgPicture.asset('assets/icons/newProcedure.svg',
                       height: 25.sp,
-                      colorFilter: ColorFilter.mode(ThemeProvider.themeOf(context).id.contains('dark')
-                          ? Colors.white
-                          : currentIndex == 0
-                              ? Colors.black
-                              : Colors.white, BlendMode.srcIn)),
+                      colorFilter: ColorFilter.mode(
+                          AdaptiveTheme.of(context).mode.isDark
+                              ? Colors.white
+                              : currentIndex == 0
+                                  ? Colors.black
+                                  : Colors.white,
+                          BlendMode.srcIn)),
                   label: "Aportes"),
             if (stateApp == StateAplication.virtualOficine)
               CurvedNavigationBarItem(
-                  icon: SvgPicture.asset('assets/icons/requisites.svg',
-                      height: 25.sp,
-
-                                            colorFilter: ColorFilter.mode(
-                          ThemeProvider.themeOf(context).id.contains('dark')
-                              ? Colors.white
-                              : currentIndex == 1
-                                  ? Colors.black
-                                  : Colors.white, BlendMode.srcIn),),
+                  icon: SvgPicture.asset(
+                    'assets/icons/requisites.svg',
+                    height: 25.sp,
+                    colorFilter: ColorFilter.mode(
+                        AdaptiveTheme.of(context).mode.isDark
+                            ? Colors.white
+                            : currentIndex == 1
+                                ? Colors.black
+                                : Colors.white,
+                        BlendMode.srcIn),
+                  ),
                   label: "Préstamos"),
           ],
           animationCurve: Curves.fastOutSlowIn,

@@ -32,6 +32,7 @@ class _HedersComponentState extends State<HedersComponent> {
   @override
   Widget build(BuildContext context) {
     final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: true).state;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -41,44 +42,7 @@ class _HedersComponentState extends State<HedersComponent> {
                 maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.bold)),
             actions: [
               if (widget.stateBell!)
-                GestureDetector(
-                  onTap: () => dialogInbox(context),
-                  child: Container(
-                    color:Colors.transparent,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-                    child: badges.Badge(
-                      key: widget.keyNotification,
-                      badgeStyle: badges.BadgeStyle(
-                        badgeColor: notificationBloc.existNotifications
-                            ? notificationBloc.listNotifications!
-                                    .where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId)
-                                    .isNotEmpty
-                                ? Colors.red
-                                : Colors.transparent
-                            : Colors.transparent,
-                        elevation: 0,
-                      ),
-                      badgeContent: notificationBloc.existNotifications &&
-                              notificationBloc.listNotifications!.where((e) => e.read == false).isNotEmpty
-                          ? Text(
-                              notificationBloc.listNotifications!
-                                  .where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId)
-                                  .length
-                                  .toString(),
-                              style: const TextStyle(color: Colors.white),
-                            )
-                          : Container(),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: SvgPicture.asset(
-                          'assets/icons/bell.svg',
-                          height: 25.sp,
-                          colorFilter: const ColorFilter.mode(Color(0xff419388), BlendMode.srcIn)
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                badgeNotification(context, notificationBloc),
             ]),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -88,6 +52,42 @@ class _HedersComponentState extends State<HedersComponent> {
         )
       ],
     );
+  }
+
+  GestureDetector badgeNotification(BuildContext context, NotificationState notificationBloc) {
+    final countNotification = notificationBloc.listNotifications.where((e) => e.read == false && e.idAffiliate == notificationBloc.affiliateId);
+    return GestureDetector(
+                onTap: () => dialogInbox(context),
+                child: Container(
+                  color:Colors.transparent,
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                  child: badges.Badge(
+                    key: widget.keyNotification,
+                    badgeStyle: badges.BadgeStyle(
+                      badgeColor: notificationBloc.existNotifications
+                          ? countNotification.isNotEmpty
+                              ? Colors.red
+                              : Colors.transparent
+                          : Colors.transparent,
+                      elevation: 0,
+                    ),
+                    badgeContent: notificationBloc.existNotifications && countNotification.isNotEmpty
+                        ? Text(
+                            '${countNotification.length}',
+                            style: const TextStyle(color: Colors.white),
+                          )
+                        : Container(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: SvgPicture.asset(
+                        'assets/icons/bell.svg',
+                        height: 25.sp,
+                        colorFilter: const ColorFilter.mode(Color(0xff419388), BlendMode.srcIn)
+                      ),
+                    ),
+                  ),
+                ),
+              );
   }
 
   dialogInbox(BuildContext context) {

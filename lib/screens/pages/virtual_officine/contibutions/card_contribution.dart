@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/model/contribution_model.dart';
 import 'package:muserpol_pvt/screens/pages/virtual_officine/contibutions/card_expanded.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class ContributionsYear extends StatelessWidget {
   final TabController tabController;
@@ -33,7 +32,7 @@ class ContributionsYear extends StatelessWidget {
                         child: card(
                             contributions[index].reimbursementTotal != '0,00' && contributions[index].reimbursementTotal != null
                                 ? const Color(0xffE0A44C)
-                                : ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                                : Colors.transparent,
                             context,
                             contributions[index],
                             'flipcardHero$index'),

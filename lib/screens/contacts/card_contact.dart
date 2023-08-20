@@ -6,7 +6,6 @@ import 'package:map_launcher/map_launcher.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/components/table_row.dart';
 import 'package:muserpol_pvt/model/contacts_model.dart';
-import 'package:theme_provider/theme_provider.dart';
 import 'package:url_launcher/url_launcher.dart' as urlauncher;
 
 class CardContact extends StatefulWidget {
@@ -25,7 +24,6 @@ class _CardContactState extends State<CardContact> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 1),
       child: ContainerComponent(
-        color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
         child:  Row(children: [
               Expanded(
                   child: Column(

@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muserpol_pvt/bloc/contribution/contribution_bloc.dart';
@@ -11,7 +12,6 @@ import 'package:muserpol_pvt/services/services.dart';
 import 'package:muserpol_pvt/utils/save_document.dart';
 import 'package:open_file_safe/open_file_safe.dart';
 import 'package:provider/provider.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class ScreenContributions extends StatefulWidget {
   final GlobalKey? keyNotification;
@@ -78,7 +78,7 @@ class _ScreenContributionsState extends State<ScreenContributions> {
               child: GestureDetector(
                 onTap: () => onPressed(),
                 child: ContainerComponent(
-                  color: ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                  color: AdaptiveTheme.of(context).theme.scaffoldBackgroundColor,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(

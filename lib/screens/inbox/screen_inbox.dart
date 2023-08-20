@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,7 +12,6 @@ import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/components/dialog_action.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class ScreenInbox extends StatefulWidget {
   const ScreenInbox({Key? key}) : super(key: key);
@@ -24,9 +24,10 @@ class _ScreenInboxState extends State<ScreenInbox> {
   @override
   Widget build(BuildContext context) {
     final notificationBloc = BlocProvider.of<NotificationBloc>(context, listen: true).state;
+    final countNotification = notificationBloc.listNotifications.where((e) => e.idAffiliate == notificationBloc.affiliateId);
     return ComponentAnimate(
         child: AlertDialog(
-      titlePadding: const EdgeInsets.all(10),
+      titlePadding: const EdgeInsets.all(20),
       actionsAlignment: MainAxisAlignment.spaceAround,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       title: SizedBox(
@@ -34,18 +35,15 @@ class _ScreenInboxState extends State<ScreenInbox> {
         child: Column(
           children: [
             if (notificationBloc.existNotifications)
-              Text(
-                  '${notificationBloc.listNotifications!.where((e) => e.idAffiliate == notificationBloc.affiliateId).isEmpty ? 'Sin' : notificationBloc.listNotifications!.where((e) => e.idAffiliate == notificationBloc.affiliateId).length} Notificación(es)',
+              Text('${countNotification.isEmpty ? 'Sin' : countNotification.length} Notificación(es)',
                   style: const TextStyle(fontWeight: FontWeight.bold)),
             Expanded(
               child: Center(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 0),
                   child: Column(
-                    children: [
-                      if (!notificationBloc.existNotifications || notificationBloc.listNotifications!.isEmpty)
-                        Column(
-                          children: [
+                    children: countNotification.isEmpty
+                        ? [
                             Image.asset(
                               'assets/icons/clouds.png',
                               fit: BoxFit.cover,
@@ -56,12 +54,12 @@ class _ScreenInboxState extends State<ScreenInbox> {
                               textAlign: TextAlign.center,
                               style: TextStyle(fontFamily: 'Poppins'),
                             ),
+                          ]
+                        : [
+                            for (final item
+                                in notificationBloc.listNotifications.reversed.where((e) => e.idAffiliate == notificationBloc.affiliateId))
+                              messageWidget(item)
                           ],
-                        ),
-                      if (notificationBloc.existNotifications)
-                        for (final item in notificationBloc.listNotifications!.reversed.where((e) => e.idAffiliate == notificationBloc.affiliateId))
-                          messageWidget(item)
-                    ],
                   ),
                 ),
               ),
@@ -82,7 +80,7 @@ class _ScreenInboxState extends State<ScreenInbox> {
     return GestureDetector(
       onTap: () => Navigator.pushNamed(context, 'message', arguments: json.decode(item.content)),
       child: ContainerComponent(
-          color: item.read ? ThemeProvider.themeOf(context).data.scaffoldBackgroundColor : const Color.fromARGB(255, 235, 218, 192),
+          color: item.read ? Colors.transparent : const Color.fromARGB(255, 235, 218, 192),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
             child: Row(
@@ -96,12 +94,12 @@ class _ScreenInboxState extends State<ScreenInbox> {
                           children: [
                             Text(
                               'Titulo: ',
-                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontWeight: FontWeight.bold, fontSize: 16.sp),
+                              style: TextStyle(color: AdaptiveTheme.of(context).theme.primaryColor, fontWeight: FontWeight.bold, fontSize: 16.sp),
                             ),
                             Flexible(
                                 child: Text(
                               item.title,
-                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontSize: 16.sp),
+                              style: TextStyle(color: AdaptiveTheme.of(context).theme.primaryColor, fontSize: 16.sp),
                             ))
                           ],
                         ),
@@ -109,12 +107,12 @@ class _ScreenInboxState extends State<ScreenInbox> {
                           children: [
                             Text(
                               'Fecha: ',
-                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontWeight: FontWeight.bold, fontSize: 16.sp),
+                              style: TextStyle(color: AdaptiveTheme.of(context).theme.primaryColor, fontWeight: FontWeight.bold, fontSize: 16.sp),
                             ),
                             Flexible(
                                 child: Text(
                               DateFormat('EEE dd, MMMM', "es_ES").format(item.date),
-                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontSize: 16.sp),
+                              style: TextStyle(color: AdaptiveTheme.of(context).theme.primaryColor, fontSize: 16.sp),
                             )),
                           ],
                         ),
@@ -122,12 +120,12 @@ class _ScreenInboxState extends State<ScreenInbox> {
                           children: [
                             Text(
                               'Hora: ',
-                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontWeight: FontWeight.bold, fontSize: 16.sp),
+                              style: TextStyle(color: AdaptiveTheme.of(context).theme.primaryColor, fontWeight: FontWeight.bold, fontSize: 16.sp),
                             ),
                             Flexible(
                                 child: Text(
                               DateFormat('kk:mm', "es_ES").format(item.date),
-                              style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColor, fontSize: 16.sp),
+                              style: TextStyle(color: AdaptiveTheme.of(context).theme.primaryColor, fontSize: 16.sp),
                             )),
                           ],
                         ),
@@ -139,11 +137,8 @@ class _ScreenInboxState extends State<ScreenInbox> {
                     onTap: () => deleteMessage(item),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: SvgPicture.asset(
-                        'assets/icons/delete.svg',
-                        height: 25.sp,
-                        colorFilter: const ColorFilter.mode( Color.fromARGB(255, 183, 28, 28), BlendMode.srcIn)
-                      ),
+                      child: SvgPicture.asset('assets/icons/delete.svg',
+                          height: 25.sp, colorFilter: const ColorFilter.mode(Color.fromARGB(255, 183, 28, 28), BlendMode.srcIn)),
                     ),
                   ),
                 ),

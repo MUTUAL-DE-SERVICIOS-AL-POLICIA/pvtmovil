@@ -8,7 +8,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc() : super(const NotificationState()) {
     on<AddNotifications>((event, emit) {
       List<NotificationModel> listNotifications = state.existNotifications
-          ? [...state.listNotifications!, event.notification]
+          ? [...state.listNotifications, event.notification]
           : [event.notification];
       emit(state.copyWith(
           existNotifications: true, listNotifications: listNotifications));

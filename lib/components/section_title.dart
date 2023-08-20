@@ -1,7 +1,7 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class SectiontitleComponent extends StatelessWidget {
   final String title;
@@ -38,7 +38,7 @@ class SectiontitleComponent extends StatelessWidget {
           : Icon(
               icon,
               size: 15.sp,
-              color: ThemeProvider.themeOf(context).id.contains('dark') ?Colors.white:Colors.black,
+              color: AdaptiveTheme.of(context).mode.isDark?Colors.white:Colors.black,
             ),
       onTap: onTap,
     );
@@ -63,7 +63,7 @@ class SectiontitleSwitchComponent extends StatelessWidget {
         style: TextStyle(fontSize: 15.sp),
       ),
       trailing: CupertinoSwitch(
-        activeColor: ThemeProvider.themeOf(context).data.primaryColor,
+        activeColor: AdaptiveTheme.of(context).theme.primaryColor,
         value: valueSwitch,
         onChanged: onChangedSwitch,
       ),

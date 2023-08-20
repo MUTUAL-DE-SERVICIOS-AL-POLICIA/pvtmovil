@@ -1,8 +1,8 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class ButtonComponent extends StatelessWidget {
   final String text;
@@ -15,7 +15,7 @@ class ButtonComponent extends StatelessWidget {
     return MaterialButton(
         minWidth: 200,
         padding: const EdgeInsets.symmetric(vertical: 19),
-        color: ThemeProvider.themeOf(context).data.primaryColor,
+        color: AdaptiveTheme.of(context).theme.primaryColor,
         disabledColor: Colors.grey,
         onPressed: onPressed,
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -47,7 +47,7 @@ class ButtonIconComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      color: ThemeProvider.themeOf(context).data.primaryColor,
+      color: AdaptiveTheme.of(context).theme.primaryColor,
       disabledColor: Colors.grey,
       onPressed: onPressed,
       child: stateLoading
@@ -81,9 +81,8 @@ class ButtonIconComponent extends StatelessWidget {
 
 class ButtonWhiteComponent extends StatelessWidget {
   final String text;
-  final Color? colorText;
   final Function()? onPressed;
-  const ButtonWhiteComponent({Key? key, required this.text, required this.onPressed, this.colorText}) : super(key: key);
+  const ButtonWhiteComponent({Key? key, required this.text, required this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +127,7 @@ class ButtonDate extends StatelessWidget {
               style: TextStyle(
                 fontSize: 17.sp,
                 fontWeight: FontWeight.w600,
-                color: ThemeProvider.themeOf(context).data.primaryColor,
+                color: AdaptiveTheme.of(context).theme.primaryColor,
               )),
         ]));
   }
@@ -144,16 +143,17 @@ class IconBtnComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RawMaterialButton(
+      padding: const EdgeInsets.all(5.0),
       onPressed: () {},
       constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
       elevation: 2.0,
       fillColor: Colors.white,
       shape: const CircleBorder(),
       child: IconButton(
-          iconSize: 40,
+          iconSize: 20,
           icon: SvgPicture.asset(
             iconText,
-            height: 100.0,
+            height: 40.0,
           ),
           onPressed: () => onPressed()),
     );
@@ -194,7 +194,7 @@ class Buttontoltip extends StatelessWidget {
                   ],
                 )),
             child: Material(
-              color: ThemeProvider.themeOf(context).data.primaryColor,
+              color: AdaptiveTheme.of(context).theme.primaryColor,
               shape: const CircleBorder(),
               elevation: 0,
               child: const Padding(

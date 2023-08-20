@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muserpol_pvt/components/button.dart';
@@ -5,7 +6,6 @@ import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
-import 'package:theme_provider/theme_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ModalAceptTermin extends StatefulWidget {
@@ -25,7 +25,7 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
         height: MediaQuery.of(context).size.height / 1.5,
         child: Scaffold(
             body: Padding(
-                padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
+                padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
                 child: Column(children: [
                   const HedersComponent(title: 'Términos y Condiciones'),
                   Expanded(
@@ -44,7 +44,9 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                                         TextSpan(
                                             text: 'Acepto ',
                                             style: TextStyle(
-                                                color: ThemeProvider.themeOf(context).data.primaryColorDark, fontFamily: 'Poppins', fontSize: 17.sp)),
+                                                color: AdaptiveTheme.of(context).theme.primaryColorDark,
+                                                fontFamily: 'Poppins',
+                                                fontSize: 17.sp)),
                                         TextSpan(
                                             text: 'Términos y Condiciones ',
                                             style: TextStyle(
@@ -52,7 +54,9 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                                         TextSpan(
                                             text: 'de uso de la aplicación móvil "MUSERPOL PVT"',
                                             style: TextStyle(
-                                                color: ThemeProvider.themeOf(context).data.primaryColorDark, fontFamily: 'Poppins', fontSize: 17.sp))
+                                                color: AdaptiveTheme.of(context).theme.primaryColorDark,
+                                                fontFamily: 'Poppins',
+                                                fontSize: 17.sp))
                                       ])),
                                     ),
                                   )
@@ -68,7 +72,7 @@ class _ModalAceptTerminState extends State<ModalAceptTermin> {
                               child: GestureDetector(
                                 onTap: () => setState(() => stateNotificationsPush = !stateNotificationsPush),
                                 child: Text('Acepto que me envien notificaciones',
-                                    style: TextStyle(color: ThemeProvider.themeOf(context).data.primaryColorDark)),
+                                    style: TextStyle(color: AdaptiveTheme.of(context).theme.primaryColorDark)),
                               ),
                             )
                           ],

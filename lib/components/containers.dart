@@ -10,7 +10,7 @@ class ContainerComponent extends StatelessWidget {
       required this.child,
       this.width,
       this.height,
-      required this.color})
+      this.color=Colors.transparent})
       : super(key: key);
 
   @override

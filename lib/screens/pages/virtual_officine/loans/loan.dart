@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +12,6 @@ import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class ScreenPageLoans extends StatefulWidget {
   final GlobalKey keyNotification;
@@ -54,7 +54,7 @@ class _ScreenPageLoansState extends State<ScreenPageLoans> {
                           Container(
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
-                                  color: ThemeProvider.themeOf(context).id.contains('dark') ? const Color(0xff184741) : const Color(0xffD2EAFA)),
+                                  color: AdaptiveTheme.of(context).mode.isDark ? const Color(0xff184741) : const Color(0xffD2EAFA)),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(

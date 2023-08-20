@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
@@ -24,7 +25,6 @@ import 'package:muserpol_pvt/screens/pages/complement/new_procedure/tab_info.dar
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class StepperProcedure extends StatefulWidget {
   final Function(dynamic) endProcedure;
@@ -98,9 +98,8 @@ class _StepperProcedureState extends State<StepperProcedure> {
                         Step(
                           title: Text('Control de vivencia',
                               style: TextStyle(
-                                  color: ThemeProvider.themeOf(context)
-                                      .data
-                                      .primaryColorDark)),
+                                color: AdaptiveTheme.of(context).theme.primaryColorDark
+                                      )),
                           content: Stack(
                             children: <Widget>[
                               GestureDetector(
@@ -132,14 +131,12 @@ class _StepperProcedureState extends State<StepperProcedure> {
                             Step(
                               title: Text('Documento:',
                                   style: TextStyle(
-                                      color: ThemeProvider.themeOf(context)
-                                          .data
-                                          .primaryColorDark)),
+                                      color: AdaptiveTheme.of(context).theme.primaryColorDark
+                                          )),
                               subtitle: Text(item.title!,
                                   style: TextStyle(
-                                      color: ThemeProvider.themeOf(context)
-                                          .data
-                                          .primaryColorDark)),
+                                      color: AdaptiveTheme.of(context).theme.primaryColorDark
+                                          )),
                               content: ImageInput(
                                 sizeImage: 250,
                                 onPressed: (img, file) =>
@@ -156,9 +153,8 @@ class _StepperProcedureState extends State<StepperProcedure> {
                         Step(
                           title: Text('Mis datos',
                               style: TextStyle(
-                                  color: ThemeProvider.themeOf(context)
-                                      .data
-                                      .primaryColorDark)),
+                                  color: AdaptiveTheme.of(context).theme.primaryColorDark
+                                      )),
                           content: TabInfoEconomicComplement(
                             onEditingComplete: () => nextPage(),
                             phoneCtrl: phoneCtrl,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,6 @@ import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:muserpol_pvt/services/services.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class ScreenSwitch extends StatefulWidget {
   const ScreenSwitch({Key? key}) : super(key: key);
@@ -80,10 +80,10 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                       GestureDetector(
                           onTap: () => setState(() => statelogin = !statelogin),
                           child: Icon(Icons.arrow_back_ios,
-                              color: ThemeProvider.themeOf(context).id.contains('dark') ? Colors.white : Colors.black)),
+                              color: AdaptiveTheme.of(context).mode.isDark ? Colors.white : Colors.black)),
                     Image(
                       image: AssetImage(
-                        ThemeProvider.themeOf(context).id.contains('dark')
+                        AdaptiveTheme.of(context).mode.isDark
                             ? 'assets/images/muserpol-logo.png'
                             : 'assets/images/muserpol-logo2.png',
                       ),

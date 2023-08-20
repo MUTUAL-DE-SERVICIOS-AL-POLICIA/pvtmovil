@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,7 +13,6 @@ import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 import 'package:provider/provider.dart';
-import 'package:theme_provider/theme_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MenuDrawer extends StatefulWidget {
@@ -33,7 +33,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      if (ThemeProvider.themeOf(context).id.contains('dark')) setState(() => colorValue = true);
+      if (AdaptiveTheme.of(context).mode.isDark) setState(() => colorValue = true);
     });
     verifyBiometric();
   }
@@ -67,7 +67,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
             children: [
               Image(
                 image: AssetImage(
-                  ThemeProvider.themeOf(context).id.contains('dark') ? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
+                  AdaptiveTheme.of(context).mode.isDark? 'assets/images/muserpol-logo.png' : 'assets/images/muserpol-logo2.png',
                 )
               ),
               Expanded(
@@ -150,13 +150,11 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   void switchTheme(state) async {
     setState(() => colorValue = state);
-    ThemeProvider.controllerOf(context).nextTheme();
-    // if (state) {
-    //   ThemeProvider.controllerOf(context).nextTheme();
-    //   ThemeProvider.controllerOf(context).setTheme('dark');
-    // } else {
-    //   ThemeProvider.controllerOf(context).setTheme('light');
-    // }
+    if (state) {
+      AdaptiveTheme.of(context).setDark();
+    } else {
+      AdaptiveTheme.of(context).setLight();
+    }
   }
 
   authBiometric(bool state) async {

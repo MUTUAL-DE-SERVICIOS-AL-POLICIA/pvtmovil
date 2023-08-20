@@ -76,7 +76,7 @@ class _PageSliderState extends State<PageSlider> {
             onPressed: () => _showModalInside(),
             label: const Text(
               'EMPEZAR',
-              style: TextStyle(color: Colors.white, fontSize: 15.0, fontWeight: FontWeight.w500),
+              style: TextStyle(color: Colors.white,  fontWeight: FontWeight.w500),
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -94,6 +94,7 @@ class _PageSliderState extends State<PageSlider> {
       enableDrag: false,
       expand: false,
       context: context,
+      backgroundColor: Colors.transparent,
       builder: (context) => const ModalAceptTermin(),
     );
   }

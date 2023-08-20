@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,8 +25,6 @@ import 'package:muserpol_pvt/check_auth_screen.dart';
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
-import 'package:theme_provider/theme_provider.dart';
-
 import 'bloc/procedure/procedure_bloc.dart';
 import 'bloc/user/user_bloc.dart';
 import 'provider/app_state.dart';
@@ -43,17 +42,19 @@ SharedPreferences? prefs;
 void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
+  final savedThemeMode = await AdaptiveTheme.getThemeMode();
   prefs = await SharedPreferences.getInstance();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   PushNotificationService.initializeapp();
   HttpOverrides.global = MyHttpOverrides();
-  runApp(const MyApp());
+  runApp(MyApp(savedThemeMode: savedThemeMode));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final AdaptiveThemeMode? savedThemeMode;
+  const MyApp({Key? key, this.savedThemeMode}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -83,34 +84,13 @@ class MyApp extends StatelessWidget {
                 designSize: const Size(360, 690),
                 minTextAdapt: true,
                 splitScreenMode: true,
-                builder: (context, child) => ThemeProvider(
-                    saveThemesOnChange: true,
-                    loadThemeOnInit: false,
-                    onInitCallback: (controller, previouslySavedThemeFuture) async {
-                      final view = View.of(context);
-                      String? savedTheme = await previouslySavedThemeFuture;
-                      if (savedTheme != null) {
-                        controller.setTheme(savedTheme);
-                      } else {
-                        Brightness platformBrightness = view.platformDispatcher.platformBrightness;
-                        if (platformBrightness == Brightness.dark) {
-                          controller.setTheme('dark');
-                        } else {
-                          controller.setTheme('light');
-                        }
-                        controller.forgetSavedTheme();
-                      }
-                    },
-                    themes: [
-                      styleLigth(),
-                      styleDark(),
-                    ],
-                    child: const ThemeConsumer(child: Muserpol())))));
+                builder: (context, child) => Muserpol(savedThemeMode: savedThemeMode))));
   }
 }
 
 class Muserpol extends StatefulWidget {
-  const Muserpol({Key? key}) : super(key: key);
+  final AdaptiveThemeMode? savedThemeMode;
+  const Muserpol({Key? key, this.savedThemeMode}) : super(key: key);
 
   @override
   State<Muserpol> createState() => _MuserpolState();
@@ -156,7 +136,12 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return AdaptiveTheme(
+      light: styleLigth(),
+      dark: styleDark(),
+      debugShowFloatingThemeButton: true,
+      initial: widget.savedThemeMode ?? AdaptiveThemeMode.light,
+      builder: (theme, darkTheme) => MaterialApp(
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
@@ -166,9 +151,10 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver {
           Locale('es', 'ES'), // Spanish
           Locale('en', 'US'), // English
         ],
-        debugShowCheckedModeBanner: dotenv.env['STATE_PROD']!='true',
+        debugShowCheckedModeBanner: true,
         navigatorKey: navigatorKey,
-        theme: ThemeProvider.themeOf(context).data,
+        theme: theme,
+        darkTheme: darkTheme,
         title: 'MUSERPOL PVT',
         initialRoute: 'check_auth',
         routes: {
@@ -178,6 +164,6 @@ class _MuserpolState extends State<Muserpol> with WidgetsBindingObserver {
           'forgot': (_) => const ForgotPwd(),
           'contacts': (_) => const ScreenContact(),
           'message': (_) => const ScreenNotification()
-        });
+        }));
   }
 }

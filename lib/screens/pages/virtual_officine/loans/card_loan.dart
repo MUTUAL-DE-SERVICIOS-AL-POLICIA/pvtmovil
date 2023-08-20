@@ -1,10 +1,10 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/containers.dart';
 import 'package:muserpol_pvt/model/loan_model.dart';
 import 'package:muserpol_pvt/screens/pages/virtual_officine/loans/card_expanded.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class CardLoan extends StatefulWidget {
   final InProcess? itemProcess;
@@ -35,7 +35,7 @@ class _CardLoanState extends State<CardLoan> {
           child: Material(
               type: MaterialType.transparency,
               child: ContainerComponent(
-                  color: widget.color ?? ThemeProvider.themeOf(context).data.scaffoldBackgroundColor,
+                  color: widget.color ?? AdaptiveTheme.of(context).theme.scaffoldBackgroundColor,
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: Row(
@@ -55,8 +55,7 @@ class _CardLoanState extends State<CardLoan> {
                               },
                             ),
                           ),
-                          if (widget.itemCurrent != null)
-                        const SizedBox(width: 20),
+                        if (widget.itemCurrent != null) const SizedBox(width: 20),
                         Expanded(
                           flex: 2,
                           child: Column(
@@ -67,17 +66,15 @@ class _CardLoanState extends State<CardLoan> {
                                   Flexible(
                                     child: Text(
                                       widget.itemProcess != null ? widget.itemProcess!.stateName! : widget.itemCurrent!.state!,
-                                      style:  TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color:widget.color!=null? Colors.black:null
-                                      ),
+                                      style: TextStyle(fontWeight: FontWeight.w500, color: widget.color != null ? Colors.black : null),
                                       textAlign: TextAlign.right,
                                     ),
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 20),
-                              Text(widget.itemProcess != null ? widget.itemProcess!.code! : widget.itemCurrent!.code!,style: widget.color!=null? const TextStyle(color: Colors.black):null),
+                              Text(widget.itemProcess != null ? widget.itemProcess!.code! : widget.itemCurrent!.code!,
+                                  style: widget.color != null ? const TextStyle(color: Colors.black) : null),
                               ButtonIconComponent(
                                 text: 'DETALLES',
                                 onPressed: () => onPressed(context),
