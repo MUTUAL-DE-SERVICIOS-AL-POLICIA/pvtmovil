@@ -18,7 +18,7 @@ class ModalInsideModal extends StatefulWidget {
   final bool stateFacialRecognition;
   final String? deviceId;
   final String? firebaseToken;
-  const ModalInsideModal({Key? key, required this.nextScreen, this.deviceId, this.stateFacialRecognition = false, this.firebaseToken}) : super(key: key);
+  const ModalInsideModal({super.key, required this.nextScreen, this.deviceId, this.stateFacialRecognition = false, this.firebaseToken});
 
   @override
   State<ModalInsideModal> createState() => _ModalInsideModalState();

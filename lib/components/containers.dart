@@ -6,12 +6,11 @@ class ContainerComponent extends StatelessWidget {
   final double? height;
   final Color color;
   const ContainerComponent(
-      {Key? key,
+      {super.key,
       required this.child,
       this.width,
       this.height,
-      this.color=Colors.transparent})
-      : super(key: key);
+      this.color=Colors.transparent});
 
   @override
   Widget build(BuildContext context) {

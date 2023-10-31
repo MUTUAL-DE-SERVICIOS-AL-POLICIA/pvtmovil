@@ -31,7 +31,7 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 class NavigatorBar extends StatefulWidget {
   final bool tutorial;
   final StateAplication stateApp;
-  const NavigatorBar({Key? key, this.tutorial = true, required this.stateApp}) : super(key: key);
+  const NavigatorBar({super.key, this.tutorial = true, required this.stateApp});
 
   @override
   State<NavigatorBar> createState() => _NavigatorBarState();
@@ -247,9 +247,7 @@ class _NavigatorBarState extends State<NavigatorBar> {
         onWillPop: _onBackPressed,
         child: Scaffold(
             drawer: const MenuDrawer(),
-            body: Stack(
-              alignment : AlignmentDirectional.bottomStart,
-              children: [
+            body: Stack(alignment: AlignmentDirectional.bottomStart, children: [
               Column(
                 children: [
                   const SizedBox(height: 25),
@@ -316,21 +314,23 @@ class _NavigatorBarState extends State<NavigatorBar> {
       onClickOverlay: (target) {
         debugPrint('onClickOverlay: $target');
       },
-      onSkip: () async {
-        debugPrint("skip");
-        setState(() => stateLoadTutorial = !stateLoadTutorial!);
-        if (await checkVersion(mounted, context)) {
-          if (widget.stateApp == StateAplication.complement) {
-            getEconomicComplement(true);
-            getEconomicComplement(false);
-          } else {
-            debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
-            getContributions();
-            getLoans();
-          }
-        }
-      },
+      onSkip: () => onSkip(),
     )..show(context: context);
+  }
+
+  onSkip() async {
+    debugPrint("skip");
+    setState(() => stateLoadTutorial = !stateLoadTutorial!);
+    if (await checkVersion(mounted, context)) {
+      if (widget.stateApp == StateAplication.complement) {
+        getEconomicComplement(true);
+        getEconomicComplement(false);
+      } else {
+        debugPrint('OBTENINENDO TODOS LOS APORTES Y PRESTAMOS');
+        getContributions();
+        getLoans();
+      }
+    }
   }
 
   void initTargets() {

@@ -12,13 +12,12 @@ class NavigationDown extends StatelessWidget {
   final GlobalKey keyBottomNavigation1;
   final GlobalKey keyBottomNavigation2;
   const NavigationDown(
-      {Key? key,
+      {super.key,
       required this.stateApp,
       required this.currentIndex,
       required this.onTap,
       required this.keyBottomNavigation1,
-      required this.keyBottomNavigation2})
-      : super(key: key);
+      required this.keyBottomNavigation2});
 
   @override
   Widget build(BuildContext context) {

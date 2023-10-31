@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart' as urlauncher;
 
 class CardContact extends StatefulWidget {
   final City city;
-  const CardContact({Key? key, required this.city}) : super(key: key);
+  const CardContact({super.key, required this.city});
 
   @override
   State<CardContact> createState() => _CardContactState();

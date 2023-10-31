@@ -54,7 +54,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final AdaptiveThemeMode? savedThemeMode;
-  const MyApp({Key? key, this.savedThemeMode}) : super(key: key);
+  const MyApp({super.key, this.savedThemeMode});
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
 
 class Muserpol extends StatefulWidget {
   final AdaptiveThemeMode? savedThemeMode;
-  const Muserpol({Key? key, this.savedThemeMode}) : super(key: key);
+  const Muserpol({super.key, this.savedThemeMode});
 
   @override
   State<Muserpol> createState() => _MuserpolState();

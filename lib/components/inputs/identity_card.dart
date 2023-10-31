@@ -16,7 +16,7 @@ class IdentityCard extends StatefulWidget {
   final Function() stateAlphanumericFalse;
   final bool? stateAlphanumeric;
   const IdentityCard(
-      {Key? key,
+      {super.key,
       required this.title,
       required this.dniCtrl,
       required this.dniComCtrl,
@@ -25,8 +25,7 @@ class IdentityCard extends StatefulWidget {
       required this.keyboardType,
       required this.onEditingComplete,
       this.stateAlphanumeric = true,
-      required this.stateAlphanumericFalse})
-      : super(key: key);
+      required this.stateAlphanumericFalse});
 
   @override
   State<IdentityCard> createState() => _IdentityCardState();

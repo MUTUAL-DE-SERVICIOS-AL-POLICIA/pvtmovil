@@ -6,7 +6,7 @@ import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 
 class ScreenContact extends StatefulWidget {
-  const ScreenContact({Key? key}) : super(key: key);
+  const ScreenContact({super.key});
 
   @override
   State<ScreenContact> createState() => _ScreenContactState();

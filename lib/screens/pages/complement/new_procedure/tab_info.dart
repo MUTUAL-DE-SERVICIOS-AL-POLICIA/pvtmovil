@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 class TabInfoEconomicComplement extends StatefulWidget {
   final TextEditingController phoneCtrl;
   final Function() onEditingComplete;
-  const TabInfoEconomicComplement({Key? key, required this.phoneCtrl, required this.onEditingComplete}) : super(key: key);
+  const TabInfoEconomicComplement({super.key, required this.phoneCtrl, required this.onEditingComplete});
 
   @override
   State<TabInfoEconomicComplement> createState() => _TabInfoEconomicComplementState();
@@ -22,7 +22,6 @@ class _TabInfoEconomicComplementState extends State<TabInfoEconomicComplement> {
     return procedureBloc.existInfoComplementInfo && loadingState.stateLoadingProcedure
         ? Column(
             children: [
-              const Text('Número telefónico:'),
               PhoneNumber(focusState:true,phoneCtrl: widget.phoneCtrl, onEditingComplete: () => widget.onEditingComplete()),
               Table(
                   columnWidths: const {

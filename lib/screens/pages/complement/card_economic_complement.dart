@@ -11,7 +11,7 @@ import 'package:open_file_safe/open_file_safe.dart';
 
 class CardEc extends StatefulWidget {
   final Datum? item;
-  const CardEc({Key? key, this.item}) : super(key: key);
+  const CardEc({super.key, this.item});
 
   @override
   State<CardEc> createState() => _CardEcState();

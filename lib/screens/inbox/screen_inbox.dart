@@ -14,7 +14,7 @@ import 'package:muserpol_pvt/database/db_provider.dart';
 import 'package:muserpol_pvt/components/dialog_action.dart';
 
 class ScreenInbox extends StatefulWidget {
-  const ScreenInbox({Key? key}) : super(key: key);
+  const ScreenInbox({super.key});
 
   @override
   State<ScreenInbox> createState() => _ScreenInboxState();

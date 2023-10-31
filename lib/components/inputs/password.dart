@@ -7,7 +7,7 @@ class Password extends StatefulWidget {
   final Function() onEditingComplete;
   final bool? confirm;
   final Function(String)? validator;
-  const Password({Key? key, required this.passwordCtrl, required this.onEditingComplete, this.confirm = false, this.validator}) : super(key: key);
+  const Password({super.key, required this.passwordCtrl, required this.onEditingComplete, this.confirm = false, this.validator});
 
   @override
   State<Password> createState() => _PasswordState();

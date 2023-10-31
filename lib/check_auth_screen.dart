@@ -14,7 +14,7 @@ import 'model/files_model.dart';
 
 //WIDGET: verifica la autenticación del usuario
 class CheckAuthScreen extends StatelessWidget {
-  const CheckAuthScreen({Key? key}) : super(key: key);
+  const CheckAuthScreen({super.key});
   @override
   Widget build(BuildContext context) {
     //llamamos a los proveedores de estados

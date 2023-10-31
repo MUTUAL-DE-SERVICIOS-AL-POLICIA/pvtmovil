@@ -6,7 +6,7 @@ import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:provider/provider.dart';
 
 class CardObservation extends StatelessWidget {
-  const CardObservation({Key? key}) : super(key: key);
+  const CardObservation({super.key});
 
   @override
   Widget build(BuildContext context) {

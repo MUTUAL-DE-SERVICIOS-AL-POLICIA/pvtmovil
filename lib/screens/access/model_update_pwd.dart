@@ -9,8 +9,7 @@ class ModalUpdatePwd extends StatefulWidget {
   final String message;
   final Function(String) onPressed;
   final bool stateLoading;
-  const ModalUpdatePwd({Key? key, required this.message, required this.onPressed, required this.stateLoading})
-      : super(key: key);
+  const ModalUpdatePwd({super.key, required this.message, required this.onPressed, required this.stateLoading});
 
   @override
   State<ModalUpdatePwd> createState() => _ModalUpdatePwdState();

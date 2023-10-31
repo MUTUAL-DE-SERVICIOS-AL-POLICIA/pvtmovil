@@ -40,7 +40,7 @@ import 'package:url_launcher/url_launcher.dart';
 class ScreenLogin extends StatefulWidget {
   final bool stateOfficeVirtual;
   final String deviceId;
-  const ScreenLogin({Key? key, required this.stateOfficeVirtual, required this.deviceId}) : super(key: key);
+  const ScreenLogin({super.key, required this.stateOfficeVirtual, required this.deviceId});
 
   @override
   State<ScreenLogin> createState() => _ScreenLoginState();

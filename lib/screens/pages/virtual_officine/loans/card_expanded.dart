@@ -16,7 +16,7 @@ class CardExpanded extends StatefulWidget {
   final String tag;
   final InProcess? inProcess;
   final Current? itemCurrent;
-  const CardExpanded({Key? key, required this.tag, this.inProcess, this.itemCurrent}) : super(key: key);
+  const CardExpanded({super.key, required this.tag, this.inProcess, this.itemCurrent});
 
   @override
   State<CardExpanded> createState() => _CardExpandedState();

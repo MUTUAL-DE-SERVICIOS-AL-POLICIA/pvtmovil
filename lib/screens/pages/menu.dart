@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MenuDrawer extends StatefulWidget {
-  const MenuDrawer({Key? key}) : super(key: key);
+  const MenuDrawer({super.key});
 
   @override
   State<MenuDrawer> createState() => _MenuDrawerState();
@@ -220,7 +220,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
 class IconName extends StatelessWidget {
   final IconData icon;
   final String text;
-  const IconName({Key? key, required this.icon, required this.text}) : super(key: key);
+  const IconName({super.key, required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {

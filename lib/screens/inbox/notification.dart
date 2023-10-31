@@ -9,7 +9,7 @@ import 'package:muserpol_pvt/components/headers.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
 
 class ScreenNotification extends StatefulWidget {
-  const ScreenNotification({Key? key}) : super(key: key);
+  const ScreenNotification({super.key});
 
   @override
   State<ScreenNotification> createState() => _ScreenNotificationState();

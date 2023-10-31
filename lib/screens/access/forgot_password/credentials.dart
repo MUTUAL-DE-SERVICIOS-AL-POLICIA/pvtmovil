@@ -18,7 +18,7 @@ class CredentialForgotPwd extends StatefulWidget {
   final DateTime currentDate;
   final String dateCtrl;
   const CredentialForgotPwd(
-      {Key? key,
+      {super.key,
       required this.dniCtrl,
       required this.phoneCtrl,
       required this.dniComCtrl,
@@ -26,8 +26,7 @@ class CredentialForgotPwd extends StatefulWidget {
       required this.selectDate,
       required this.sendCredentials,
       required this.currentDate,
-      required this.dateCtrl, required this.stateAlphanumericFalse})
-      : super(key: key);
+      required this.dateCtrl, required this.stateAlphanumericFalse});
 
   @override
   State<CredentialForgotPwd> createState() => _CredentialForgotPwdState();

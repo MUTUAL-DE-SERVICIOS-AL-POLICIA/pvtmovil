@@ -20,7 +20,7 @@ class InputComponent extends StatelessWidget {
   final Function()? onTapInput;
   final bool? stateAutofocus;
   const InputComponent(
-      {Key? key,
+      {super.key,
       required this.labelText,
       required this.keyboardType,
       required this.textInputAction,
@@ -36,8 +36,7 @@ class InputComponent extends StatelessWidget {
       this.textCapitalization = TextCapitalization.none,
       this.onChanged,
       this.onTapInput,
-      this.stateAutofocus = false})
-      : super(key: key);
+      this.stateAutofocus = false});
 
   @override
   Widget build(BuildContext context) {

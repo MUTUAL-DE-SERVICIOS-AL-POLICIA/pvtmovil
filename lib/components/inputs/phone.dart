@@ -6,7 +6,7 @@ class PhoneNumber extends StatelessWidget {
   final TextEditingController phoneCtrl;
   final bool focusState;
   final Function() onEditingComplete;
-  const PhoneNumber({Key? key, required this.phoneCtrl, required this.onEditingComplete, this.focusState = false}) : super(key: key);
+  const PhoneNumber({super.key, required this.phoneCtrl, required this.onEditingComplete, this.focusState = false});
 
   @override
   Widget build(BuildContext context) {

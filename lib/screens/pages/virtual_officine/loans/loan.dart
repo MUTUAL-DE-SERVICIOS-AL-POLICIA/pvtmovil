@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 
 class ScreenPageLoans extends StatefulWidget {
   final GlobalKey keyNotification;
-  const ScreenPageLoans({Key? key, required this.keyNotification}) : super(key: key);
+  const ScreenPageLoans({super.key, required this.keyNotification});
 
   @override
   State<ScreenPageLoans> createState() => _ScreenPageLoansState();

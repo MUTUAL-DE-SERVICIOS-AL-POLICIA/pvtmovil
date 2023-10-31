@@ -7,11 +7,10 @@ class CupertinoPickerWidget extends StatefulWidget {
   final List<String> items;
   final Function(String) onEvent;
   const CupertinoPickerWidget(
-      {Key? key,
+      {super.key,
       required this.title,
       required this.items,
-      required this.onEvent})
-      : super(key: key);
+      required this.onEvent});
 
   @override
   State<CupertinoPickerWidget> createState() => _CupertinoPickerWidgetState();

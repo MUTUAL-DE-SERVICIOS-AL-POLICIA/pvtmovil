@@ -7,7 +7,7 @@ import 'package:muserpol_pvt/swipe/acept_conditions.dart';
 import 'package:muserpol_pvt/swipe/liquid_page.dart';
 
 class PageSlider extends StatefulWidget {
-  const PageSlider({Key? key}) : super(key: key);
+  const PageSlider({super.key});
 
   @override
   State<PageSlider> createState() => _PageSliderState();

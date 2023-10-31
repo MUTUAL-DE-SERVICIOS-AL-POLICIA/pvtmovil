@@ -15,14 +15,13 @@ class HedersComponent extends StatefulWidget {
   final GlobalKey? keyNotification;
   final bool? stateIconMuserpol;
   const HedersComponent(
-      {Key? key,
+      {super.key,
       this.titleHeader,
       this.title = '',
       this.center = false,
       this.stateBell = false,
       this.keyNotification,
-      this.stateIconMuserpol = true})
-      : super(key: key);
+      this.stateIconMuserpol = true});
 
   @override
   State<HedersComponent> createState() => _HedersComponentState();

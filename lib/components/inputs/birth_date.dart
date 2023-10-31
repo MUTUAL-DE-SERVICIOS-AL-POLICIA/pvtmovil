@@ -9,7 +9,7 @@ class BirthDate extends StatefulWidget {
   final DateTime currentDate;
   final Function(String, DateTime, String) selectDate;
   final String dateCtrl;
-  const BirthDate({Key? key, required this.dateState, required this.currentDate, required this.selectDate, required this.dateCtrl}) : super(key: key);
+  const BirthDate({super.key, required this.dateState, required this.currentDate, required this.selectDate, required this.dateCtrl});
 
   @override
   State<BirthDate> createState() => _BirthDateState();

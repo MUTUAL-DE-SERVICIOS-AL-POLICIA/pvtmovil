@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ModalAceptTermin extends StatefulWidget {
-  const ModalAceptTermin({Key? key}) : super(key: key);
+  const ModalAceptTermin({super.key});
 
   @override
   State<ModalAceptTermin> createState() => _ModalAceptTerminState();
@@ -100,7 +100,7 @@ class OptionTermCondition extends StatelessWidget {
   final Function(bool) onChanged;
   final bool state;
   final Widget child;
-  const OptionTermCondition({Key? key, required this.onChanged, required this.state, required this.child}) : super(key: key);
+  const OptionTermCondition({super.key, required this.onChanged, required this.state, required this.child});
 
   @override
   Widget build(BuildContext context) {

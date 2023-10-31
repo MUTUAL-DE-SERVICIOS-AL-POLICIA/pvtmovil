@@ -7,7 +7,7 @@ import 'package:muserpol_pvt/model/qr_model.dart';
 class ScreenWorkFlow extends StatefulWidget {
   final String stateFlow;
   final QrModel qrModel;
-  const ScreenWorkFlow({Key? key, required this.qrModel, required this.stateFlow}) : super(key: key);
+  const ScreenWorkFlow({super.key, required this.qrModel, required this.stateFlow});
   @override
   State<ScreenWorkFlow> createState() => _ScreenWorkFlowState();
 }

@@ -6,7 +6,7 @@ import 'package:muserpol_pvt/components/button.dart';
 class TabInfo extends StatelessWidget {
   final String text;
   final Function() nextScreen;
-  const TabInfo({Key? key, required this.text, required this.nextScreen}) : super(key: key);
+  const TabInfo({super.key, required this.text, required this.nextScreen});
 
   @override
   Widget build(BuildContext context) {

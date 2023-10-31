@@ -10,7 +10,7 @@ class CardLoan extends StatefulWidget {
   final InProcess? itemProcess;
   final Color? color;
   final Current? itemCurrent;
-  const CardLoan({Key? key, this.itemProcess, this.color, this.itemCurrent}) : super(key: key);
+  const CardLoan({super.key, this.itemProcess, this.color, this.itemCurrent});
 
   @override
   State<CardLoan> createState() => _CardLoanState();

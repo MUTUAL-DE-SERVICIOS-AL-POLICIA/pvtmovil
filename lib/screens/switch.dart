@@ -20,7 +20,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:muserpol_pvt/services/services.dart';
 
 class ScreenSwitch extends StatefulWidget {
-  const ScreenSwitch({Key? key}) : super(key: key);
+  const ScreenSwitch({super.key});
 
   @override
   ScreenSwitchState createState() => ScreenSwitchState();

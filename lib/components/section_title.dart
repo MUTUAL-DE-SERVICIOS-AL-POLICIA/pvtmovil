@@ -10,13 +10,12 @@ class SectiontitleComponent extends StatelessWidget {
   final Function() onTap;
   final bool? stateLoading;
   const SectiontitleComponent(
-      {Key? key,
+      {super.key,
       required this.title,
       this.subTitle,
       required this.icon,
       required this.onTap,
-      this.stateLoading = false})
-      : super(key: key);
+      this.stateLoading = false});
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -50,11 +49,10 @@ class SectiontitleSwitchComponent extends StatelessWidget {
   final bool valueSwitch;
   final Function(bool) onChangedSwitch;
   const SectiontitleSwitchComponent(
-      {Key? key,
+      {super.key,
       required this.title,
       required this.valueSwitch,
-      required this.onChangedSwitch})
-      : super(key: key);
+      required this.onChangedSwitch});
   @override
   Widget build(BuildContext context) {
     return ListTile(

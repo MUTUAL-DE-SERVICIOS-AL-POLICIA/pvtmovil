@@ -28,15 +28,14 @@ class ScreenProcedures extends StatefulWidget {
   final Function()? reload;
   final bool? stateLoad;
   const ScreenProcedures(
-      {Key? key,
+      {super.key,
       required this.current,
       required this.scroll,
       this.keyProcedure,
       this.keyRefresh,
       this.keyNotification,
       this.reload,
-      this.stateLoad = false})
-      : super(key: key);
+      this.stateLoad = false});
 
   @override
   State<ScreenProcedures> createState() => _ScreenProceduresState();

@@ -12,11 +12,10 @@ class ImageInput extends StatefulWidget {
   final Function(InputImage, File) onPressed;
   final FileDocument itemFile;
   const ImageInput(
-      {Key? key,
+      {super.key,
       required this.sizeImage,
       required this.onPressed,
-      required this.itemFile})
-      : super(key: key);
+      required this.itemFile});
 
   @override
   ImageInputState createState() => ImageInputState();

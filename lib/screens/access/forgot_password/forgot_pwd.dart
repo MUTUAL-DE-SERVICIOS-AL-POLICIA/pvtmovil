@@ -9,7 +9,7 @@ import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
 
 class ForgotPwd extends StatefulWidget {
-  const ForgotPwd({Key? key}) : super(key: key);
+  const ForgotPwd({super.key});
 
   @override
   State<ForgotPwd> createState() => _ForgotPwdState();

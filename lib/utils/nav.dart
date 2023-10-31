@@ -14,7 +14,7 @@ class CurvedNavigationBar extends StatefulWidget {
   final double height;
 
   CurvedNavigationBar({
-    Key? key,
+    super.key,
     required this.items,
     this.index = 0,
     this.onTap,
@@ -25,8 +25,7 @@ class CurvedNavigationBar extends StatefulWidget {
   })  : letIndexChange = letIndexChange ?? ((_) => true),
         assert(items.isNotEmpty),
         assert(0 <= index && index < items.length),
-        assert(0 <= height && height <= height),
-        super(key: key);
+        assert(0 <= height && height <= height);
 
   @override
   CurvedNavigationBarState createState() => CurvedNavigationBarState();
@@ -227,14 +226,14 @@ class NavButton extends StatelessWidget {
   final double height;
 
   const NavButton({
-    Key? key,
+    super.key,
     required this.onTap,
     required this.position,
     required this.length,
     required this.index,
     required this.child,
     required this.height,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

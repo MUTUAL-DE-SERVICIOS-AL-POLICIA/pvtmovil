@@ -35,13 +35,12 @@ class LiquidPage extends StatelessWidget {
   final String subtitleText;
   final String text;
   const LiquidPage(
-      {Key? key,
+      {super.key,
       required this.imageBackground,
       required this.imageFront,
       required this.titleText,
       required this.subtitleText,
-      required this.text})
-      : super(key: key);
+      required this.text});
 
   @override
   Widget build(BuildContext context) {

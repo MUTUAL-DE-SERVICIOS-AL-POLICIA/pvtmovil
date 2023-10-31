@@ -17,7 +17,7 @@ showSuccessful(
 
 class GifLoadingSuccessful extends StatelessWidget {
   final String text;
-  const GifLoadingSuccessful({Key? key, required this.text}) : super(key: key);
+  const GifLoadingSuccessful({super.key, required this.text});
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

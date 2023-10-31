@@ -10,11 +10,11 @@ class ContributionsYear extends StatelessWidget {
   final String year;
   final List<Contribution> contributions;
   const ContributionsYear({
-    Key? key,
+    super.key,
     required this.year,
     required this.contributions,
     required this.tabController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

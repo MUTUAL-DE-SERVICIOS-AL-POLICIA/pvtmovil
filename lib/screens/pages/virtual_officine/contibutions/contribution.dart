@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 
 class ScreenContributions extends StatefulWidget {
   final GlobalKey? keyNotification;
-  const ScreenContributions({Key? key, required this.keyNotification}) : super(key: key);
+  const ScreenContributions({super.key, required this.keyNotification});
 
   @override
   State<ScreenContributions> createState() => _ScreenContributionsState();

@@ -14,8 +14,7 @@ class CodeForgotPwd extends StatefulWidget {
   final Function() resendcode;
   final Function() correct;
   const CodeForgotPwd(
-      {Key? key, required this.cellPhoneNumber, required this.dni, required this.resendcode, required this.correct, required this.stateSendSms})
-      : super(key: key);
+      {super.key, required this.cellPhoneNumber, required this.dni, required this.resendcode, required this.correct, required this.stateSendSms});
 
   @override
   State<CodeForgotPwd> createState() => _CodeForgotPwdState();

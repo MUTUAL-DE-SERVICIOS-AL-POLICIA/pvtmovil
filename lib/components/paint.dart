@@ -2,7 +2,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 
 class FormButtom extends StatelessWidget {
-  const FormButtom({Key? key}) : super(key: key);
+  const FormButtom({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class FormButtomPainter extends CustomPainter {
 }
 
 class Formtop extends StatelessWidget {
-  const Formtop({Key? key}) : super(key: key);
+  const Formtop({super.key});
 
   @override
   Widget build(BuildContext context) {

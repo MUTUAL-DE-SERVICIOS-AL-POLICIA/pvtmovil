@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class DialogAction extends StatelessWidget {
   final String message;
-  const DialogAction({Key? key, required this.message}) : super(key: key);
+  const DialogAction({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +26,7 @@ class DialogOneFunction extends StatelessWidget {
   final String message;
   final String textButton;
   final Function() onPressed;
-  const DialogOneFunction({Key? key, required this.title, required this.message, required this.textButton, required this.onPressed})
-      : super(key: key);
+  const DialogOneFunction({super.key, required this.title, required this.message, required this.textButton, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +66,7 @@ class DialogTwoAction extends StatefulWidget {
   final Function()? actionCancel;
   final String messageCorrect;
 
-  const DialogTwoAction({Key? key, required this.message, required this.actionCorrect, this.actionCancel, required this.messageCorrect})
-      : super(key: key);
+  const DialogTwoAction({super.key, required this.message, required this.actionCorrect, this.actionCancel, required this.messageCorrect});
 
   @override
   State<DialogTwoAction> createState() => _DialogTwoActionState();

@@ -28,8 +28,7 @@ import 'package:provider/provider.dart';
 
 class StepperProcedure extends StatefulWidget {
   final Function(dynamic) endProcedure;
-  const StepperProcedure({Key? key, required this.endProcedure})
-      : super(key: key);
+  const StepperProcedure({super.key, required this.endProcedure});
 
   @override
   State<StepperProcedure> createState() => _StepperProcedureState();

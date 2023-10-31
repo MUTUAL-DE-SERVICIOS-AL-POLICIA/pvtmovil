@@ -10,7 +10,7 @@ class CardExpanded extends StatefulWidget {
   final String index;
   final Contribution contribution;
   final Color colorRefund;
-  const CardExpanded({Key? key, required this.colorRefund, required this.index, required this.contribution}) : super(key: key);
+  const CardExpanded({super.key, required this.colorRefund, required this.index, required this.contribution});
 
   @override
   State<CardExpanded> createState() => _CardExpandedState();

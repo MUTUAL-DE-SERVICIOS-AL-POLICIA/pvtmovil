@@ -11,7 +11,7 @@ import 'package:muserpol_pvt/components/button.dart';
 
 class ImageCtrlLive extends StatefulWidget {
   final Function(String) sendImage;
-  const ImageCtrlLive({Key? key, required this.sendImage}) : super(key: key);
+  const ImageCtrlLive({super.key, required this.sendImage});
 
   @override
   State<ImageCtrlLive> createState() => _ImageCtrlLiveState();
