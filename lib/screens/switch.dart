@@ -40,7 +40,8 @@ class ScreenSwitchState extends State<ScreenSwitch> {
   final _flashOffController = TextEditingController(text: 'SIN FLASH');
   final _cancelController = TextEditingController(text: 'ATRAS');
 
-  static final _possibleFormats = BarcodeFormat.values.toList()..removeWhere((e) => e == BarcodeFormat.unknown);
+  static final _possibleFormats = BarcodeFormat.values.toList()
+    ..removeWhere((e) => e == BarcodeFormat.unknown);
   List<BarcodeFormat> selectedFormats = [..._possibleFormats];
 
   @override
@@ -65,85 +66,107 @@ class ScreenSwitchState extends State<ScreenSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: _onBackPressed,
-        child: Scaffold(
-          body: Stack(children: [
+    return PopScope(
+      canPop:
+          false, // Evita que el usuario cierre la pantalla con el botón de retroceso
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        bool exitApp = await _onBackPressed();
+        if (exitApp) {
+          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        }
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
             const Formtop(),
             const FormButtom(),
             Padding(
-                padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (statelogin)
-                      GestureDetector(
-                          onTap: () => setState(() => statelogin = !statelogin),
-                          child: Icon(Icons.arrow_back_ios,
-                              color: AdaptiveTheme.of(context).mode.isDark ? Colors.white : Colors.black)),
-                    Image(
-                      image: AssetImage(
-                        AdaptiveTheme.of(context).mode.isDark
-                            ? 'assets/images/muserpol-logo.png'
-                            : 'assets/images/muserpol-logo2.png',
+              padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (statelogin)
+                    GestureDetector(
+                      onTap: () => setState(() => statelogin = !statelogin),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: AdaptiveTheme.of(context).mode.isDark
+                            ? Colors.white
+                            : Colors.black,
                       ),
                     ),
-                    Expanded(
-                      child: Center(
-                        child: SingleChildScrollView(
-                          child: statelogin
-                              ? FadeIn(
-                                  animate: statelogin,
-                                  child: ScreenLogin(deviceId: deviceId!, stateOfficeVirtual: stateOF))
-                              : FadeIn(
-                                  animate: !statelogin,
-                                  child: Column(
-                                    children: [
-                                      // const Text(
-                                      //   'Versión de pruebas',
-                                      //   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, backgroundColor: Color(0xffd9e9e7)),
-                                      //   textAlign: TextAlign.center,
-                                      // ),
-                                      optionTool(
-                                          const Image(
-                                            image: AssetImage(
-                                              'assets/images/couple.png',
-                                            ),
-                                          ),
-                                          'COMPLEMENTO ECONÓMICO',
-                                          'Creación y seguimiento de trámites de Complemento Económico.',
-                                          () => setState(() => stateOF = false),
-                                          false),
-                                      optionTool(
-                                          const Image(
-                                            image: AssetImage(
-                                              'assets/images/computer.png',
-                                            ),
-                                          ),
-                                          'OFICINA VIRTUAL',
-                                          'Control de Aportes y seguimiento de trámites de Préstamos.',
-                                          () => setState(() => stateOF = true),
-                                          false),
-                                      optionTool(
-                                          SvgPicture.asset(
-                                            'assets/icons/qr.svg',
-                                            height: 50.sp,
-                                            colorFilter: const ColorFilter.mode( Color(0xff419388), BlendMode.srcIn),
-                                          ),
-                                          'SEGUIMIENTO CON QR',
-                                          'Seguimiento de trámite de Préstamos y Beneficios Económicos con QR.',
-                                          () => scan(),
-                                          true),
-                                    ],
-                                  ),
+                  Image(
+                    image: AssetImage(
+                      AdaptiveTheme.of(context).mode.isDark
+                          ? 'assets/images/muserpol-logo.png'
+                          : 'assets/images/muserpol-logo2.png',
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: SingleChildScrollView(
+                        child: statelogin
+                            ? FadeIn(
+                                animate: statelogin,
+                                child: ScreenLogin(
+                                  deviceId: deviceId!,
+                                  stateOfficeVirtual: stateOF,
                                 ),
-                        ),
+                              )
+                            : FadeIn(
+                                animate: !statelogin,
+                                child: Column(
+                                  children: [
+                                    optionTool(
+                                      const Image(
+                                        image: AssetImage(
+                                          'assets/images/couple.png',
+                                        ),
+                                      ),
+                                      'COMPLEMENTO ECONÓMICO',
+                                      'Creación y seguimiento de trámites de Complemento Económico.',
+                                      () => setState(() => stateOF = false),
+                                      false,
+                                    ),
+                                    optionTool(
+                                      const Image(
+                                        image: AssetImage(
+                                          'assets/images/computer.png',
+                                        ),
+                                      ),
+                                      'OFICINA VIRTUAL',
+                                      'Control de Aportes y seguimiento de trámites de Préstamos.',
+                                      () => setState(() => stateOF = true),
+                                      false,
+                                    ),
+                                    optionTool(
+                                      SvgPicture.asset(
+                                        'assets/icons/qr.svg',
+                                        height: 50.sp,
+                                        colorFilter: const ColorFilter.mode(
+                                          Color(0xff419388),
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                      'SEGUIMIENTO CON QR',
+                                      'Seguimiento de trámite de Préstamos y Beneficios Económicos con QR.',
+                                      () => scan(),
+                                      true,
+                                    ),
+                                  ],
+                                ),
+                              ),
                       ),
-                    )
-                  ],
-                ))
-          ]),
-        ));
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future scan() async {
@@ -167,15 +190,16 @@ class ScreenSwitchState extends State<ScreenSwitch> {
       if (scanResult!.rawContent != '') {
         debugPrint('scanResult!.rawContent ${scanResult!.rawContent}');
         if (!mounted) return;
-        var response =
-            await serviceMethod(mounted, context, 'get', null, serviceGetQr(scanResult!.rawContent), false, false);
+        var response = await serviceMethod(mounted, context, 'get', null,
+            serviceGetQr(scanResult!.rawContent), false, false);
         if (response != null) {
           if (!mounted) return;
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    ScreenWorkFlow(qrModel: qrModelFromJson(response.body), stateFlow: scanResult!.rawContent)),
+                builder: (context) => ScreenWorkFlow(
+                    qrModel: qrModelFromJson(response.body),
+                    stateFlow: scanResult!.rawContent)),
           );
         } else {
           if (!mounted) return;
@@ -199,13 +223,16 @@ class ScreenSwitchState extends State<ScreenSwitch> {
         builder: (BuildContext context) {
           return ComponentAnimate(
               child: DialogTwoAction(
-                  message: '¿Estás seguro de salir de la aplicación MUSERPOL PVT?',
-                  actionCorrect: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+                  message:
+                      '¿Estás seguro de salir de la aplicación MUSERPOL PVT?',
+                  actionCorrect: () => SystemChannels.platform
+                      .invokeMethod('SystemNavigator.pop'),
                   messageCorrect: 'Salir'));
         });
   }
 
-  Widget optionTool(Widget child, String title, String description, Function() onPress, bool qrstate) {
+  Widget optionTool(Widget child, String title, String description,
+      Function() onPress, bool qrstate) {
     return FadeIn(
         animate: !statelogin,
         duration: const Duration(milliseconds: 500),
@@ -225,13 +252,16 @@ class ScreenSwitchState extends State<ScreenSwitch> {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black),
                       textAlign: TextAlign.center,
                     ),
                     Row(
                       children: [
                         Expanded(
-                          child: Padding(padding: const EdgeInsets.all(10.0), child: child),
+                          child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: child),
                         ),
                         SizedBox(
                           width: MediaQuery.of(context).size.width / 1.5,
