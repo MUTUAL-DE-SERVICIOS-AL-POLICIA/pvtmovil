@@ -223,10 +223,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-              color: const Color(0xff419388).withAlpha(77), width: 2),
+              color: const Color(0xff419388).withValues(alpha: 0.3), width: 2),
           boxShadow: [
             BoxShadow(
-                color: const Color(0xff419388).withAlpha(26),
+                color: const Color(0xff419388).withValues(alpha: 0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 3))
           ],
@@ -257,7 +257,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-              color: const Color(0xff419388).withAlpha(77),
+              color: const Color(0xff419388).withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 2))
         ],
@@ -419,20 +419,23 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xff419388).withAlpha(26),
-            const Color(0xff419388).withAlpha(38)
+            const Color(0xff419388).withValues(alpha: 0.1),
+            const Color(0xff419388).withValues(alpha: 0.15)
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: const Color(0xff419388).withAlpha(77), width: 2),
+        border: Border.all(
+          color: const Color(0xff419388).withValues(alpha: 0.3),
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
-              color: const Color(0xff419388).withAlpha(51),
-              blurRadius: 8,
-              offset: const Offset(0, 3))
+            color: const Color(0xff419388).withValues(alpha: 0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          )
         ],
       ),
       padding: const EdgeInsets.all(20),

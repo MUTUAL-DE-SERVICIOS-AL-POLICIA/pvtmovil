@@ -591,7 +591,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
             border: Border.all(color: const Color(0xff2d6b61), width: 1.5),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withAlpha(13),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2))
             ]),
