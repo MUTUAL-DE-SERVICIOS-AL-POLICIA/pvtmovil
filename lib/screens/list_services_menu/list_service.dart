@@ -32,6 +32,7 @@ class _ScreenListServiceState extends State<ScreenListService> {
   final GlobalKey keyComplemento = GlobalKey();
   final GlobalKey keyAportes = GlobalKey();
   final GlobalKey keyPrestamos = GlobalKey();
+  final GlobalKey keyBeneficios = GlobalKey();
 
   TutorialCoachMark? tutorialCoachMark;
   bool isGridView = false;
@@ -48,7 +49,8 @@ class _ScreenListServiceState extends State<ScreenListService> {
       }
     });
   }
- Future<void> _loadInitialData() async {
+
+  Future<void> _loadInitialData() async {
     final userBloc =
         BlocProvider.of<UserBloc>(context, listen: false).state.user;
 
@@ -69,6 +71,7 @@ class _ScreenListServiceState extends State<ScreenListService> {
         keyComplemento: keyComplemento,
         keyAportes: keyAportes,
         keyPrestamos: keyPrestamos,
+        keyBeneficios: keyBeneficios,
       ),
       colorShadow: const Color(0xff419388),
       textSkip: "OMITIR",
@@ -129,8 +132,7 @@ class _ScreenListServiceState extends State<ScreenListService> {
         key: keyComplemento,
         image: 'assets/images/icon_complement_economic.png',
         title: 'Complemento Económico',
-        description:
-            'Creación e historial de trámites de Complemento Económico.',
+        description: 'Solicitud y seguimiento de trámites.',
         onPressed: () async {
           final userBloc =
               BlocProvider.of<UserBloc>(context, listen: false).state.user;
@@ -191,16 +193,14 @@ class _ScreenListServiceState extends State<ScreenListService> {
         key: keyAportes,
         image: 'assets/images/icon_contributions.png',
         title: 'Certificación de Aportes',
-        description:
-            'Consulta y descarga tus aportes individuales de activo o pasivo.',
+        description: 'Visualización de aportes sector activo y pasivo.',
         onPressed: () => _goToModule(1),
       ),
       _ServiceData(
         key: keyPrestamos,
         image: 'assets/images/icon_loans.png',
         title: 'Préstamos',
-        description:
-            'Consulta de historial de préstamos, Realiza tu calculo para tu nuevo préstamo.',
+        description: 'Seguimiento de trámites y evaluación referencial.',
         onPressed: () => _goToModule(2),
       ),
     ];
@@ -257,7 +257,6 @@ class _ScreenListServiceState extends State<ScreenListService> {
                         ),
                       ),
                     ),
-
                     IconButton(
                       icon: Icon(
                         isGridView ? Icons.view_list : Icons.grid_view,
@@ -289,7 +288,8 @@ class _ScreenListServiceState extends State<ScreenListService> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: services.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 16,
@@ -316,7 +316,6 @@ class _ScreenListServiceState extends State<ScreenListService> {
                   ),
                 ),
               ],
-
               SizedBox(height: 20.h),
             ],
           ),
@@ -349,39 +348,56 @@ class ServiceGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    const kPrimaryGreen = Color(0xff419388);
+
     return InkWell(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(20),
       onTap: service.onPressed,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xffd9e9e7),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
+          color: isDarkMode ? const Color(0xff2a4f49) : kPrimaryGreen,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
             BoxShadow(
               blurRadius: 10,
               spreadRadius: 1,
-              offset: Offset(0, 4),
-              color: Colors.black26,
+              offset: const Offset(0, 4),
+              color: Colors.black.withAlpha((0.25 * 255).toInt()),
             ),
           ],
         ),
-        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              service.image,
-              width: 64,
-              height: 64,
+            // Imagen en círculo semitransparente
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withAlpha((0.35 * 255).toInt()),
+              ),
+              padding: const EdgeInsets.all(10),
+              child: Image.asset(
+                service.image,
+                fit: BoxFit.contain,
+              ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              service.title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+            const SizedBox(height: 10),
+            // Título sin fondo y letras claras
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Text(
+                service.title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

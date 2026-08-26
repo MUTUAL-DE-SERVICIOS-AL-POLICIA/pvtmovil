@@ -5,6 +5,7 @@ import 'package:muserpol_pvt/model/saved_loan_evaluation.dart';
 import 'package:muserpol_pvt/services/evaluation_service.dart';
 
 import 'package:muserpol_pvt/bloc/loan_pre_evaluation/loan_pre_evaluation_bloc.dart';
+import 'package:muserpol_pvt/utils/logger.dart'; // SEGURIDAD: Import para logging seguro
 import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/screens/pages/loans_pages/loan_pre_evaluation/calculation_result_screen.dart';
 
@@ -87,7 +88,8 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
         }
       }
     } catch (e) {
-      print('Error al limpiar evaluaciones obsoletas: $e');
+      // SEGURIDAD: Uso de AppLog para evitar registros en producción
+      AppLog.d('Error al limpiar evaluaciones obsoletas: $e');
     }
   }
 
@@ -223,11 +225,9 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? theme.scaffoldBackgroundColor : Colors.grey.shade50,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Mis Evaluaciones'),
         centerTitle: true,
@@ -236,7 +236,7 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _evaluations.isEmpty
               ? _buildEmptyState(theme)
-              : _buildEvaluationsList(theme, isDark),
+              : _buildEvaluationsList(theme),
     );
   }
 
@@ -272,7 +272,7 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
             Text(
               'Realiza una evaluación preliminar y guárdala para verla aquí',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[600],
+                color: theme.textTheme.bodySmall?.color,
               ),
               textAlign: TextAlign.center,
             ),
@@ -282,7 +282,7 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
     );
   }
 
-  Widget _buildEvaluationsList(ThemeData theme, bool isDark) {
+  Widget _buildEvaluationsList(ThemeData theme) {
     final sortedEvaluations = List<SavedLoanEvaluation>.from(_evaluations)
       ..sort((a, b) {
         if (a.isFavorite && !b.isFavorite) return -1;
@@ -297,7 +297,7 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
         itemCount: sortedEvaluations.length,
         itemBuilder: (context, index) {
           final evaluation = sortedEvaluations[index];
-          return _buildEvaluationCard(evaluation, theme, isDark);
+          return _buildEvaluationCard(evaluation, theme);
         },
       ),
     );
@@ -306,7 +306,6 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
   Widget _buildEvaluationCard(
     SavedLoanEvaluation evaluation,
     ThemeData theme,
-    bool isDark,
   ) {
     final daysSinceCreation =
         DateTime.now().difference(evaluation.createdAt).inDays;
@@ -315,12 +314,12 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade800 : Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: evaluation.isFavorite
               ? Colors.amber.shade400
-              : (isDark ? Colors.grey.shade700 : Colors.grey.shade200),
+              : theme.dividerColor,
           width: evaluation.isFavorite ? 2 : 1,
         ),
         boxShadow: [
@@ -338,7 +337,7 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.orange.shade50,
+                color: Colors.orange.withValues(alpha: 0.1),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
@@ -366,8 +365,8 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: evaluation.isFavorite
-                  ? Colors.amber.shade50
-                  : (isDark ? Colors.grey.shade700 : Colors.grey.shade50),
+                  ? Colors.amber.withValues(alpha: 0.1)
+                  : theme.cardColor.withValues(alpha: 0.5),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -380,7 +379,7 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
                     evaluation.isFavorite ? Icons.star : Icons.star_border,
                     color: evaluation.isFavorite
                         ? Colors.amber.shade700
-                        : Colors.grey.shade400,
+                        : theme.disabledColor,
                   ),
                   onPressed: () => _toggleFavorite(evaluation.id),
                 ),
@@ -398,7 +397,7 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
                       Text(
                         _formatDate(evaluation.createdAt),
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.grey.shade600,
+                          color: theme.textTheme.bodySmall?.color,
                         ),
                       ),
                     ],
@@ -445,7 +444,7 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? Colors.grey.shade700 : Colors.grey.shade50,
+              color: theme.cardColor,
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16),
@@ -500,7 +499,9 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
         Icon(
           icon,
           size: 20,
-          color: isHighlighted ? Colors.green[600] : Colors.grey.shade600,
+          color: isHighlighted 
+              ? theme.colorScheme.primary 
+              : theme.iconTheme.color,
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -510,7 +511,7 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
               Text(
                 label,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.grey.shade600,
+                  color: theme.textTheme.bodySmall?.color,
                 ),
               ),
               const SizedBox(height: 2),
@@ -518,7 +519,9 @@ class _SavedEvaluationsScreenState extends State<SavedEvaluationsScreen> {
                 value,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: isHighlighted ? FontWeight.bold : FontWeight.w600,
-                  color: isHighlighted ? Colors.green[700] : null,
+                  color: isHighlighted 
+                      ? theme.colorScheme.primary 
+                      : theme.textTheme.bodyMedium?.color,
                 ),
               ),
             ],

@@ -3,10 +3,22 @@ package com.muserpol.pvt
 import android.app.NotificationManager
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import androidx.core.view.WindowCompat
 import io.flutter.embedding.android.FlutterFragmentActivity
 
 class MainActivity: FlutterFragmentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        // Habilitar edge-to-edge para Android 15+ (API 35)
+        // Usamos 35 directamente ya que VANILLA_ICE_CREAM puede no estar disponible
+        if (Build.VERSION.SDK_INT >= 35) {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+        }
+    }
 
     override fun onResume() {
         super.onResume()

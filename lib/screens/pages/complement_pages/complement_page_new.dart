@@ -9,7 +9,6 @@ import 'package:muserpol_pvt/bloc/user/user_bloc.dart';
 import 'package:muserpol_pvt/components/button.dart';
 import 'package:muserpol_pvt/components/card_observation.dart';
 import 'package:muserpol_pvt/components/susessful.dart';
-import 'package:muserpol_pvt/main.dart';
 import 'package:muserpol_pvt/model/procedure_model.dart';
 import 'package:muserpol_pvt/provider/app_state.dart';
 import 'package:muserpol_pvt/provider/files_state.dart';
@@ -180,19 +179,43 @@ class _ScreenComplementNewState extends State<ScreenComplementNew> {
         Provider.of<TabProcedureState>(context, listen: false);
     return showSuccessful(context, 'Trámite registrado correctamente',
         () async {
-      if (!prefs!.getBool('isDoblePerception')!) {
-        String pathFile = await saveFile(
-            'Documents',
-            'sol_eco_com_${DateTime.now().millisecondsSinceEpoch}.pdf',
-            response.bodyBytes);
-        await OpenFilex.open(pathFile);
-      }
+      // Siempre abrimos el PDF que llega en la respuesta del POST (ya sea 1 o tenga ambas páginas)
+      String pathFile = await saveFile(
+          'Documents',
+          'sol_eco_com_${DateTime.now().millisecondsSinceEpoch}.pdf',
+          response.bodyBytes);
+      await OpenFilex.open(pathFile);
 
       setState(() {
         tabProcedureState.updateTabProcedure(0);
         filesState.clearFiles();
       });
       procedureBloc.add(UpdateStateComplementInfo(false));
+      
+      // Recargamos la lista
+      await getEconomicComplement(refresh: true);
+
+      // Si es doble percepción y queremos asegurarnos de descargar ambos PDFs individuales
+      // simulando el botón "Ver en PDF", descomenta el siguiente bloque:
+      /*
+      if (prefs!.getBool('isDoblePerception')!) {
+        if (procedureBloc.state.currentProcedures != null) {
+          for (var item in procedureBloc.state.currentProcedures!) {
+            if (item.printable == true) {
+              var responsePdf = await serviceMethod(mounted, context, 'get', null,
+                  serviceGetPDFEC(item.id!), true, true);
+              if (responsePdf != null) {
+                String pathItemFile = await saveFile(
+                    'Documents',
+                    'eco_com_${item.title!.replaceAll(' ', '_').replaceAll('/', '_').toLowerCase()}_${item.id}.pdf',
+                    responsePdf.bodyBytes);
+                await OpenFilex.open(pathItemFile);
+              }
+            }
+          }
+        }
+      }
+      */
     });
   }
 
@@ -254,7 +277,10 @@ class _ScreenComplementNewState extends State<ScreenComplementNew> {
   return Center(
     child: IconBtnComponent(
       iconText: 'assets/icons/reload.svg',
-      onPressed: () => getEconomicComplement(refresh: true),
+      onPressed: () async {
+        await getProcessingPermit();
+        await getEconomicComplement(refresh: true);
+      },
     ),
   );
 }

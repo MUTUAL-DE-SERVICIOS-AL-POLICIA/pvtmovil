@@ -180,6 +180,7 @@ class Contribution {
     this.reimbursementTotal,
     required this.total,
     required this.type,
+    this.typePayroll,
   });
 
   String state;
@@ -193,6 +194,7 @@ class Contribution {
   String? reimbursementTotal;
   String? total;
   String? type;
+  String? typePayroll;
 
   Contribution copyWith({
     String? state,
@@ -206,6 +208,7 @@ class Contribution {
     String? reimbursementTotal,
     String? total,
     String? type,
+    String? typePayroll,
   }) =>
       Contribution(
         state: state ?? this.state,
@@ -219,6 +222,7 @@ class Contribution {
         reimbursementTotal: reimbursementTotal ?? this.reimbursementTotal,
         total: total ?? this.total,
         type: type ?? this.type,
+        typePayroll: typePayroll ?? this.typePayroll,
       );
 
   factory Contribution.fromJson(Map<String, dynamic> json) {
@@ -252,6 +256,7 @@ class Contribution {
       reimbursementTotal: json["reimbursement_total"],
       total: json["total"],
       type: json["type"],
+      typePayroll: json["type_payroll"],
     );
   }
 
@@ -268,5 +273,6 @@ class Contribution {
         "reimbursement_total": reimbursementTotal,
         "total": total,
         "type": type,
+        "type_payroll": typePayroll,
       };
 }

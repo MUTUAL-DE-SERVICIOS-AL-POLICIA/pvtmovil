@@ -1,7 +1,6 @@
 import 'dart:io';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as p;
-import 'package:flutter/material.dart';
 import 'package:muserpol_pvt/database/notification_model.dart';
 import 'package:muserpol_pvt/database/affiliate_model.dart';
 export 'package:muserpol_pvt/database/notification_model.dart';
@@ -9,6 +8,8 @@ export 'package:muserpol_pvt/database/affiliate_model.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:sqflite/sqflite.dart';
+import 'package:muserpol_pvt/utils/logger.dart'; // SEGURIDAD: Import para logging seguro
+
 
 class DBProvider {
   static Database? _database;
@@ -121,7 +122,10 @@ class DBProvider {
     final noti = await db
         .query('notification', where: 'content = ?', whereArgs: [content]);
     if (noti.isNotEmpty) {
-      debugPrint('noti ${noti[0]}');
+// ignore: avoid_print
+      // SEGURIDAD: Se usa AppLog para evitar que esta información se registre en producción
+      AppLog.d('noti ${noti[0]}');
+
       final newNoti = Map.of(noti[0]);
       newNoti['read'] = 'true';
       final res = await db.update('notification', newNoti,

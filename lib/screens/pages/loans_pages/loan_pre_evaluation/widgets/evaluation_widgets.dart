@@ -11,19 +11,23 @@ class EvaluationWidgets {
 
   /// Header con gradiente común
   static Widget gradientHeader({
+    required BuildContext context,
     required String title,
     String? subtitle,
     required IconData icon,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFFB2DFDB), // Fondo sólido, sin gradiente
+        color: isDark ? const Color(0xff419388) : const Color(0xFFB2DFDB), // Fondo sólido
         borderRadius: BorderRadius.circular(20),
+        border: isDark ? Border.all(color: const Color(0xff419388).withValues(alpha: 0.5), width: 1.5) : null,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF80CBC4).withValues(alpha: 0.23),
-            blurRadius: 15,
+            color: isDark ? Colors.black.withValues(alpha: 0.3) : const Color(0xFF80CBC4).withValues(alpha: 0.23),
+            blurRadius: isDark ? 12 : 15,
             offset: const Offset(0, 5),
           )
         ],
@@ -33,14 +37,14 @@ class EvaluationWidgets {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: const Color(0xFF00695C), size: 24.sp),
+              Icon(icon, color: isDark ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF00695C), size: 24.sp),
               const SizedBox(width: 12),
               Text(
                 title,
                 style: TextStyle(
                   fontSize: 23.sp,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF00695C),
+                  color: isDark ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF00695C),
                 ),
               ),
             ],
@@ -50,7 +54,7 @@ class EvaluationWidgets {
             Text(
               subtitle,
               style: TextStyle(
-                color: const Color(0xFF00695C).withValues(alpha: 0.9),
+                color: isDark ? Colors.white.withValues(alpha: 0.7) : const Color(0xFF00695C).withValues(alpha: 0.9),
                 fontSize: 15.sp,
               ),
               textAlign: TextAlign.center,
@@ -479,11 +483,15 @@ class EvaluationWidgets {
 
   /// Widget de información de pago (versión simplificada sin card externa)
   static Widget paymentSummary({
+    required BuildContext context,
     required double monthlyPayment,
     required double amount,
     required int term,
     required LoanParameters params,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     final termType = EvaluationService.getTermType(params.loanMonthTerm);
     final paymentFrequency =
         EvaluationService.getPaymentFrequency(params.loanMonthTerm);
@@ -494,15 +502,22 @@ class EvaluationWidgets {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [
-                Color(0xFFE0F2F1),
-                Color(0xFFB2DFDB)
-              ], // Verde menta claro
+            gradient: LinearGradient(
+              colors: isDark
+                  ? [
+                      Colors.teal.shade900.withValues(alpha: 0.4),
+                      Colors.teal.shade800.withValues(alpha: 0.4)
+                    ]
+                  : [
+                      const Color(0xFFE0F2F1),
+                      const Color(0xFFB2DFDB)
+                    ], // Verde menta claro
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: const Color(0xFF80CBC4).withValues(alpha: 0.39),
+              color: isDark
+                  ? Colors.teal.shade600
+                  : const Color(0xFF80CBC4).withValues(alpha: 0.39),
               width: 2,
             ),
           ),
@@ -511,14 +526,14 @@ class EvaluationWidgets {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.payments,
-                      color: Color(0xFF00695C), size: 22),
+                   Icon(Icons.payments,
+                      color: isDark ? Colors.teal.shade200 : const Color(0xFF00695C), size: 22),
                   const SizedBox(width: 8),
                   Text(
                     'CUOTA ${paymentFrequency.toUpperCase()}',
                     style: TextStyle(
                       fontSize: 14.sp,
-                      color: const Color(0xFF00695C),
+                      color: isDark ? Colors.teal.shade200 : const Color(0xFF00695C),
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
                     ),
@@ -531,7 +546,7 @@ class EvaluationWidgets {
                 style: TextStyle(
                   fontSize: 40.sp,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF004D40),
+                  color: isDark ? Colors.white : const Color(0xFF004D40),
                   letterSpacing: -0.5,
                 ),
               ),
@@ -540,7 +555,9 @@ class EvaluationWidgets {
                 'Bolivianos',
                 style: TextStyle(
                   fontSize: 13.sp,
-                  color: const Color(0xFF00695C).withValues(alpha: 0.8),
+                  color: isDark
+                      ? Colors.teal.shade100
+                      : const Color(0xFF00695C).withValues(alpha: 0.8),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -552,21 +569,21 @@ class EvaluationWidgets {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           child: Column(
             children: [
-              _detailRow(Icons.attach_money, 'Monto',
+              _detailRow(context, Icons.attach_money, 'Monto',
                   '${EvaluationService.formatMoney(amount)} Bs'),
               const SizedBox(height: 12),
-              _detailRow(Icons.calendar_today, 'Plazo', '$term $termType'),
+              _detailRow(context, Icons.calendar_today, 'Plazo', '$term $termType'),
               const SizedBox(height: 12),
-              _detailRow(Icons.percent, 'Interés Anual',
+              _detailRow(context, Icons.percent, 'Interés Anual',
                   '${params.annualInterest.toStringAsFixed(2)}%'),
               const SizedBox(height: 12),
-              _detailRow(Icons.people, 'Garantes', '${params.guarantors}'),
+              _detailRow(context, Icons.people, 'Garantes', '${params.guarantors}'),
             ],
           ),
         ),
@@ -574,17 +591,20 @@ class EvaluationWidgets {
     );
   }
 
-  static Widget _detailRow(IconData icon, String label, String value) {
+  static Widget _detailRow(BuildContext context, IconData icon, String label, String value) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Row(
       children: [
-        Icon(icon, color: const Color(0xff419388), size: 20),
+        Icon(icon, color: isDark ? Colors.teal.shade300 : const Color(0xff419388), size: 20),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             label,
             style: TextStyle(
               fontSize: 16.sp,
-              color: Colors.grey.shade600,
+              color: theme.textTheme.bodySmall?.color,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -594,7 +614,7 @@ class EvaluationWidgets {
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
-            color: const Color(0xff2d6b61),
+            color: theme.primaryColorDark,
           ),
         ),
       ],
@@ -638,12 +658,16 @@ class EvaluationWidgets {
 
   /// Widget de selector de plazo
   static Widget termSelector({
+    required BuildContext context,
     required int currentTerm,
     required int minTerm,
     required int maxTerm,
     required int loanMonthTerm,
     required Function(int) onTermChanged,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     final termType = EvaluationService.getTermType(loanMonthTerm);
     final termTypeSingular =
         EvaluationService.getTermTypeSingular(loanMonthTerm);
@@ -656,13 +680,14 @@ class EvaluationWidgets {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 17.sp,
-            color: const Color(0xff2d6b61),
+            color: theme.primaryColorDark,
           ),
         ),
         const SizedBox(height: 12),
         Row(
           children: [
             _termButton(
+              context,
               Icons.remove,
               currentTerm > minTerm,
               () => onTermChanged(currentTerm - 1),
@@ -673,10 +698,12 @@ class EvaluationWidgets {
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.orange.shade100, Colors.orange.shade50],
+                    colors: isDark
+                        ? [Colors.orange.shade900.withValues(alpha: 0.3), Colors.orange.shade800.withValues(alpha: 0.3)]
+                        : [Colors.orange.shade100, Colors.orange.shade50],
                   ),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.orange.shade200),
+                  border: Border.all(color: isDark ? Colors.orange.shade800 : Colors.orange.shade200),
                 ),
                 child: Center(
                   child: Text(
@@ -684,7 +711,7 @@ class EvaluationWidgets {
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
-                      color: Colors.orange.shade800,
+                      color: isDark ? Colors.orange.shade300 : Colors.orange.shade800,
                     ),
                   ),
                 ),
@@ -692,6 +719,7 @@ class EvaluationWidgets {
             ),
             const SizedBox(width: 12),
             _termButton(
+              context,
               Icons.add,
               currentTerm < maxTerm,
               () => onTermChanged(currentTerm + 1),
@@ -703,9 +731,9 @@ class EvaluationWidgets {
           value: currentTerm.toDouble(),
           min: minTerm.toDouble(),
           max: maxTerm.toDouble(),
-          divisions: maxTerm - minTerm,
-          activeColor: Colors.orange.shade600,
-          inactiveColor: Colors.orange.shade200,
+          divisions: maxTerm > minTerm ? maxTerm - minTerm : 1,
+          activeColor: isDark ? Colors.orange.shade400 : Colors.orange.shade600,
+          inactiveColor: isDark ? Colors.orange.shade900.withValues(alpha: 0.5) : Colors.orange.shade200,
           onChanged: (v) => onTermChanged(v.round()),
         ),
         Row(
@@ -715,7 +743,7 @@ class EvaluationWidgets {
               '$minTerm $termTypeSingular',
               style: TextStyle(
                 fontSize: 13.sp,
-                color: Colors.orange.shade700,
+                color: isDark ? Colors.orange.shade300 : Colors.orange.shade700,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -723,7 +751,7 @@ class EvaluationWidgets {
               '$maxTerm $termType',
               style: TextStyle(
                 fontSize: 13.sp,
-                color: Colors.orange.shade700,
+                color: isDark ? Colors.orange.shade300 : Colors.orange.shade700,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -734,15 +762,16 @@ class EvaluationWidgets {
   }
 
   static Widget _termButton(
-      IconData icon, bool enabled, VoidCallback onPressed) {
+      BuildContext context, IconData icon, bool enabled, VoidCallback onPressed) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ElevatedButton(
       onPressed: enabled ? onPressed : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.orange.shade300,
+        backgroundColor: isDark ? Colors.orange.shade700 : Colors.orange.shade300,
         shape: const CircleBorder(),
         padding: const EdgeInsets.all(12),
         elevation: 0,
-        disabledBackgroundColor: Colors.grey.shade300,
+        disabledBackgroundColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
       ),
       child: Icon(icon, size: 20, color: Colors.white),
     );
@@ -754,22 +783,36 @@ class EvaluationWidgets {
 
   /// Card de modalidad para grid o lista
   static Widget modalityCard(
+    BuildContext context,
     LoanModalityNew modality, {
     required bool isGridView,
     required VoidCallback onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: isGridView ? 4 : 0,
         vertical: 8,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8F5E8),
+        color: isDark ? null : const Color(0xFFE8F5E8),
+        gradient: isDark 
+            ? const LinearGradient(
+                colors: [Color(0xFF264035), Color(0xFF1A3026)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : null,
         borderRadius: BorderRadius.circular(20),
+        border: isDark 
+            ? Border.all(color: const Color(0xff419388).withValues(alpha: 0.6), width: 1.5)
+            : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 10,
+            color: isDark 
+                ? Colors.black.withValues(alpha: 0.3) 
+                : Colors.black.withValues(alpha: 0.08),
+            blurRadius: isDark ? 12 : 10,
             offset: const Offset(0, 4),
           )
         ],
@@ -782,15 +825,17 @@ class EvaluationWidgets {
           child: Padding(
             padding: EdgeInsets.all(isGridView ? 12 : 20),
             child: isGridView
-                ? _buildModalityGridContent(modality)
-                : _buildModalityListContent(modality),
+                ? _buildModalityGridContent(context, modality)
+                : _buildModalityListContent(context, modality),
           ),
         ),
       ),
     );
   }
 
-  static Widget _buildModalityGridContent(LoanModalityNew modality) {
+  static Widget _buildModalityGridContent(BuildContext context, LoanModalityNew modality) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF2D5F4C);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -799,7 +844,7 @@ class EvaluationWidgets {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 15.sp,
-            color: const Color(0xFF2D5F4C),
+            color: textColor,
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -810,16 +855,19 @@ class EvaluationWidgets {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildModalityInfoRow(
+                context,
                 Icons.percent,
                 'Interés Anual',
                 '${modality.parameters.annualInterest.toStringAsFixed(2)}%',
               ),
               _buildModalityInfoRow(
+                context,
                 Icons.people,
                 'Garantes',
                 '${modality.parameters.guarantors}',
               ),
               _buildModalityInfoRow(
+                context,
                 Icons.calendar_today,
                 'Plazo',
                 '${modality.parameters.minimumTermModality}-${modality.parameters.maximumTermModality} ${EvaluationService.getTermType(modality.parameters.loanMonthTerm)}',
@@ -831,7 +879,9 @@ class EvaluationWidgets {
     );
   }
 
-  static Widget _buildModalityListContent(LoanModalityNew modality) {
+  static Widget _buildModalityListContent(BuildContext context, LoanModalityNew modality) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF2D5F4C);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -840,7 +890,7 @@ class EvaluationWidgets {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 17.sp,
-            color: const Color(0xFF2D5F4C),
+            color: textColor,
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -850,6 +900,7 @@ class EvaluationWidgets {
           children: [
             Expanded(
               child: _buildModalityInfoCell(
+                context,
                 Icons.percent,
                 'Interés Anual',
                 '${modality.parameters.annualInterest.toStringAsFixed(2)}%',
@@ -858,6 +909,7 @@ class EvaluationWidgets {
             const SizedBox(width: 12),
             Expanded(
               child: _buildModalityInfoCell(
+                context,
                 Icons.people,
                 'Garantes',
                 '${modality.parameters.guarantors}',
@@ -867,6 +919,7 @@ class EvaluationWidgets {
         ),
         const SizedBox(height: 12),
         _buildModalityInfoCell(
+          context,
           Icons.calendar_today,
           'Plazo',
           '${modality.parameters.minimumTermModality}-${modality.parameters.maximumTermModality} ${EvaluationService.getTermType(modality.parameters.loanMonthTerm)}',
@@ -876,11 +929,14 @@ class EvaluationWidgets {
   }
 
   static Widget _buildModalityInfoRow(
-      IconData icon, String label, String value) {
+      BuildContext context, IconData icon, String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white.withValues(alpha: 0.8) : const Color(0xFF2D5F4C);
+    final iconColor = isDark ? Colors.white.withValues(alpha: 0.7) : const Color(0xFF419388);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 15, color: const Color(0xFF419388)),
+        Icon(icon, size: 15, color: iconColor),
         const SizedBox(width: 4),
         Expanded(
           child: Column(
@@ -891,7 +947,7 @@ class EvaluationWidgets {
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF2D5F4C),
+                  color: textColor,
                 ),
               ),
               Text(
@@ -899,7 +955,7 @@ class EvaluationWidgets {
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.normal,
-                  color: const Color(0xFF2D5F4C),
+                  color: textColor,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -912,20 +968,23 @@ class EvaluationWidgets {
   }
 
   static Widget _buildModalityInfoCell(
-      IconData icon, String label, String value) {
+      BuildContext context, IconData icon, String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white.withValues(alpha: 0.8) : const Color(0xFF2D5F4C);
+    final iconColor = isDark ? Colors.white.withValues(alpha: 0.7) : const Color(0xFF419388);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, size: 15, color: const Color(0xFF419388)),
+            Icon(icon, size: 15, color: iconColor),
             const SizedBox(width: 4),
             Text(
               label,
               style: TextStyle(
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF2D5F4C),
+                color: textColor,
               ),
             ),
           ],
@@ -936,7 +995,7 @@ class EvaluationWidgets {
           style: TextStyle(
             fontSize: 15.sp,
             fontWeight: FontWeight.normal,
-            color: const Color(0xFF2D5F4C),
+            color: textColor,
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -947,11 +1006,13 @@ class EvaluationWidgets {
 
   /// Sección completa de modalidades con toggle de vista
   static Widget modalitiesSection({
+    required BuildContext context,
     required List<LoanModalityNew> modalities,
     required bool isGridView,
     required VoidCallback onToggleView,
     required Function(LoanModalityNew) onModalitySelected,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         Padding(
@@ -964,13 +1025,13 @@ class EvaluationWidgets {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20.sp,
-                  color: const Color(0xff2d6b61),
+                  color: isDark ? Colors.white.withValues(alpha: 0.9) : const Color(0xff2d6b61),
                 ),
               ),
               IconButton(
                 icon: Icon(
                   isGridView ? Icons.view_list : Icons.grid_view,
-                  color: const Color(0xff419388),
+                  color: isDark ? Colors.white.withValues(alpha: 0.8) : const Color(0xff419388),
                 ),
                 onPressed: onToggleView,
                 tooltip: isGridView ? 'Ver como lista' : 'Ver como cuadrícula',
@@ -1003,6 +1064,7 @@ class EvaluationWidgets {
       ),
       itemCount: modalities.length,
       itemBuilder: (context, index) => modalityCard(
+        context,
         modalities[index],
         isGridView: true,
         onTap: () => onModalitySelected(modalities[index]),
@@ -1021,6 +1083,7 @@ class EvaluationWidgets {
       itemBuilder: (context, index) => Padding(
         padding: const EdgeInsets.only(bottom: 16),
         child: modalityCard(
+          context,
           modalities[index],
           isGridView: false,
           onTap: () => onModalitySelected(modalities[index]),

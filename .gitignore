@@ -4,6 +4,7 @@
 *.pyc
 *.swp
 *.png
+!assets/**/*.png
 .DS_Store
 .atom/
 .buildlog/
@@ -35,7 +36,6 @@ migrate_working_dir/
 /build/
 
 # Web related
-lib/generated_plugin_registrant.dart
 
 # Symbolication related
 app.*.symbols
@@ -55,3 +55,5 @@ app.*.map.json
 
 
 /android/key.properties
+/android/app/keystore.jks
+*.jks

@@ -91,19 +91,33 @@ class _ScreenFormLoginState extends State<ScreenFormLogin> {
 
   Future<void> _authenticate() async {
     final authService = Provider.of<AuthService>(context, listen: false);
+    // Verificar si el dispositivo tiene biometría disponible
+    if (!await auth.canCheckBiometrics) {
+      debugPrint('No hay biometría disponible');
+      return;
+    }
+    // Verificar si el dispositivo es compatible con autenticación biométrica
+    if (!await auth.isDeviceSupported()) {
+      debugPrint('Dispositivo no soportado');
+      return;
+    }
+    // Verificar si el dispositivo tiene biometría configurada (huella, rostro, etc.)
+    final availableBiometrics = await auth.getAvailableBiometrics();
+    if (availableBiometrics.isEmpty) {
+      debugPrint('No hay biometría configurada');
+      return;
+    }
     bool autenticated = false;
     try {
       autenticated = await auth.authenticate(
           localizedReason: 'MUSERPOL',
+          biometricOnly: true,
           authMessages: [
             const AndroidAuthMessages(
               signInTitle: 'Autenticación Biometrica',
               cancelButton: 'No Gracias',
-              biometricHint: 'Verificar Identidad',
             ),
-          ],
-          options: const AuthenticationOptions(
-              stickyAuth: true, biometricOnly: true));
+          ]);
     } on PlatformException catch (e) {
       debugPrint('$e');
       return;

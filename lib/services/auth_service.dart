@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Servicio de autenticación y almacenamiento seguro
-/// Esta clase se encarga de guardar y recuperar tokens, información del usuario
-/// y datos del dispositivo de manera segura utilizando `flutter_secure_storage`.
+/// Usa flutter_secure_storage con AES-GCM EXCLUSIVAMENTE (sin CBC)
+/// Configuración forzada para evitar vulnerabilidades de padding oracle
 class AuthService extends ChangeNotifier {
-  /// Instancia del almacenamiento seguro
-  final storage = const FlutterSecureStorage();
+  
+  /// Instancia de flutter_secure_storage con AES-GCM forzado
+  /// IMPORTANTE: Usa SOLO AES-GCM, nunca CBC
+  static const _secureStorage = FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      // Forzar AES-GCM explícitamente (sin CBC)
+      keyCipherAlgorithm: KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
+      storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
+    ),
+  );
+
+  /// Método privado para obtener la instancia de SharedPreferences
+  Future<SharedPreferences> _getPrefs() async {
+    return await SharedPreferences.getInstance();
+  }
 
   /// Guarda el token principal de sesión, asociado a la versión actual
   Future<void> writeToken(BuildContext context, String token) async {
-    await storage.write(
+    await _secureStorage.write(
       key: 'tokenv${dotenv.env['version']}',
       value: token,
     );
@@ -19,79 +33,85 @@ class AuthService extends ChangeNotifier {
 
   /// Recupera el token principal de sesión
   Future<String> readToken() async {
-    return await storage.read(key: 'tokenv${dotenv.env['version']}') ?? '';
+    final token = await _secureStorage.read(key: 'tokenv${dotenv.env['version']}');
+    return token ?? '';
   }
 
   /// Guarda un token auxiliar, por ejemplo usado temporalmente antes de iniciar sesión completa
   Future<void> writeAuxtoken(String token) async {
-    await storage.write(key: 'auxToken', value: token);
+    await _secureStorage.write(key: 'auxToken', value: token);
   }
 
   /// Recupera el token auxiliar
   Future<String> readAuxToken() async {
-    return await storage.read(key: 'auxToken') ?? '';
+    final token = await _secureStorage.read(key: 'auxToken');
+    return token ?? '';
   }
 
   /// Guarda los datos del usuario autenticado (en formato JSON)
   Future<void> writeUser(BuildContext context, String value) async {
-    await storage.write(key: 'user', value: value);
+    await _secureStorage.write(key: 'user', value: value);
   }
 
   /// Recupera los datos del usuario (en formato JSON)
   Future<String> readUser() async {
-    return await storage.read(key: 'user') ?? '';
+    final user = await _secureStorage.read(key: 'user');
+    return user ?? '';
   }
 
   /// Guarda el identificador único del dispositivo
   Future<void> writeDeviceId(String deviceId) async {
-    await storage.write(key: 'device_id', value: deviceId);
+    await _secureStorage.write(key: 'device_id', value: deviceId);
   }
 
   /// Recupera el identificador único del dispositivo
   Future<String> readDeviceId() async {
-    return await storage.read(key: 'device_id') ?? '';
+    final deviceId = await _secureStorage.read(key: 'device_id');
+    return deviceId ?? '';
   }
 
   /// Elimina los datos de autenticación biométrica
   Future<void> deleteBiometric() async {
-    await storage.delete(key: 'biometric');
+    await _secureStorage.delete(key: 'biometric');
   }
 
   /// Elimina los datos de sesión al cerrar sesión del usuario
   Future<void> logout() async {
-    await storage.delete(key: 'user');
-    await storage.delete(key: 'tokenv${dotenv.env['version']}');
-    await storage.delete(key: 'auxToken');
-    await storage.delete(key: 'device_id');
+    await _secureStorage.delete(key: 'user');
+    await _secureStorage.delete(key: 'tokenv${dotenv.env['version']}');
+    await _secureStorage.delete(key: 'auxToken');
+    await _secureStorage.delete(key: 'device_id');
   }
 
-  /// Borra absolutamente todo el contenido del almacenamiento seguro
+  /// Borra absolutamente todo el contenido del almacenamiento seguro y persistente
   /// Útil para depuración o reinicio completo de sesión
   Future<void> clearAll() async {
-    await storage.deleteAll();
+    await _secureStorage.deleteAll();
+    final prefs = await _getPrefs();
+    await prefs.clear();
   }
 
-  // Lee si es la primera vez que se abre la app
-
+  /// Lee si es la primera vez que se abre la app
   Future<String> readFirstTime() async {
-    return await storage.read(key: 'firstTime') ?? '';
+    final prefs = await _getPrefs();
+    return prefs.getString('firstTime') ?? '';
   }
 
-// Guarda si el usuario tiene activada la autenticación biométrica
-
+  /// Guarda si el usuario tiene activada la autenticación biométrica
   Future<void> writeBiometric(BuildContext context, String value) async {
-    await storage.write(key: 'biometric', value: value);
+    await _secureStorage.write(key: 'biometric', value: value);
   }
 
-// Lee si la autenticación biométrica está activada
-
+  /// Lee si la autenticación biométrica está activada
   Future<String> readBiometric() async {
-    return await storage.read(key: 'biometric') ?? '';
+    final biometric = await _secureStorage.read(key: 'biometric');
+    return biometric ?? '';
   }
 
-  // Guarda si es la primera vez que se abre la app (ej. para mostrar onboarding)
-
+  /// Guarda si es la primera vez que se abre la app (ej. para mostrar onboarding)
   Future<void> writeFirstTime(BuildContext context) async {
-    await storage.write(key: 'firstTime', value: 'true');
+    final prefs = await _getPrefs();
+    await prefs.setString('firstTime', 'true');
   }
 }
+

@@ -5,7 +5,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:muserpol_pvt/database/db_provider.dart';
-import 'package:muserpol_pvt/firebase_options.dart';
+import 'package:muserpol_pvt/firebase_options.dart'; // IMPORTAMOS NUESTRA CONFIG
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // NECESARIO PARA CARGAR .ENV
 
 class PushNotificationService {
   static FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -15,29 +16,36 @@ class PushNotificationService {
   static Stream<String> get messagesStream => _messageStream.stream;
 
   static Future initializeapp() async {
-    //push notifications
-    await Firebase.initializeApp();
+    // No es necesario inicializar Firebase aquí si ya se hizo en main,
+    // pero si lo necesitas por seguridad, asegúrate de que main ya haya corrido.
+    // Generalmente se quita esta inicialización si main.dart lo hace primero.
 
     await requestPermission();
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
     await FirebaseMessaging.instance.getToken().then((v) {}).catchError((err) {
       debugPrint('error $err');
     });
-    // debugPrint('tokenNotification $token');
 
-    //cuando esta en segundo plano la app
     FirebaseMessaging.onBackgroundMessage(_backgroundHandle);
-    //cuando esta en primer plano la app
+
     FirebaseMessaging.onMessage
         .listen((RemoteMessage message) {})
         .onData((data) => _onMessageHandler(data));
-    //cuando se abre la app desde la notificacion y la app esta en segundo plano pero no esta cerrado del todo
+
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenApp);
   }
 
   @pragma('vm:entry-point')
   static Future<void> _backgroundHandle(RemoteMessage message) async {
-    await Firebase.initializeApp();
+    // 1. Inicializar bindings (necesario para plugins y dotenv)
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // 2. Cargar variables de entorno (ES CLAVE EN BACKGROUND ISOLATE)
+    await dotenv.load(fileName: ".env");
+
+    // 3. Inicializar Firebase con nuestras opciones dinámicas
+    await Firebase.initializeApp(options: firebaseOptionsFromEnv);
+
     debugPrint('_backgroundHandle ${json.encode(message.data)}');
     final affiliateId = await DBProvider.db.getAffiliateModelById();
     final notification = NotificationModel(
@@ -89,20 +97,26 @@ class PushNotificationService {
 
   static closeStreams() async {
     // _messageStream.close();
-    // await Firebase.
   }
+
   static Future getTokenFirebase() async {
     return await FirebaseMessaging.instance.getToken();
   }
 }
 
-// en push_notifications.dart (fuera de la clase)
+// Función top-level para el handler de background (definida fuera de la clase)
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // 1. Inicializar bindings
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 2. Cargar .env
+  await dotenv.load(fileName: ".env");
+
+  // 3. Inicializar Firebase usando la config del archivo auxiliar
   try {
-    // 👇 IMPORTANTE: pasa las opciones explícitas en el isolate de background
     await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+      options: firebaseOptionsFromEnv,
     );
 
     debugPrint('_backgroundHandle ${json.encode(message.data)}');

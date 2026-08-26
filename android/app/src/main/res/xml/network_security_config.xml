@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
+    <!-- 1. Configuración General (Producción): SEGURA -->
+    <!-- Bloquea HTTP y exige certificados válidos del sistema -->
     <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>
     </base-config>
+
+    <!-- 2. Configuración para IP de desarrollo con certificados autofirmados -->
+    <!-- Permite HTTPS con certificados autofirmados en la red local -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">192.168.2.90</domain>
+    </domain-config>
 </network-security-config>

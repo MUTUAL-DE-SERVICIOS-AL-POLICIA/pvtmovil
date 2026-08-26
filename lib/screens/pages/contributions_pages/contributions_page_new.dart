@@ -76,6 +76,41 @@ class _ScreenContributionsStateNew extends State<ScreenContributionsNew> {
               if (contributionBloc.existContribution)
                 const Text('Mis Aportes por año:',
                     style: TextStyle(fontWeight: FontWeight.bold)),
+              // NUEVO: Leyenda de colores
+              if (contributionBloc.existContribution)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 16,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: const Color(0xffE0A44C),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text('Reintegro',
+                          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500)),
+                      const SizedBox(width: 16),
+                      Container(
+                        width: 16,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xffCD6155)
+                          : const Color(0xffE8837C),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text('Regularización',
+                          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500)),
+                    ],
+                  ),
+                ),
               const SizedBox(
                 height: 20,
               ),
@@ -127,13 +162,58 @@ class _ScreenContributionsStateNew extends State<ScreenContributionsNew> {
         biometricUserModelFromJson(await authService.readBiometric());
     setState(() => stateLoading = true);
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null,
-        servicePrintContributionPasive(biometric.affiliateId!), true, false);
-    setState(() => stateLoading = false);
-    if (response != null) {
+    
+    try {
+      var response = await serviceMethod(mounted, context, 'get', null,
+          servicePrintContributionPasive(biometric.affiliateId!), true, false);
+      
+      setState(() => stateLoading = false);
+      
+      if (response == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo obtener el documento')),
+        );
+        return;
+      }
+      
+      // Verificar que tenemos datos válidos
+      if (response.bodyBytes.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se recibieron datos del servidor')),
+        );
+        return;
+      }
+      
+      // Verificar que es un PDF válido (debe empezar con %PDF)
+      final pdfHeader = String.fromCharCodes(response.bodyBytes.take(4));
+      if (!pdfHeader.startsWith('%PDF')) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('El archivo recibido no es un PDF válido')),
+        );
+        return;
+      }
+      
       String pathFile = await saveFile(
           'Contributions', 'contribucionesPasivo.pdf', response.bodyBytes);
-      await OpenFilex.open(pathFile);
+      
+      final result = await OpenFilex.open(pathFile);
+      
+      // Verificar si hubo error al abrir el archivo
+      if (result.type != ResultType.done) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al abrir el archivo: ${result.message}')),
+        );
+      }
+    } catch (e) {
+      setState(() => stateLoading = false);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al procesar el documento: $e')),
+      );
     }
   }
 
@@ -143,13 +223,58 @@ class _ScreenContributionsStateNew extends State<ScreenContributionsNew> {
         biometricUserModelFromJson(await authService.readBiometric());
     setState(() => stateLoading = true);
     if (!mounted) return;
-    var response = await serviceMethod(mounted, context, 'get', null,
-        servicePrintContributionActive(biometric.affiliateId!), true, false);
-    setState(() => stateLoading = false);
-    if (response != null) {
+    
+    try {
+      var response = await serviceMethod(mounted, context, 'get', null,
+          servicePrintContributionActive(biometric.affiliateId!), true, false);
+      
+      setState(() => stateLoading = false);
+      
+      if (response == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo obtener el documento')),
+        );
+        return;
+      }
+      
+      // Verificar que tenemos datos válidos
+      if (response.bodyBytes.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se recibieron datos del servidor')),
+        );
+        return;
+      }
+      
+      // Verificar que es un PDF válido (debe empezar con %PDF)
+      final pdfHeader = String.fromCharCodes(response.bodyBytes.take(4));
+      if (!pdfHeader.startsWith('%PDF')) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('El archivo recibido no es un PDF válido')),
+        );
+        return;
+      }
+      
       String pathFile = await saveFile(
           'Contributions', 'contribucionesActivo.pdf', response.bodyBytes);
-      await OpenFilex.open(pathFile);
+      
+      final result = await OpenFilex.open(pathFile);
+      
+      // Verificar si hubo error al abrir el archivo
+      if (result.type != ResultType.done) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al abrir el archivo: ${result.message}')),
+        );
+      }
+    } catch (e) {
+      setState(() => stateLoading = false);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al procesar el documento: $e')),
+      );
     }
   }
 }

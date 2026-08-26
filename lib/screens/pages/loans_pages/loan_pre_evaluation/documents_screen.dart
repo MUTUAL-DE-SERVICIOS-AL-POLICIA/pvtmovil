@@ -172,12 +172,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     }
   }
 
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const LoanProgressIndicator(currentStep: 3),
         centerTitle: true,
@@ -209,6 +208,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   Widget _buildHeader(ThemeData theme) {
     return EvaluationWidgets.gradientHeader(
+      context: context,
       title: "REQUISITOS",
       subtitle: "Para Solicitar",
       icon: Icons.description,
@@ -220,7 +220,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       return Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
               color: const Color(0xff419388).withValues(alpha: 0.3), width: 2),
@@ -292,7 +292,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           fontWeight: FontWeight.bold,
           fontSize: 16.sp,
           height: 1.4,
-          color: Colors.grey.shade800),
+          color: Theme.of(context).textTheme.bodyMedium?.color),
     );
   }
 
@@ -301,7 +301,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       "Una de las siguientes opciones:",
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        color: Colors.grey.shade700,
+        color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
         fontSize: 15.sp,
         fontStyle: FontStyle.italic,
       ),
@@ -329,7 +329,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   fontWeight: FontWeight.w600,
                   fontSize: 15.sp,
                   height: 1.4,
-                  color: Colors.grey.shade800),
+                  color: Theme.of(context).textTheme.bodyMedium?.color),
             ),
           ),
         ],
@@ -458,14 +458,14 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   "Información Importante",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xff2d6b61),
+                      color: theme.primaryColorDark,
                       fontSize: 17.sp),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   "Todos los documentos son obligatorios y deben ser presentados al realizar su préstamo formal en oficinas a nivel nacional.",
                   style: TextStyle(
-                      color: const Color(0xff2d6b61),
+                      color: theme.primaryColorDark,
                       fontSize: 15.sp,
                       height: 1.4),
                 ),

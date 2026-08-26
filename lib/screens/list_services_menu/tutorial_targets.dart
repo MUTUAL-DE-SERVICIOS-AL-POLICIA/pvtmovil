@@ -6,6 +6,7 @@ List<TargetFocus> getTutorialTargets({
   required GlobalKey keyComplemento,
   required GlobalKey keyAportes,
   required GlobalKey keyPrestamos,
+  required GlobalKey keyBeneficios,
 }) {
   return [
     TargetFocus(

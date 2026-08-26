@@ -154,8 +154,8 @@ ThemeData styleDark() {
       textTheme: ThemeData.dark()
           .textTheme
           .copyWith(
-            bodyLarge: TextStyle(fontSize: 17.sp),
-            bodyMedium: TextStyle(fontSize: 17.sp),
+            bodyLarge: TextStyle(color: Colors.white, fontSize: 17.sp),
+            bodyMedium: TextStyle(color: Colors.white, fontSize: 17.sp),
             labelLarge: TextStyle(fontSize: 17.sp),
           )
           .apply(

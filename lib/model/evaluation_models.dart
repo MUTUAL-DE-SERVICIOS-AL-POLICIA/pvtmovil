@@ -1,5 +1,7 @@
 // lib/model/evaluation_models.dart
-/// Modelo unificado para todos los datos de evaluación referencial
+// Modelo unificado para todos los datos de evaluación referencial
+
+import '../utils/logger.dart';
 
 // ============================================================================
 // MODELOS DE MODALIDADES
@@ -54,11 +56,11 @@ class LoanModality {
         parameters: LoanParameters.fromJson(json['parameters'] ?? {}),
       );
 
-      print('✅ LoanModality parseado exitosamente: ${modality.name}');
+      AppLog.d('✅ LoanModality parseado exitosamente: ${modality.name}');
       return modality;
     } catch (e) {
-      print('❌ Error parsing LoanModality: $e');
-      print('JSON data: $json');
+      AppLog.d('❌ Error parsing LoanModality: $e');
+      AppLog.d('JSON data: $json');
       rethrow;
     }
   }
@@ -126,19 +128,19 @@ class LoanParameters {
         periodInterest: _toDouble(json['periodInterest']),
       );
 
-      print('✅ LoanParameters parseado exitosamente:');
-      print('   - debtIndex: ${parameters.debtIndex}');
-      print('   - annualInterest: ${parameters.annualInterest}');
-      print('   - periodInterest: ${parameters.periodInterest}');
-      print('   - coveragePercentage: ${parameters.coveragePercentage}');
-      print('   - minLenderCategory: ${parameters.minLenderCategory}');
-      print('   - maxLenderCategory: ${parameters.maxLenderCategory}');
-      print('   - maximumAmount: ${parameters.maximumAmountModality}');
-      print('   - minimumAmount: ${parameters.minimumAmountModality}');
+      AppLog.d('✅ LoanParameters parseado exitosamente:');
+      AppLog.d('   - debtIndex: ${parameters.debtIndex}');
+      AppLog.d('   - annualInterest: ${parameters.annualInterest}');
+      AppLog.d('   - periodInterest: ${parameters.periodInterest}');
+      AppLog.d('   - coveragePercentage: ${parameters.coveragePercentage}');
+      AppLog.d('   - minLenderCategory: ${parameters.minLenderCategory}');
+      AppLog.d('   - maxLenderCategory: ${parameters.maxLenderCategory}');
+      AppLog.d('   - maximumAmount: ${parameters.maximumAmountModality}');
+      AppLog.d('   - minimumAmount: ${parameters.minimumAmountModality}');
       return parameters;
     } catch (e) {
-      print('❌ Error parsing LoanParameters: $e');
-      print('JSON data: $json');
+      AppLog.d('❌ Error parsing LoanParameters: $e');
+      AppLog.d('JSON data: $json');
       rethrow;
     }
   }

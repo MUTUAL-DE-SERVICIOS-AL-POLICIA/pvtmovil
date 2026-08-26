@@ -1,0 +1,33 @@
+Changing current working directory to: /home/dilan/Documentos/19-02-26/Mobile-App
+Running Gradle task 'assembleRelease'...                        
+Note: /home/dilan/.pub-cache/hosted/pub.dev/google_mlkit_commons-0.11.1/android/src/main/java/com/google_mlkit_commons/InputImageConverter.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+ERROR: Missing classes detected while running R8. Please add the missing classes or apply additional keep rules that are generated in /home/dilan/Documentos/19-02-26/Mobile-App/build/app/outputs/mapping/release/missing_rules.txt.
+ERROR: R8: Missing class androidx.window.extensions.area.ExtensionWindowAreaStatus (referenced from: java.lang.Object androidx.window.area.WindowAreaControllerImpl$windowAreaInfos$1.invokeSuspend(java.lang.Object) and 3 other contexts)
+Missing class androidx.window.extensions.area.WindowAreaComponent (referenced from: androidx.window.extensions.area.WindowAreaComponent androidx.window.area.RearDisplayPresentationSessionPresenterImpl.windowAreaComponent and 19 other contexts)
+Missing class androidx.window.extensions.embedding.ActivityStack (referenced from: androidx.window.embedding.SplitInfo androidx.window.embedding.EmbeddingAdapter$VendorApiLevel1Impl.translateCompat(androidx.window.extensions.embedding.SplitInfo) and 2 other contexts)
+Missing class androidx.window.extensions.embedding.SplitAttributes$SplitType$ExpandContainersSplitType (referenced from: androidx.window.embedding.SplitAttributes androidx.window.embedding.EmbeddingAdapter.translate$window_release(androidx.window.extensions.embedding.SplitAttributes))
+Missing class androidx.window.extensions.embedding.SplitAttributes$SplitType$HingeSplitType (referenced from: androidx.window.embedding.SplitAttributes androidx.window.embedding.EmbeddingAdapter.translate$window_release(androidx.window.extensions.embedding.SplitAttributes))
+Missing class androidx.window.extensions.embedding.SplitAttributes$SplitType$RatioSplitType (referenced from: androidx.window.embedding.SplitAttributes androidx.window.embedding.EmbeddingAdapter.translate$window_release(androidx.window.extensions.embedding.SplitAttributes))
+Missing class androidx.window.extensions.embedding.SplitAttributes$SplitType (referenced from: androidx.window.embedding.SplitAttributes androidx.window.embedding.EmbeddingAdapter.translate$window_release(androidx.window.extensions.embedding.SplitAttributes))
+Missing class androidx.window.extensions.embedding.SplitAttributes (referenced from: androidx.window.embedding.SplitInfo androidx.window.embedding.EmbeddingAdapter$VendorApiLevel2Impl.translateCompat(androidx.window.extensions.embedding.SplitInfo) and 2 other contexts)
+Missing class androidx.window.extensions.embedding.SplitInfo (referenced from: androidx.window.embedding.SplitAttributes androidx.window.embedding.EmbeddingAdapter$VendorApiLevel1Impl.getSplitAttributesCompat(androidx.window.extensions.embedding.SplitInfo) and 5 other contexts)
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:minifyReleaseWithR8'.
+> A failure occurred while executing com.android.build.gradle.internal.tasks.R8Task$R8Runnable
+   > Compilation failed to complete
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1m 4s
+Running Gradle task 'assembleRelease'...                           65,2s
+Gradle task assembleRelease failed with exit code 1

@@ -384,7 +384,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
       child: BlocListener<LoanPreEvaluationBloc, LoanPreEvaluationState>(
         listener: _handleBlocState,
         child: Scaffold(
-          backgroundColor: Colors.grey.shade50,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
             title: const LoanProgressIndicator(currentStep: 2),
             centerTitle: true,
@@ -423,8 +423,12 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
                   ? const Center(
                       child:
                           CircularProgressIndicator(color: Color(0xff419388)))
-                  : SingleChildScrollView(
-                      padding: const EdgeInsets.all(16), child: _buildBody());
+                  : SafeArea(
+                      child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(16),
+                          child: _buildBody()),
+                    );
+
             },
           ),
         ),
@@ -526,7 +530,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
           'MODALIDAD DE PRÉSTAMO',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: const Color(0xff2d6b61),
+            color: Theme.of(context).primaryColorDark,
             fontSize: 20.sp,
           ),
         ),
@@ -535,7 +539,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
             child: Text(
               _modality!.name,
               style: TextStyle(
-                color: const Color(0xff2d6b61),
+                color: Theme.of(context).primaryColorDark,
                 fontSize: 18.sp,
               ),
             ),
@@ -552,7 +556,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
           'CONFIGURA TU PRÉSTAMO',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: const Color(0xff2d6b61),
+            color: Theme.of(context).primaryColorDark,
             fontSize: 20.sp,
           ),
         ),
@@ -560,6 +564,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
         _buildAmountInput(),
         const SizedBox(height: 20),
         EvaluationWidgets.termSelector(
+          context: context,
           currentTerm: _plazoMeses,
           minTerm: _params!.minimumTermModality,
           maxTerm: _params!.maximumTermModality,
@@ -577,21 +582,22 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
 
   Widget _buildAmountInput() {
     _getMaxAmount();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text('Monto a Acceder (Bs)',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: 17.sp,
-              color: const Color(0xff2d6b61))),
+              color: Theme.of(context).primaryColorDark)),
       const SizedBox(height: 12),
       Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xff2d6b61), width: 1.5),
+            border: Border.all(color: isDark ? const Color(0xff419388) : const Color(0xff2d6b61), width: 1.5),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2))
             ]),
@@ -603,7 +609,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
           style: TextStyle(
               fontSize: 20.sp,
               fontWeight: FontWeight.w600,
-              color: const Color(0xff2d6b61),
+              color: isDark ? Colors.green.shade200 : const Color(0xff2d6b61),
               letterSpacing: 0.5),
           textAlign: TextAlign.right,
           decoration: InputDecoration(
@@ -616,7 +622,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
             suffixStyle: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xff2d6b61)),
+                color: Theme.of(context).primaryColorDark),
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             filled: true,
@@ -645,12 +651,13 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
           'RESULTADO DEL CÁLCULO',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: const Color(0xff2d6b61),
+            color: Theme.of(context).primaryColorDark,
             fontSize: 20.sp,
           ),
         ),
         const SizedBox(height: 20),
         EvaluationWidgets.paymentSummary(
+          context: context,
           monthlyPayment: _cuotaMensual,
           amount: _montoSolicitado,
           term: _plazoMeses,

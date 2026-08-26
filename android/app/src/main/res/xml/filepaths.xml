@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- External storage paths -->
+    <external-path name="external_files" path="." />
+    <external-files-path name="external_storage_files" path="." />
+    <external-cache-path name="external_cache" path="." />
+    
+    <!-- Internal storage paths -->
+    <cache-path name="cache_files" path="." />
+    <files-path name="files" path="." />
+    <files-path name="app_flutter" path="app_flutter/" />
+    
+    <!-- Root path (use with caution) -->
+    <root-path name="root" path="." />
+</paths>

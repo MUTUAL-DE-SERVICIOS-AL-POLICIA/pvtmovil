@@ -70,7 +70,18 @@ Future<dynamic> serviceMethod(
               .timeout(const Duration(seconds: 40))
               .then((value) {
             AppLog.d('statusCode ${value.statusCode}');
-            AppLog.d('value ${value.body}');
+            // Detectar si la respuesta es un PDF u otro contenido binario
+            final contentType = value.headers['content-type'] ?? '';
+            final isPdf = contentType.contains('application/pdf');
+            final isBinary = contentType.contains('application/octet-stream') || 
+                             contentType.contains('application/') && !contentType.contains('json');
+            
+            if (isPdf || isBinary) {
+              AppLog.d('Binary content received (${value.bodyBytes.length} bytes)');
+            } else {
+              AppLog.d('value ${value.body}');
+            }
+            
             switch (value.statusCode) {
               case 200:
                 return value;

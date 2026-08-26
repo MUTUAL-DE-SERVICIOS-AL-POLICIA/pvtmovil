@@ -30,14 +30,17 @@ class ContributionsYear extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: card(
-                            contributions[index].reimbursementTotal != '0,00' &&
-                                    contributions[index].reimbursementTotal !=
-                                        null
-                                ? const Color(0xffE0A44C)
-                                : Colors.transparent,
-                            context,
-                            contributions[index],
-                            'flipcardHero$index'),
+                          contributions[index].reimbursementTotal != null &&
+                          contributions[index].reimbursementTotal != '0,00'
+                              ? (contributions[index].typePayroll == 'regularizacion'
+                                  ? (Theme.of(context).brightness == Brightness.dark
+                                      ? const Color(0xffCD6155)
+                                      : const Color(0xffE8837C))
+                                  : const Color(0xffE0A44C))
+                              : Colors.transparent,
+                          context,
+                          contributions[index],
+                          'flipcardHero$index'),
                       )));
             }),
           )

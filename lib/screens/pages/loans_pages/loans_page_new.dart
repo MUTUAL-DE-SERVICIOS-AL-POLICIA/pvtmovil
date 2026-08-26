@@ -13,6 +13,7 @@ import 'package:muserpol_pvt/screens/pages/loans_pages/loan_pre_evaluation/saved
 import 'package:muserpol_pvt/services/auth_service.dart';
 import 'package:muserpol_pvt/services/service_method.dart';
 import 'package:muserpol_pvt/services/services.dart';
+import 'package:muserpol_pvt/utils/logger.dart'; // SEGURIDAD: Import para logging seguro
 import 'package:provider/provider.dart';
 
 class ScreenLoansNew extends StatefulWidget {
@@ -156,10 +157,12 @@ class _ScreenLoansNewState extends State<ScreenLoansNew> {
       final loanBloc = BlocProvider.of<LoanBloc>(context, listen: false);
 
       if (loanBloc.state.existLoan && loanBloc.state.loan != null) {
-        print('Verificando evaluaciones guardadas...');
+        // SEGURIDAD: Uso de AppLog para evitar registros en producción
+        AppLog.d('Verificando evaluaciones guardadas...');
       }
     } catch (e) {
-      print('Error al verificar evaluaciones: $e');
+      // SEGURIDAD: Uso de AppLog para evitar registros en producción
+      AppLog.d('Error al verificar evaluaciones: $e');
     }
   }
 
@@ -256,7 +259,7 @@ class _ScreenLoansNewState extends State<ScreenLoansNew> {
                       ),
                     ),
                     Container(
-                      color: Colors.white,
+                      color: theme.cardColor,
                       child: const Padding(
                         padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
                         child: Column(
@@ -352,23 +355,37 @@ class _ScreenLoansNewState extends State<ScreenLoansNew> {
                                 );
                               }
                             },
-                            icon: const Icon(Icons.history),
+                            icon: Icon(
+                              Icons.history,
+                              color: theme.brightness == Brightness.dark
+                                  ? Colors.white
+                                  : const Color(0xff419388),
+                            ),
                             label: Text(
                               'MIS EVALUACIONES',
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.5,
+                                color: theme.brightness == Brightness.dark
+                                    ? Colors.white
+                                    : const Color(0xff419388),
                               ),
                             ),
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: const Color(0xff419388),
-                              side: const BorderSide(
-                                  color: Color(0xff419388), width: 2),
+                              foregroundColor: theme.brightness == Brightness.dark
+                                  ? Colors.white
+                                  : const Color(0xff419388),
+                              side: BorderSide(
+                                  color: theme.brightness == Brightness.dark
+                                      ? Colors.white
+                                      : const Color(0xff419388),
+                                  width: 2),
                               padding: const EdgeInsets.symmetric(vertical: 18),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                               ),
                             ),
+
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -409,32 +426,36 @@ class _CompactFeature extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Row(
       children: [
         Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? theme.scaffoldBackgroundColor : theme.scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            icon,
-            color: const Color(0xff2d6b61),
-            size: 22,
+        child: Icon(
+          icon,
+          color: isDark ? const Color(0xfff2f2f2) : theme.primaryColor,
+          size: 22,
+        ),
+      ),
+      const SizedBox(width: 12),
+      Expanded(
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w600,
+            color: isDark ? const Color(0xfff2f2f2) : theme.primaryColorDark,
           ),
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xff2d6b61),
-            ),
-          ),
-        ),
+      ),
+
       ],
     );
   }

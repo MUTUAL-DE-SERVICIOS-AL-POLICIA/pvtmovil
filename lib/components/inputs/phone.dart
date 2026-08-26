@@ -146,7 +146,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
                 return null;
               },
               inputFormatters: [
-                LengthLimitingTextInputFormatter(11),
+                LengthLimitingTextInputFormatter(17),
                 PhoneNumberFormatter(),
               ],
               textAlignVertical: TextAlignVertical.center,

@@ -422,46 +422,49 @@ class _RegisterIdentityScreenState extends State<RegisterIdentityScreen> {
               Container(color: Colors.black),
             if (_showGuide) _buildDocumentGuide(),
             Positioned(
-              bottom: 20,
               left: 20,
               right: 20,
-              child: Column(
-                children: [
-                  const Text(
-                    "Coloque la cédula dentro del marco",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      shadows: [Shadow(blurRadius: 10, color: Colors.black)],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "Asegúrese de que el número de cédula sea visible",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      shadows: [Shadow(blurRadius: 10, color: Colors.black)],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton.icon(
-                    onPressed: canShowPreview ? _captureAndDetect : null,
-                    icon: const Icon(Icons.camera),
-                    label: const Text("CAPTURAR"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          AdaptiveTheme.of(context).theme.primaryColor,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
+              bottom: 0,
+              child: SafeArea(
+                minimum: const EdgeInsets.only(bottom: 20), // margen extra
+                child: Column(
+                  children: [
+                    const Text(
+                      "Coloque la cédula dentro del marco",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        shadows: [Shadow(blurRadius: 10, color: Colors.black)],
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Asegúrese de que el número de cédula sea visible",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        shadows: [Shadow(blurRadius: 10, color: Colors.black)],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      onPressed: canShowPreview ? _captureAndDetect : null,
+                      icon: const Icon(Icons.camera),
+                      label: const Text("CAPTURAR"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            AdaptiveTheme.of(context).theme.primaryColor,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             if (_showVerifying) _buildVerifyingOverlay(),

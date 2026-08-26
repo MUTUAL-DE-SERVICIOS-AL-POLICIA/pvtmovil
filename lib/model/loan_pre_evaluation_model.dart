@@ -1,3 +1,5 @@
+import '../utils/logger.dart';
+
 // Model for loan modalities response
 class LoanModalitiesResponse {
   final List<LoanModalityNew> modalities;
@@ -48,11 +50,11 @@ class LoanModalityNew {
         parameters: LoanParametersNew.fromJson(json['parameters'] ?? {}),
       );
 
-      print('✅ LoanModalityNew parseado exitosamente: ${modality.name}');
+      AppLog.d('✅ LoanModalityNew parseado exitosamente: ${modality.name}');
       return modality;
     } catch (e) {
-      print('❌ Error parsing LoanModalityNew: $e');
-      print('JSON data: $json');
+      AppLog.d('❌ Error parsing LoanModalityNew: $e');
+      AppLog.d('JSON data: $json');
       rethrow;
     }
   }
@@ -121,19 +123,19 @@ class LoanParametersNew {
         periodInterest: _safeToDouble(json['periodInterest']),
       );
 
-      print('✅ LoanParametersNew parseado exitosamente:');
-      print('   - debIndex: ${parameters.debtIndex}');
-      print('   - annualInterest: ${parameters.annualInterest}');
-      print('   - periodInterest: ${parameters.periodInterest}');
-      print('   - coveragePercentage: ${parameters.coveragePercentage}');
-      print('   - minLenderCategory: ${parameters.minLenderCategory}');
-      print('   - maxLenderCategory: ${parameters.maxLenderCategory}');
-      print('   - maximumAmount: ${parameters.maximumAmountModality}');
-      print('   - minimumAmount: ${parameters.minimumAmountModality}');
+      AppLog.d('✅ LoanParametersNew parseado exitosamente:');
+      AppLog.d('   - debIndex: ${parameters.debtIndex}');
+      AppLog.d('   - annualInterest: ${parameters.annualInterest}');
+      AppLog.d('   - periodInterest: ${parameters.periodInterest}');
+      AppLog.d('   - coveragePercentage: ${parameters.coveragePercentage}');
+      AppLog.d('   - minLenderCategory: ${parameters.minLenderCategory}');
+      AppLog.d('   - maxLenderCategory: ${parameters.maxLenderCategory}');
+      AppLog.d('   - maximumAmount: ${parameters.maximumAmountModality}');
+      AppLog.d('   - minimumAmount: ${parameters.minimumAmountModality}');
       return parameters;
     } catch (e) {
-      print('❌ Error parsing LoanParametersNew: $e');
-      print('JSON data: $json');
+      AppLog.d('❌ Error parsing LoanParametersNew: $e');
+      AppLog.d('JSON data: $json');
       rethrow;
     }
   }

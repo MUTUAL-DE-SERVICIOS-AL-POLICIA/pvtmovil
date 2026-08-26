@@ -114,8 +114,40 @@ Future<void> _loadContributions(BuildContext context) async {
   );
 
   if (response != null) {
-    contributionBloc
-        .add(UpdateContributions(contributionModelFromJson(response.body)));
+    final model = contributionModelFromJson(response.body);
+    _processContributions(model);  // NUEVO: Procesar datos
+    contributionBloc.add(UpdateContributions(model));
+  }
+}
+
+// NUEVA FUNCIÓN
+void _processContributions(ContributionModel model) {
+  for (var yearData in model.payload.contributionsTotal!) {
+    // Separar registros por tipo
+    final contributions = <Contribution>[];
+    final reimbursements = <Contribution>[];
+    for (var c in yearData.contributions) {
+      if (c.type == 'reimbursement') {
+        reimbursements.add(c);
+      } else {
+        contributions.add(c);
+      }
+    }
+    // Para cada contribution con reimbursement, copiar typePayroll
+    for (var c in contributions) {
+      if (c.reimbursementTotal != null && c.reimbursementTotal != '0,00') {
+        // Buscar reimbursement del mismo mes
+        final match = reimbursements.where(
+          (r) => r.monthYear?.year == c.monthYear?.year &&
+                 r.monthYear?.month == c.monthYear?.month,
+        );
+        if (match.isNotEmpty) {
+          c.typePayroll = match.first.typePayroll;
+        }
+      }
+    }
+    // Reemplazar lista solo con contributions (sin reimbursement)
+    yearData.contributions = contributions;
   }
 }
 

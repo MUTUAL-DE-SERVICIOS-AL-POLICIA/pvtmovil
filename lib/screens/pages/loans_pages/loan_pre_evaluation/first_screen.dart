@@ -174,7 +174,7 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               gradient: LinearGradient(
-                colors: [Colors.orange.shade50, Colors.orange.shade100],
+                colors: [Colors.orange.withValues(alpha: 0.1), Colors.orange.withValues(alpha: 0.2)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -227,7 +227,7 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color:
@@ -242,7 +242,7 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
                               'para iniciar la solicitud formal del préstamo debes realizarlo de manera presencial en las oficinas de la MUSERPOL a nivel nacional.',
                               style: TextStyle(
                                 fontSize: 16.sp,
-                                color: const Color(0xFF2D6B61),
+                                color: Theme.of(context).primaryColorDark,
                                 fontWeight: FontWeight.w600,
                                 height: 1.4,
                               ),
@@ -291,7 +291,7 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        backgroundColor: Theme.of(context).cardColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: const LoanProgressIndicator(currentStep: 1),
           centerTitle: true,
@@ -573,26 +573,26 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.blue.shade50,
+          color: Colors.blue.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.blue.shade200),
+          border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
-            Icon(Icons.info_outline, size: 48, color: Colors.blue.shade600),
+            Icon(Icons.info_outline, size: 48, color: theme.primaryColorDark),
             const SizedBox(height: 12),
             Text(
               'Ingrese su sueldo para ver las modalidades disponibles',
               textAlign: TextAlign.center,
               style: theme.textTheme.titleMedium?.copyWith(
-                  color: Colors.blue.shade700, fontWeight: FontWeight.bold),
+                  color: theme.primaryColorDark, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               'Complete los campos de sueldo y renta dignidad para calcular su sueldo base y ver las opciones de préstamo.',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: Colors.blue.shade600),
+                  ?.copyWith(color: theme.primaryColorDark),
             ),
           ],
         ),
@@ -603,8 +603,8 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
   Widget _buildActivoInvalidPrompt() {
     final theme = Theme.of(context);
     const primaryGreen = Color(0xFF419388);
-    const softGreenBg = Color(0xFFE8F4F2);
-    const mediumGreen = Color(0xFF2D6B61);
+    final softGreenBg = primaryGreen.withValues(alpha: 0.1);
+    final mediumGreen = theme.primaryColorDark;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -672,6 +672,8 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
 
   Widget _buildLiquidoCalificacionExpandable() {
     final theme = Theme.of(context);
+    final textColor = theme.primaryColorDark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -680,7 +682,7 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20.sp,
-            color: const Color(0xff2d6b61),
+            color: textColor,
           ),
         ),
         const SizedBox(height: 12),
@@ -690,13 +692,13 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: _liquidoParaCalificacion >= 0
-                  ? const Color(0xff419388).withValues(alpha: 0.1)
-                  : Colors.red.shade50,
+                  ? (theme.brightness == Brightness.dark ? const Color(0xff419388).withValues(alpha: 0.2) : const Color(0xff419388).withValues(alpha: 0.1))
+                  : (theme.brightness == Brightness.dark ? Colors.red.shade900.withValues(alpha: 0.3) : Colors.red.shade50),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: _liquidoParaCalificacion >= 0
                     ? const Color(0xff419388).withValues(alpha: 0.3)
-                    : Colors.red.shade200,
+                    : (theme.brightness == Brightness.dark ? Colors.red.shade800 : Colors.red.shade200),
               ),
             ),
             child: Column(
@@ -714,8 +716,8 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontSize: 18,
                               color: _liquidoParaCalificacion >= 0
-                                  ? const Color(0xff419388)
-                                  : Colors.red.shade600,
+                                  ? (theme.brightness == Brightness.dark ? Colors.green.shade300 : const Color(0xff419388))
+                                  : (theme.brightness == Brightness.dark ? Colors.red.shade300 : Colors.red.shade600),
                               fontWeight: FontWeight.w500,
                             ),
                             textAlign: TextAlign.center,
@@ -729,8 +731,8 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
                               fontWeight: FontWeight.bold,
                               fontSize: 22.sp,
                               color: _liquidoParaCalificacion >= 0
-                                  ? const Color(0xff2d6b61)
-                                  : Colors.red.shade700,
+                                  ? textColor
+                                  : (theme.brightness == Brightness.dark ? Colors.red.shade400 : Colors.red.shade700),
                               letterSpacing: -0.5,
                             ),
                             textAlign: TextAlign.center,
@@ -744,8 +746,8 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
                       child: Icon(
                         Icons.expand_more,
                         color: _liquidoParaCalificacion >= 0
-                            ? const Color(0xff419388)
-                            : Colors.red.shade600,
+                            ? (theme.brightness == Brightness.dark ? Colors.green.shade300 : const Color(0xff419388))
+                            : (theme.brightness == Brightness.dark ? Colors.red.shade400 : Colors.red.shade600),
                         size: 28,
                       ),
                     ),
@@ -806,7 +808,6 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
   Widget _buildDesgloseLine(String label, TextEditingController controller,
       {ValueChanged<String>? onChanged}) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Row(
       children: [
@@ -823,7 +824,7 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                       color:
-                          isDark ? Colors.grey.shade600 : Colors.grey.shade300,
+                          theme.dividerColor,
                       width: 1),
                 ),
                 child: TextField(
@@ -840,13 +841,13 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
                   decoration: InputDecoration(
                     hintText: "0,00",
                     hintStyle:
-                        TextStyle(color: Colors.grey.shade400, fontSize: 16),
+                        TextStyle(color: theme.hintColor, fontSize: 16),
                     suffixText: "Bs",
                     suffixStyle: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color:
-                          isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                          theme.disabledColor,
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 10, horizontal: 12),
@@ -869,6 +870,7 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
 
   Widget _buildPasivoFields() {
     final theme = Theme.of(context);
+    final textColor = theme.primaryColorDark;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -878,7 +880,7 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
           Text(
             'MONTO PARA EVALUAR',
             style: theme.textTheme.titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp),
+                ?.copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp, color: textColor),
           ),
           const SizedBox(height: 12),
           GestureDetector(
@@ -887,13 +889,13 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: _liquidoParaCalificacion >= 0
-                    ? const Color(0xff419388).withValues(alpha: 0.1)
-                    : Colors.red.shade50,
+                    ? (theme.brightness == Brightness.dark ? const Color(0xff419388).withValues(alpha: 0.2) : const Color(0xff419388).withValues(alpha: 0.1))
+                    : (theme.brightness == Brightness.dark ? Colors.red.shade900.withValues(alpha: 0.3) : Colors.red.shade50),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: _liquidoParaCalificacion >= 0
                       ? const Color(0xff419388).withValues(alpha: 0.3)
-                      : Colors.red.shade200,
+                      : (theme.brightness == Brightness.dark ? Colors.red.shade800 : Colors.red.shade200),
                 ),
               ),
               child: Column(
@@ -911,8 +913,8 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontSize: 18,
                                 color: _liquidoParaCalificacion >= 0
-                                    ? const Color(0xff419388)
-                                    : Colors.red.shade600,
+                                    ? (theme.brightness == Brightness.dark ? Colors.green.shade300 : const Color(0xff419388))
+                                    : (theme.brightness == Brightness.dark ? Colors.red.shade300 : Colors.red.shade600),
                                 fontWeight: FontWeight.w500,
                               ),
                               textAlign: TextAlign.center,
@@ -926,8 +928,8 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 22.sp,
                                 color: _liquidoParaCalificacion >= 0
-                                    ? const Color(0xff2d6b61)
-                                    : Colors.red.shade700,
+                                    ? textColor
+                                    : (theme.brightness == Brightness.dark ? Colors.red.shade400 : Colors.red.shade700),
                                 letterSpacing: -0.5,
                               ),
                               textAlign: TextAlign.center,
@@ -941,8 +943,8 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
                         child: Icon(
                           Icons.expand_more,
                           color: _liquidoParaCalificacion >= 0
-                              ? const Color(0xff419388)
-                              : Colors.red.shade600,
+                              ? (theme.brightness == Brightness.dark ? Colors.green.shade300 : const Color(0xff419388))
+                              : (theme.brightness == Brightness.dark ? Colors.red.shade400 : Colors.red.shade600),
                           size: 28,
                         ),
                       ),
@@ -1002,6 +1004,7 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
 
   Widget _buildModalitiesSection(List<LoanModalityNew> modalities) {
     return EvaluationWidgets.modalitiesSection(
+      context: context,
       modalities: modalities,
       isGridView: _isGridView,
       onToggleView: () => setState(() => _isGridView = !_isGridView),

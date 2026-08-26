@@ -1,7 +1,7 @@
 // text_detector.dart
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:muserpol_pvt/utils/logger.dart'; // SEGURIDAD: Import para logging seguro
 import 'files_state_veritify.dart';
 import 'file_document.dart';
 
@@ -64,7 +64,8 @@ class TextDetector {
         matchedBlocks: matches,
       );
     } catch (e) {
-      debugPrint("Error en detección de texto: $e");
+      // SEGURIDAD: Uso de AppLog para evitar registros en producción
+      AppLog.d("Error en detección de texto: $e");
       return TextDetectionResult(
         success: false,
         match: false,

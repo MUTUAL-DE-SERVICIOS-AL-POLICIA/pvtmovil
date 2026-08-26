@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:muserpol_pvt/components/containers.dart';
+
+// Colores del tema (style.dart)
+const _kPrimaryGreen = Color(0xff419388);
 
 class ServiceOption extends StatelessWidget {
   final String image;
@@ -25,54 +27,83 @@ class ServiceOption extends StatelessWidget {
       duration: const Duration(milliseconds: 500),
       child: GestureDetector(
         onTap: onPressed,
-        child: ContainerComponent(
-          width: double.infinity,
-          color: const Color(0xffd9e9e7),
+        child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          borderRadius: 16,
-          boxShadow: [
-            BoxShadow(
-              color: isDarkMode
-                  ? Colors.white.withAlpha((0.2 * 255).toInt())
-                  : Colors.black.withAlpha((0.4 * 255).toInt()),
-              blurRadius: 10,
-              spreadRadius: 1,
-              offset: const Offset(0, 4),
-            )
-          ],
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 19.sp,
-                    color: Colors.black,
+          decoration: BoxDecoration(
+            color: isDarkMode ? const Color(0xff1e3d37) : _kPrimaryGreen,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: isDarkMode
+                    ? Colors.black.withAlpha((0.4 * 255).toInt())
+                    : Colors.black.withAlpha((0.25 * 255).toInt()),
+                blurRadius: 12,
+                spreadRadius: 1,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              // -- Panel izquierdo verde con imagen circular --
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Container(
+                  width: 90,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withAlpha((0.35 * 255).toInt()),
                   ),
-                  textAlign: TextAlign.center,
+                  padding: const EdgeInsets.all(12),
+                  child: Image.asset(
+                    image,
+                    fit: BoxFit.contain,
+                  ),
                 ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    SizedBox(width: 70, height: 80, child: Image.asset(image)),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
+              ),
+
+              // -- Panel derecho blanco con texto --
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? const Color(0xff2a4f49) : Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 21.sp,
+                          color: isDarkMode ? Colors.white : _kPrimaryGreen,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
                         description,
                         style: TextStyle(
                           fontSize: 16.sp,
-                          color: Colors.black,
+                          color: isDarkMode
+                              ? Colors.white70
+                              : Colors.black87,
+                          height: 1.4,
                         ),
-                        maxLines: 3,
+                        maxLines: 4,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

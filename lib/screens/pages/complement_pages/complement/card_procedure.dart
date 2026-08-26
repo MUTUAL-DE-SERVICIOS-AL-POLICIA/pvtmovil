@@ -83,120 +83,123 @@ class _StepperProcedureState extends State<StepperProcedure> {
         }
       },
       child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                const HedersComponent(title: 'Nuevo trámite'),
-                Expanded(
-                  child: Stepper(
-                    onStepTapped: (step) => tapped(step),
-                    type: stepperType,
-                    physics: const ScrollPhysics(),
-                    currentStep: tabProcedureState.indexTabProcedure,
-                    onStepContinue: nextPage,
-                    controlsBuilder:
-                        (BuildContext context, ControlsDetails details) {
-                      return tabProcedureState.indexTabProcedure > 0
-                          ? buttonStep(context, details)
-                          : Container();
-                    },
-                    steps: <Step>[
-                      Step(
-                        title: Text(
-                          'Control de vivencia',
-                          style: TextStyle(
-                            color: AdaptiveTheme.of(context)
-                                .theme
-                                .primaryColorDark,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  const HedersComponent(title: 'Nuevo trámite'),
+                  Expanded(
+                    child: Stepper(
+                      onStepTapped: (step) => tapped(step),
+                      type: stepperType,
+                      physics: const ScrollPhysics(),
+                      currentStep: tabProcedureState.indexTabProcedure,
+                      onStepContinue: nextPage,
+                      controlsBuilder:
+                          (BuildContext context, ControlsDetails details) {
+                        return tabProcedureState.indexTabProcedure > 0
+                            ? buttonStep(context, details)
+                            : Container();
+                      },
+                      steps: <Step>[
+                        Step(
+                          title: Text(
+                            'Control de vivencia',
+                            style: TextStyle(
+                              color: AdaptiveTheme.of(context)
+                                  .theme
+                                  .primaryColorDark,
+                            ),
                           ),
-                        ),
-                        content: Stack(
-                          children: <Widget>[
-                            GestureDetector(
-                              onTap: () => initCtrlLive(),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: Image.asset(
-                                  'assets/images/face.png',
-                                  fit: BoxFit.cover,
-                                  gaplessPlayback: true,
-                                  width: 200,
-                                  height: 200,
+                          content: Stack(
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap: () => initCtrlLive(),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Image.asset(
+                                    'assets/images/face.png',
+                                    fit: BoxFit.cover,
+                                    gaplessPlayback: true,
+                                    width: 200,
+                                    height: 200,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Positioned(
-                              bottom: 2,
-                              right: 0,
-                              child: IconBtnComponent(
-                                iconText: 'assets/icons/camera.svg',
-                                onPressed: () => initCtrlLive(),
+                              Positioned(
+                                bottom: 2,
+                                right: 0,
+                                child: IconBtnComponent(
+                                  iconText: 'assets/icons/camera.svg',
+                                  onPressed: () => initCtrlLive(),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        isActive: tabProcedureState.indexTabProcedure >= 0,
-                        state: tabProcedureState.indexTabProcedure >= 0
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      if (!userBloc!.verified!)
-                        for (var item in filesState.files)
-                          Step(
-                            title: Text(
-                              'Documento:',
-                              style: TextStyle(
-                                color: AdaptiveTheme.of(context)
-                                    .theme
-                                    .primaryColorDark,
-                              ),
-                            ),
-                            subtitle: Text(
-                              item.title!,
-                              style: TextStyle(
-                                color: AdaptiveTheme.of(context)
-                                    .theme
-                                    .primaryColorDark,
-                              ),
-                            ),
-                            content: ImageInput(
-                              sizeImage: 250,
-                              onPressed: (img, file) =>
-                                  detectorText(img, file, item),
-                              itemFile: item,
-                            ),
-                            isActive: tabProcedureState.indexTabProcedure >= 0,
-                            state: userBloc.verified!
-                                ? StepState.complete
-                                : item.imageFile != null
-                                    ? StepState.complete
-                                    : StepState.disabled,
+                            ],
                           ),
-                      Step(
-                        title: Text(
-                          'Mis datos',
-                          style: TextStyle(
-                            color: AdaptiveTheme.of(context)
-                                .theme
-                                .primaryColorDark,
+                          isActive: tabProcedureState.indexTabProcedure >= 0,
+                          state: tabProcedureState.indexTabProcedure >= 0
+                              ? StepState.complete
+                              : StepState.disabled,
+                        ),
+                        if (!userBloc!.verified!)
+                          for (var item in filesState.files)
+                            Step(
+                              title: Text(
+                                'Documento:',
+                                style: TextStyle(
+                                  color: AdaptiveTheme.of(context)
+                                      .theme
+                                      .primaryColorDark,
+                                ),
+                              ),
+                              subtitle: Text(
+                                item.title!,
+                                style: TextStyle(
+                                  color: AdaptiveTheme.of(context)
+                                      .theme
+                                      .primaryColorDark,
+                                ),
+                              ),
+                              content: ImageInput(
+                                sizeImage: 250,
+                                onPressed: (img, file) =>
+                                    detectorText(img, file, item),
+                                itemFile: item,
+                              ),
+                              isActive:
+                                  tabProcedureState.indexTabProcedure >= 0,
+                              state: userBloc.verified!
+                                  ? StepState.complete
+                                  : item.imageFile != null
+                                      ? StepState.complete
+                                      : StepState.disabled,
+                            ),
+                        Step(
+                          title: Text(
+                            'Mis datos',
+                            style: TextStyle(
+                              color: AdaptiveTheme.of(context)
+                                  .theme
+                                  .primaryColorDark,
+                            ),
                           ),
+                          content: TabInfoEconomicComplement(
+                            onEditingComplete: () => nextPage(),
+                            phoneCtrl: phoneCtrl,
+                          ),
+                          isActive: tabProcedureState.indexTabProcedure >= 0,
+                          state: tabProcedureState.indexTabProcedure > 2
+                              ? StepState.complete
+                              : StepState.disabled,
                         ),
-                        content: TabInfoEconomicComplement(
-                          onEditingComplete: () => nextPage(),
-                          phoneCtrl: phoneCtrl,
-                        ),
-                        isActive: tabProcedureState.indexTabProcedure >= 0,
-                        state: tabProcedureState.indexTabProcedure > 2
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -239,13 +242,15 @@ class _StepperProcedureState extends State<StepperProcedure> {
     final result = await showDialog<bool>(
       barrierDismissible: false,
       context: context,
-      builder: (context) => ComponentAnimate(
-        child: DialogTwoAction(
-          message: '¿DESEAS SALIR DEL PROCESO?',
-          actionCorrect: () {
-            Navigator.pop(context, true);
-          },
-          messageCorrect: 'Salir',
+      builder: (context) => SafeArea(
+        child: ComponentAnimate(
+          child: DialogTwoAction(
+            message: '¿DESEAS SALIR DEL PROCESO?',
+            actionCorrect: () {
+              Navigator.pop(context, true);
+            },
+            messageCorrect: 'Salir',
+          ),
         ),
       ),
     );
